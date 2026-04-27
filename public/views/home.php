@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- CSS Extra -->
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="/../assets/css/style.css">
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -19,7 +19,7 @@
     <meta name="description" content="TechUrbis - soluções inteligentes para cidades modernas e sustentáveis.">
     <meta name="author" content="TechUrbis">
 
-    <link rel="icon" type="image/png" href="Img/logo.png">
+    <link rel="icon" type="image/png" href="/../assets/img/logo.png">
 
     <style>
         body {
@@ -42,7 +42,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-transparent">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#">
-            <img src="Img/logo.png" alt="Logo TechUrbis" width="40" class="me-2">
+            <img src="/../assets/img/logo.png" alt="Logo TechUrbis" width="40" class="me-2">
             TechUrbis
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -55,8 +55,8 @@
                 <li class="nav-item"><a class="nav-link" href="#features">Upgrades</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contact">Contacts</a></li>
                 <li class="nav-item">
-                    <a class="nav-link" href="login.html">
-                        <img src="Img/IconUser.png" alt="Login"
+                    <a class="nav-link" href="login">
+                        <img src="/../assets/img/IconUser.png" alt="Login"
                             width="28" height="28">
                     </a>
                 </li>
@@ -77,15 +77,15 @@
 
         <!-- Imagens -->
     <div class="carousel-item active">
-        <img src="Img/Img1.jpeg" class="d-block w-100" alt="Cidade inteligente moderna">
+        <img src="/../assets/img/Img1.jpeg" class="d-block w-100" alt="Cidade inteligente moderna">
     </div>
 
     <div class="carousel-item">
-        <img src="Img/Img2.jpeg" class="d-block w-100" alt="Iluminação pública inteligente">
+        <img src="/../assets/img/Img2.jpeg" class="d-block w-100" alt="Iluminação pública inteligente">
     </div>
 
     <div class="carousel-item">
-        <img src="Img/Img3.jpeg" class="d-block w-100" alt="Estacionamento inteligente">
+        <img src="/../assets/img/Img3.jpeg" class="d-block w-100" alt="Estacionamento inteligente">
     </div>
 
     <div class="carousel-caption custom-caption text-center">
@@ -119,38 +119,38 @@
             more efficient and sustainable.
         </p>
 
-       <h3 class="text-center mb-4">Our Team</h3>
+        <h3 class="text-center mb-4">Our Team</h3>
 
-<div class="row g-4 justify-content-center">
-    
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <img src="img/joao.png" class="img-fluid rounded-circle mb-3" style="width: 120px;" alt="João Nicolau">
-                <h6 class="card-title">João Nicolau</h6>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="/../assets/img/imgjoao.png" alt="Foto de João Nicolau" class="rounded-circle mb-3" width="100" height="110">
+                        <h6 class="card-title">João Nicolau</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="/../assets/img/imggomes.png" alt="Foto de Rodrigo Gomes" class="rounded-circle mb-3" width="100" height="110">
+                        <h6 class="card-title">Rodrigo Gomes</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="/../assets/img/imgesther.png" alt="Foto de Esther Pereira" class="rounded-circle mb-3" width="100" height="110">
+                        <h6 class="card-title">Esther Pereira</h6>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <img src="img/rodrigo.png" class="img-fluid rounded-circle mb-3" style="width: 120px;" alt="Rodrigo Gomes">
-                <h6 class="card-title">Rodrigo Gomes</h6>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <img src="img/esther.png" class="img-fluid rounded-circle mb-3" style="width: 120px;" alt="Esther Pereira">
-                <h6 class="card-title">Esther Pereira</h6>
-            </div>
-        </div>
-    </div>
-
-</div>
+</section>
 
 <!-- MELHORAMENTOS -->
 <section id="features" class="py-5">
@@ -286,7 +286,7 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="scripts/scripts.js"></script>
+<script src="/../assets/js/scripts.js"></script>
 
 </body>
 </html>
