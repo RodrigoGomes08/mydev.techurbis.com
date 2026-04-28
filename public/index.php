@@ -12,7 +12,7 @@ if($uri === '/' || $uri === '/index' || $uri === '/home') {
   (new WebController())->index();
 } elseif ($uri === '/login' && $method === "GET") {
   (new WebController())->login();
-} elseif ($uri === '/PortalADMGeral' && $method === "POST") {
+} elseif ($uri === '/PortalADMGeral') {
   (new WebController())->adminGeral();
 }  elseif ($uri === '/sigup' && $method === "GET") {
   var_dump("Entrar na página sigup");
