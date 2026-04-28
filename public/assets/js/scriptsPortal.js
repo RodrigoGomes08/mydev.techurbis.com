@@ -614,7 +614,7 @@
             if (idx === '') parques.push(novoParque);
             else parques[parseInt(idx)] = novoParque;
  
-            bootstrap.Modal.getInstance(document.getElementById('modalNovoParque')).hide();
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNovoParque')).hide();
             renderParques(parques);
             atualizarKpis();
         });
@@ -654,5 +654,219 @@
         renderParques(parques);
         atualizarKpis();
     }
- 
+
+    // =========================
+    // UTILIZADORES
+    // =========================
+    const listaUtilizadores = document.getElementById('listaUtilizadores');
+    if (listaUtilizadores) {
+
+        let utilizadores = [
+            { nome: 'João Nicolau',  iniciais: 'JN', cor: 'linear-gradient(135deg,#435ebe,#5f7cff)', cargo: 'Administrador', email: 'joao@gmail.com',  morada: 'Rua das Flores, Porto' },
+            { nome: 'Ana Costa',     iniciais: 'AC', cor: 'linear-gradient(135deg,#27ae60,#2ecc71)', cargo: 'Utilizador',    email: 'ana@gmail.com',   morada: 'Av. Central, Braga'   },
+            { nome: 'Pedro Santos',  iniciais: 'PS', cor: 'linear-gradient(135deg,#f39c12,#f1c40f)', cargo: 'Utilizador',    email: 'pedro@gmail.com', morada: 'Rua do Sol, Lisboa'   },
+        ];
+
+        function renderUtilizadores(lista) {
+            listaUtilizadores.innerHTML = '';
+            lista.forEach((u) => {
+                const ri = utilizadores.indexOf(u);
+                const cargoBadge = u.cargo === 'Administrador'
+                    ? `<span class="parque-tag" style="background:#fde8e8;color:#e74c3c;"><i class="bi bi-shield-fill me-1"></i>Administrador</span>`
+                    : `<span class="parque-tag"><i class="bi bi-person-fill me-1"></i>Utilizador</span>`;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:36px;height:36px;border-radius:50%;background:${u.cor};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.85rem;flex-shrink:0;">${u.iniciais}</div>
+                            <strong>${u.nome}</strong>
+                        </div>
+                    </td>
+                    <td>${cargoBadge}</td>
+                    <td>${u.email}</td>
+                    <td><span class="badge bg-secondary">••••••••</span></td>
+                    <td><i class="bi bi-geo-alt text-muted me-1"></i>${u.morada}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-primary btn-edit-util" data-index="${ri}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger btn-del-util" data-index="${ri}"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>`;
+                listaUtilizadores.appendChild(tr);
+            });
+
+            document.querySelectorAll('.btn-edit-util').forEach(btn => {
+                btn.addEventListener('click', function () { abrirModalUtil(parseInt(this.dataset.index)); });
+            });
+            document.querySelectorAll('.btn-del-util').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const idx = parseInt(this.dataset.index);
+                    if (confirm(`Remover "${utilizadores[idx].nome}"?`)) {
+                        utilizadores.splice(idx, 1);
+                        renderUtilizadores(utilizadores);
+                        atualizarKpisUtil();
+                    }
+                });
+            });
+        }
+
+        function atualizarKpisUtil() {
+            const total  = utilizadores.length;
+            const admins = utilizadores.filter(u => u.cargo === 'Administrador').length;
+            const comuns = total - admins;
+            const cidades = new Set(utilizadores.map(u => u.morada.split(',')[1]?.trim() || u.morada)).size;
+            const elTotal  = document.getElementById('pkpi-util-total');
+            const elAdmins = document.getElementById('pkpi-util-admins');
+            const elComuns = document.getElementById('pkpi-util-comuns');
+            const elCidad  = document.getElementById('pkpi-util-cidades');
+            const elCount  = document.getElementById('util-count');
+            if (elTotal)  elTotal.textContent  = total;
+            if (elAdmins) elAdmins.textContent = admins;
+            if (elComuns) elComuns.textContent = comuns;
+            if (elCidad)  elCidad.textContent  = cidades;
+            if (elCount)  elCount.textContent  = `${total} utilizadores registados`;
+        }
+
+        function abrirModalUtil(index) {
+            const u = index === -1 ? null : utilizadores[index];
+            const modal = document.getElementById('modalUtilizador');
+            if (!modal) return;
+            document.getElementById('modalUtilLabel').textContent  = index === -1 ? 'Adicionar Utilizador' : `Editar — ${u.nome}`;
+            document.getElementById('utilIndex').value             = index === -1 ? '' : index;
+            document.getElementById('inputUtilNome').value         = u?.nome   || '';
+            document.getElementById('inputUtilEmail').value        = u?.email  || '';
+            document.getElementById('inputUtilCargo').value        = u?.cargo  || 'Utilizador';
+            document.getElementById('inputUtilMorada').value       = u?.morada || '';
+            document.getElementById('inputUtilPass').value         = '';
+            new bootstrap.Modal(modal).show();
+        }
+
+        document.querySelector('.btn-add-util')?.addEventListener('click', () => abrirModalUtil(-1));
+
+        document.getElementById('btnGuardarUtil')?.addEventListener('click', () => {
+            const nome   = document.getElementById('inputUtilNome').value.trim();
+            const email  = document.getElementById('inputUtilEmail').value.trim();
+            const cargo  = document.getElementById('inputUtilCargo').value;
+            const morada = document.getElementById('inputUtilMorada').value.trim();
+            if (!nome || !email) { alert('Nome e email são obrigatórios.'); return; }
+            const iniciais = nome.split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
+            const cores = ['linear-gradient(135deg,#435ebe,#5f7cff)','linear-gradient(135deg,#27ae60,#2ecc71)','linear-gradient(135deg,#f39c12,#f1c40f)','linear-gradient(135deg,#e74c3c,#c0392b)','linear-gradient(135deg,#8e44ad,#9b59b6)'];
+            const cor = cores[Math.floor(Math.random() * cores.length)];
+            const idx = document.getElementById('utilIndex').value;
+            if (idx === '') {
+                utilizadores.push({ nome, iniciais, cor, cargo, email, morada });
+            } else {
+                const i = parseInt(idx);
+                utilizadores[i] = { ...utilizadores[i], nome, iniciais, cargo, email, morada };
+            }
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUtilizador')).hide();
+            renderUtilizadores(utilizadores);
+            atualizarKpisUtil();
+        });
+
+        document.getElementById('searchUtil')?.addEventListener('input', function () {
+            const t = this.value.toLowerCase();
+            renderUtilizadores(utilizadores.filter(u => u.nome.toLowerCase().includes(t) || u.email.toLowerCase().includes(t)));
+        });
+        document.getElementById('filtroUtilCargo')?.addEventListener('change', function () {
+            const v = this.value;
+            renderUtilizadores(v ? utilizadores.filter(u => u.cargo === v) : utilizadores);
+        });
+
+        renderUtilizadores(utilizadores);
+        atualizarKpisUtil();
+    }
+
+    // =========================
+    // CIDADE — botões info cards
+    // =========================
+    const secCidade = document.getElementById('cidade');
+    if (secCidade) {
+        document.querySelector('.btn-atualizar-ambiente')?.addEventListener('click', function () {
+            const vals = {
+                temp:     (20 + Math.random() * 8).toFixed(1) + '°C',
+                humidade: Math.round(55 + Math.random() * 20) + '%',
+                vento:    Math.round(8 + Math.random() * 15) + ' km/h',
+            };
+            const grid = this.closest('.parque-card')?.querySelector('.parque-info-grid');
+            if (grid) {
+                const items = grid.querySelectorAll('.parque-info-value');
+                items[0].textContent = vals.temp;
+                items[1].textContent = vals.humidade;
+                items[2].textContent = 'Bom';
+                items[3].textContent = vals.vento;
+            }
+            this.innerHTML = '<i class="bi bi-check-circle me-1"></i>Atualizado!';
+            setTimeout(() => { this.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Atualizar'; }, 1500);
+        });
+
+        document.querySelector('.btn-historico-ambiente')?.addEventListener('click', function () {
+            const el = document.getElementById('modalHistoricoLabel');
+            if (el) el.textContent = 'Histórico Ambiental — Últimas 24h';
+            const body = document.getElementById('modalHistoricoBody');
+            if (body) {
+                const horas = ['00:00','04:00','08:00','12:00','16:00','20:00','Agora'];
+                const temps = [18.2,17.5,19.1,22.5,23.8,21.4,22.5];
+                body.innerHTML = `
+                <table class="table table-sm table-hover">
+                    <thead><tr><th>Hora</th><th>Temperatura</th><th>Humidade</th><th>Qualidade Ar</th></tr></thead>
+                    <tbody>${horas.map((h,i)=>`<tr><td>${h}</td><td>${temps[i]}°C</td><td>${Math.round(60+Math.random()*15)}%</td><td>Bom</td></tr>`).join('')}</tbody>
+                </table>`;
+            }
+            new bootstrap.Modal(document.getElementById('modalHistorico')).show();
+        });
+
+        document.querySelector('.btn-mapa-trafego')?.addEventListener('click', function () {
+            const titleEl  = document.getElementById('modalMapaCidadeTitle');
+            const iframeEl = document.getElementById('iframeMapaCidade');
+            if (titleEl)  titleEl.textContent = 'Mapa de Tráfego Pedonal';
+            if (iframeEl) iframeEl.src = 'https://www.google.com/maps?q=38.7223,-9.1393&z=14&output=embed';
+            new bootstrap.Modal(document.getElementById('modalMapaCidade')).show();
+        });
+
+        document.querySelector('.btn-detalhe-trafego')?.addEventListener('click', function () {
+            const el = document.getElementById('modalHistoricoLabel');
+            if (el) el.textContent = 'Detalhes — Tráfego Pedonal';
+            const body = document.getElementById('modalHistoricoBody');
+            if (body) body.innerHTML = `
+                <div class="row g-3">
+                    ${[['Zona Centro','Alto','danger'],['Zona Norte','Médio','warning'],['Zona Sul','Baixo','success'],['Zona Industrial','Baixo','success']].map(([z,n,c])=>`
+                    <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value text-${c}">${n}</div><div class="pkpi-label">${z}</div></div></div>`).join('')}
+                </div>`;
+            new bootstrap.Modal(document.getElementById('modalHistorico')).show();
+        });
+
+        document.querySelector('.btn-calendario-residuos')?.addEventListener('click', function () {
+            const el = document.getElementById('modalHistoricoLabel');
+            if (el) el.textContent = 'Calendário de Recolha — Esta Semana';
+            const body = document.getElementById('modalHistoricoBody');
+            if (body) body.innerHTML = `
+                <table class="table table-sm table-hover">
+                    <thead><tr><th>Dia</th><th>Zona</th><th>Tipo</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        <tr><td>Seg</td><td>Centro</td><td>Indiferenciado</td><td><span class="badge bg-success">Concluído</span></td></tr>
+                        <tr><td>Ter</td><td>Norte</td><td>Reciclagem</td><td><span class="badge bg-success">Concluído</span></td></tr>
+                        <tr><td>Qua</td><td>Sul</td><td>Indiferenciado</td><td><span class="badge bg-warning text-dark">Em curso</span></td></tr>
+                        <tr><td>Qui</td><td>Industrial</td><td>Orgânico</td><td><span class="badge bg-secondary">Agendado</span></td></tr>
+                        <tr><td>Sex</td><td>Centro</td><td>Reciclagem</td><td><span class="badge bg-secondary">Agendado</span></td></tr>
+                    </tbody>
+                </table>`;
+            new bootstrap.Modal(document.getElementById('modalHistorico')).show();
+        });
+
+        document.querySelector('.btn-detalhe-residuos')?.addEventListener('click', function () {
+            const el = document.getElementById('modalHistoricoLabel');
+            if (el) el.textContent = 'Detalhes — Gestão de Resíduos';
+            const body = document.getElementById('modalHistoricoBody');
+            if (body) body.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value text-success">7</div><div class="pkpi-label">Rotas Concluídas</div></div></div>
+                    <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value text-warning">3</div><div class="pkpi-label">Rotas Pendentes</div></div></div>
+                    <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value text-primary">38%</div><div class="pkpi-label">Taxa Reciclagem</div></div></div>
+                    <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value">4.2 t</div><div class="pkpi-label">Resíduos Hoje</div></div></div>
+                </div>`;
+            new bootstrap.Modal(document.getElementById('modalHistorico')).show();
+        });
+    }
+
 })();

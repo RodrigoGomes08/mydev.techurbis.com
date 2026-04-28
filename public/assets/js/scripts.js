@@ -16,22 +16,28 @@ document.addEventListener("scroll", function () {
 });
  
 // JS do login.html
-// Só corre se o formulário existir na página
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
     loginForm.addEventListener("submit", function (e) {
         e.preventDefault();
- 
+
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const errorMsg = document.getElementById("errorMsg");
- 
+
         if (email === "a@a" && password === "12345") {
             sessionStorage.setItem('loggedIn', 'true');
-            window.location.href = "PortalADMGeral.html";
+
+            // Criar e submeter um form POST para a rota correta
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/PortalADMGeral";
+            document.body.appendChild(form);
+            form.submit();
         } else {
             errorMsg.style.display = "block";
         }
     });
 }
+
  

@@ -12,8 +12,8 @@ if($uri === '/' || $uri === '/index' || $uri === '/home') {
   (new WebController())->index();
 } elseif ($uri === '/login' && $method === "GET") {
   (new WebController())->login();
-} elseif ($uri === '/login' && $method === "POST") {
-  var_dump("Entrar na página login post para submeter");
+} elseif ($uri === '/PortalADMGeral' && $method === "POST") {
+  (new WebController())->adminGeral();
 }  elseif ($uri === '/sigup' && $method === "GET") {
   var_dump("Entrar na página sigup");
 } elseif ($uri === '/signup' && $method === "POST") {

@@ -1,5 +1,56 @@
-<?php include __DIR__ . "/../../includes/header.php"; ?>
-
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações da Cidade | Portal SmartCity</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles/stylesPortal.css">
+    <link rel="icon" type="image/png" href="Img/logo.png">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-admin">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="PortalADMGeral.html">
+            <img src="Img/logo.png" alt="Logo" style="width:30px;height:30px;margin-right:8px;">
+            <span>Portal de Administração</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto"></ul>
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-notif" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge badge-notif bg-danger">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="width:320px;">
+                        <li class="dropdown-header"><strong>Notificações</strong></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-item text-muted text-center">Sem notificações</li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-item text-center text-muted" style="font-size:0.85rem;">Sistema SmartCity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="admin-container">
+    <aside class="sidebar-admin">
+        <nav class="nav flex-column h-100">
+            <a class="nav-link" href="PortalADMGeral.html"><i class="bi bi-graph-up"></i> Geral</a>
+            <a class="nav-link" href="PortalADMUtilizadores.html"><i class="bi bi-people"></i> Utilizadores</a>
+            <a class="nav-link" href="PortalADMContentores.html"><i class="bi bi-trash"></i> Contentores de Lixo</a>
+            <a class="nav-link" href="PortalADMPostes.html"><i class="bi bi-lightbulb"></i> Postes de Iluminação</a>
+            <a class="nav-link" href="PortalADMParques.html"><i class="bi bi-p-circle"></i> Parques de Estacionamento</a>
+            <a class="nav-link active" href="PortalADMCidade.html"><i class="bi bi-info-circle"></i> Informações da Cidade</a>
+            <a class="nav-link text-danger mt-auto" href="index.html"><i class="bi bi-box-arrow-right"></i> Sair</a>
+        </nav>
+    </aside>
     <main class="content-admin">
         <section id="cidade" class="adm-page active">
 
@@ -111,8 +162,8 @@
                             </div>
                         </div>
                         <div class="parque-actions">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-bar-chart me-1"></i>Histórico</button>
+                            <button class="btn btn-sm btn-outline-secondary btn-atualizar-ambiente"><i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
+                            <button class="btn btn-sm btn-outline-primary btn-historico-ambiente"><i class="bi bi-bar-chart me-1"></i>Histórico</button>
                         </div>
                     </div>
                 </div>
@@ -145,8 +196,8 @@
                             </div>
                         </div>
                         <div class="parque-actions">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-map me-1"></i>Ver Mapa</button>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Detalhes</button>
+                            <button class="btn btn-sm btn-outline-secondary btn-mapa-trafego"><i class="bi bi-map me-1"></i>Ver Mapa</button>
+                            <button class="btn btn-sm btn-outline-primary btn-detalhe-trafego"><i class="bi bi-eye me-1"></i>Detalhes</button>
                         </div>
                     </div>
                 </div>
@@ -179,8 +230,8 @@
                             </div>
                         </div>
                         <div class="parque-actions">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-calendar me-1"></i>Calendário</button>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Detalhes</button>
+                            <button class="btn btn-sm btn-outline-secondary btn-calendario-residuos"><i class="bi bi-calendar me-1"></i>Calendário</button>
+                            <button class="btn btn-sm btn-outline-primary btn-detalhe-residuos"><i class="bi bi-eye me-1"></i>Detalhes</button>
                         </div>
                     </div>
                 </div>
@@ -239,11 +290,46 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../includes/footer.php"; ?>
-<!-- <script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="scripts/scriptsPortal.js"></script>
+
+<!-- MODAL HISTÓRICO / DETALHES -->
+<div class="modal fade" id="modalHistorico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                <h5 class="modal-title" id="modalHistoricoLabel">Histórico</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalHistoricoBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg me-1"></i>Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MAPA CIDADE -->
+<div class="modal fade" id="modalMapaCidade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                <h5 class="modal-title" id="modalMapaCidadeTitle">Mapa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div style="width:100%;height:420px;">
+                    <iframe id="iframeMapaCidade" src="" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
     if (!sessionStorage.getItem('loggedIn')) { window.location.href = 'login.html'; }
     const syncEl = document.getElementById('cidade-sync-time');
     if (syncEl) syncEl.textContent = new Date().toLocaleString('pt-PT');
-</script> -->
+</script>
 </body>
 </html>

@@ -1,5 +1,56 @@
-<?php include __DIR__ . "/../../includes/header.php"; ?>
-
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contentores | Portal SmartCity</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles/stylesPortal.css">
+    <link rel="icon" type="image/png" href="Img/logo.png">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-admin">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="PortalADMGeral.html">
+            <img src="Img/logo.png" alt="Logo" style="width:30px;height:30px;margin-right:8px;">
+            <span>Portal de Administração</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto"></ul>
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-notif" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge badge-notif bg-danger">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="width:320px;">
+                        <li class="dropdown-header"><strong>Notificações</strong></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-item text-muted text-center">Sem notificações</li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-item text-center text-muted" style="font-size:0.85rem;">Sistema SmartCity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="admin-container">
+    <aside class="sidebar-admin">
+        <nav class="nav flex-column h-100">
+            <a class="nav-link" href="PortalADMGeral.html"><i class="bi bi-graph-up"></i> Geral</a>
+            <a class="nav-link" href="PortalADMUtilizadores.html"><i class="bi bi-people"></i> Utilizadores</a>
+            <a class="nav-link active" href="PortalADMContentores.html"><i class="bi bi-trash"></i> Contentores de Lixo</a>
+            <a class="nav-link" href="PortalADMPostes.html"><i class="bi bi-lightbulb"></i> Postes de Iluminação</a>
+            <a class="nav-link" href="PortalADMParques.html"><i class="bi bi-p-circle"></i> Parques de Estacionamento</a>
+            <a class="nav-link" href="PortalADMCidade.html"><i class="bi bi-info-circle"></i> Informações da Cidade</a>
+            <a class="nav-link text-danger mt-auto" href="index.html"><i class="bi bi-box-arrow-right"></i> Sair</a>
+        </nav>
+    </aside>
     <main class="content-admin">
         <section id="contentores" class="adm-page active">
 
@@ -100,7 +151,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -129,7 +180,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -158,7 +209,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -187,7 +238,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -216,7 +267,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -245,7 +296,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -274,7 +325,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -303,7 +354,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -351,7 +402,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -380,7 +431,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -409,7 +460,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -438,7 +489,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -467,7 +518,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -496,7 +547,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -525,7 +576,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -554,7 +605,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -602,7 +653,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -631,7 +682,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -660,7 +711,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -689,7 +740,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -718,7 +769,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -747,7 +798,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -776,7 +827,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -805,7 +856,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -853,7 +904,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -882,7 +933,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -911,7 +962,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -940,7 +991,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -969,7 +1020,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -998,7 +1049,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1027,7 +1078,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1056,7 +1107,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1104,7 +1155,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1133,7 +1184,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1162,7 +1213,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1191,7 +1242,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1220,7 +1271,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1249,7 +1300,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1278,7 +1329,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1307,7 +1358,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1355,7 +1406,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1384,7 +1435,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1413,7 +1464,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1442,7 +1493,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1471,7 +1522,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1500,7 +1551,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1529,7 +1580,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1558,7 +1609,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1606,7 +1657,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1635,7 +1686,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1664,7 +1715,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1693,7 +1744,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1722,7 +1773,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1751,7 +1802,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1780,7 +1831,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1809,7 +1860,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1857,7 +1908,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1886,7 +1937,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1915,7 +1966,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1944,7 +1995,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -1973,7 +2024,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2002,7 +2053,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2031,7 +2082,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2060,7 +2111,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2108,7 +2159,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2137,7 +2188,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2166,7 +2217,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2195,7 +2246,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2224,7 +2275,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2253,7 +2304,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2282,7 +2333,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2311,7 +2362,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2359,7 +2410,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2388,7 +2439,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2417,7 +2468,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2446,7 +2497,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2475,7 +2526,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2504,7 +2555,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2533,7 +2584,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2562,7 +2613,7 @@
                                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalContentor001">
                                         <i class="bi bi-geo-alt me-1"></i>Mapa
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary">
+                                    <button class="btn btn-sm btn-outline-primary btn-detalhe-cont">
                                         <i class="bi bi-eye me-1"></i>Detalhes
                                     </button>
                                 </div>
@@ -2620,12 +2671,30 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../includes/footer.php"; ?>
-<script>
-    // if (!sessionStorage.getItem('loggedIn')) { window.location.href = 'login.html'; }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="scripts/scriptsPortal.js"></script>
 
-    // const syncEl = document.getElementById('cont-sync-time');
-    // if (syncEl) syncEl.textContent = new Date().toLocaleString('pt-PT');
+<!-- MODAL DETALHES CONTENTOR -->
+<div class="modal fade" id="modalDetalheContentor" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                <h5 class="modal-title" id="modalDetalheContentorTitle">Detalhes do Contentor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalDetalheContentorBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg me-1"></i>Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    if (!sessionStorage.getItem('loggedIn')) { window.location.href = 'login.html'; }
+
+    const syncEl = document.getElementById('cont-sync-time');
+    if (syncEl) syncEl.textContent = new Date().toLocaleString('pt-PT');
 
     // Filter
     function aplicarFiltroContentores() {
@@ -2657,10 +2726,39 @@
             this.classList.remove('btn-outline-danger');
         }
         aplicarFiltroContentores();
-        // Expand all sections to show results
         document.querySelectorAll('.collapse').forEach(c => {
             if (filtro.value) new bootstrap.Collapse(c, {show:true});
         });
+    });
+
+    // Botões Detalhes — abre modal com info do contentor
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-detalhe-cont');
+        if (!btn) return;
+        const card  = btn.closest('.parque-card');
+        const nome  = card?.querySelector('.parque-titulo span')?.textContent?.trim() || 'Contentor';
+        const pct   = card?.querySelector('.parque-pct-num')?.textContent?.trim() || '—';
+        const cls   = card?.classList.contains('critico') ? 'danger' : card?.classList.contains('atencao') ? 'warning' : 'success';
+        const estado = cls === 'danger' ? 'Crítico' : cls === 'warning' ? 'Atenção' : 'Normal';
+        document.getElementById('modalDetalheContentorTitle').textContent = nome + ' — Detalhes';
+        document.getElementById('modalDetalheContentorBody').innerHTML = `
+            <div class="text-center mb-3">
+                <div class="pkpi-icon mx-auto mb-2" style="background:#f0f3ff;color:#435ebe;width:60px;height:60px;border-radius:14px;font-size:1.8rem;display:flex;align-items:center;justify-content:center;">
+                    <i class="bi bi-trash-fill"></i>
+                </div>
+                <div style="font-size:2.8rem;font-weight:800;" class="text-${cls}">${pct}</div>
+                <div class="text-muted">capacidade utilizada</div>
+            </div>
+            <div class="parque-prog mb-3">
+                <div class="parque-prog-bar ${cls === 'danger' ? 'critico' : cls === 'warning' ? 'atencao' : 'normal'}" style="width:${pct}"></div>
+            </div>
+            <table class="table table-sm table-borderless" style="font-size:0.9rem;">
+                <tr><td class="text-muted">Nome</td><td><strong>${nome}</strong></td></tr>
+                <tr><td class="text-muted">Estado</td><td><span class="badge bg-${cls}">${estado}</span></td></tr>
+                <tr><td class="text-muted">Última leitura</td><td><strong>${new Date().toLocaleString('pt-PT')}</strong></td></tr>
+                <tr><td class="text-muted">Próxima recolha</td><td><strong>Amanhã 06:30</strong></td></tr>
+            </table>`;
+        new bootstrap.Modal(document.getElementById('modalDetalheContentor')).show();
     });
 </script>
 </body>
