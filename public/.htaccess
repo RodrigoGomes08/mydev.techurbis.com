@@ -1,18 +1,13 @@
 RewriteEngine On
  
-# Se for exatamente /admin ou /admin/
-
-RewriteRule ^admin/?$ /admin/index.php [L]
+# Routing do ADMIN
+RewriteRule ^admin/?$ admin/index.php [L]
+RewriteRule ^admin/(.*)$ admin/index.php [L]
  
-# Permitir ficheiros e pastas reais (inclui /admin/index.php)
-
+# Permitir ficheiros reais
 RewriteCond %{REQUEST_FILENAME} -f [OR]
-
 RewriteCond %{REQUEST_FILENAME} -d
-
 RewriteRule ^ - [L]
  
-# Regra geral (front controller)
-
+# Front controller (site principal)
 RewriteRule ^ index.php [QSA,L]
- 

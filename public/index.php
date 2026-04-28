@@ -12,6 +12,8 @@ if($uri === '/' || $uri === '/index' || $uri === '/home') {
   (new WebController())->index();
 } elseif ($uri === '/login' && $method === "GET") {
   (new WebController())->login();
+} else if ($uri === '/login' && $method === 'POST') {
+  (new AuthController())->loginWeb();
 } elseif ($uri === '/PortalADMGeral') {
   (new WebController())->adminGeral();
 }  elseif ($uri === '/sigup' && $method === "GET") {
