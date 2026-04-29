@@ -15,7 +15,7 @@ document.addEventListener("scroll", function () {
     }
 });
  
-/* JS do login.html
+//JS do login.html
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
     loginForm.addEventListener("submit", function (e) {
@@ -38,6 +38,6 @@ if (loginForm) {
             errorMsg.style.display = "block";
         }
     });
-}*/
+}
 
  
