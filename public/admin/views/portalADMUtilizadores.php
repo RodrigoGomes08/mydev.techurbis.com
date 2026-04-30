@@ -117,7 +117,6 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- MODAL ADICIONAR / EDITAR UTILIZADOR -->
 <div class="modal fade" id="modalUtilizador" tabindex="-1" aria-labelledby="modalUtilLabel" aria-hidden="true">

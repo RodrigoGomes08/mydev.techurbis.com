@@ -209,7 +209,6 @@
                     </div>
     </main>
 </div>
-<?php include __DIR__ . "/../../includes/footer.php"; ?>
 <!-- <script>
     if (!sessionStorage.getItem('loggedIn')) { window.location.href = 'login.html'; }
 </script> -->

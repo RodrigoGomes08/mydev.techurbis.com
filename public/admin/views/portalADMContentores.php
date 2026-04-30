@@ -2620,9 +2620,6 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="scripts/scriptsPortal.js"></script>
-
 <!-- MODAL DETALHES CONTENTOR -->
 <div class="modal fade" id="modalDetalheContentor" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

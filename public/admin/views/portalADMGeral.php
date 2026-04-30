@@ -132,9 +132,10 @@
     </div>
 </div>
 
-<?php include __DIR__ . "/../../includes/footer.php"; ?>
+
 <!-- <script>
     if (!sessionStorage.getItem('loggedIn')) { window.location.href = 'login.html'; }
 </script> -->
 </body>
 </html>
+<?php include __DIR__ . "/../../includes/footer.php"; ?>

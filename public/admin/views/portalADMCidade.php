@@ -301,9 +301,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts/scriptsPortal.js"></script>
-
     <!-- MODAL HISTÓRICO / DETALHES -->
     <div class="modal fade" id="modalHistorico" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -347,4 +344,5 @@
 </body>
 
 </html>
+
 <?php include __DIR__ . "/../../includes/footer.php"; ?>
