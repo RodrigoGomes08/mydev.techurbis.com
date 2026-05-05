@@ -161,22 +161,22 @@
         function abrirModalEditar(index) {
             const p = postes[index];
             document.getElementById('modalPosteLabel').textContent = `Editar Poste #${index + 1}`;
-            document.getElementById('posteIndex').value            = index;
-            document.getElementById('inputLongitude').value        = p.longitude;
-            document.getElementById('inputLatitude').value         = p.latitude;
-            document.getElementById('inputEstado').value           = p.estado;
-            document.getElementById('inputObservacoes').value      = p.observacoes;
+            document.getElementById('posteIndex').value = index;
+            document.getElementById('inputLongitude').value = p.longitude;
+            document.getElementById('inputLatitude').value = p.latitude;
+            document.getElementById('inputEstado').value = p.estado;
+            document.getElementById('inputObservacoes').value = p.observacoes;
             modal.show();
         }
  
         if (btnNovoPoste) {
             btnNovoPoste.addEventListener('click', () => {
                 document.getElementById('modalPosteLabel').textContent = 'Adicionar Poste';
-                document.getElementById('posteIndex').value            = '';
-                document.getElementById('inputLongitude').value        = '';
-                document.getElementById('inputLatitude').value         = '';
-                document.getElementById('inputEstado').value           = 'operacional';
-                document.getElementById('inputObservacoes').value      = '';
+                document.getElementById('posteIndex').value = '';
+                document.getElementById('inputLongitude').value = '';
+                document.getElementById('inputLatitude').value = '';
+                document.getElementById('inputEstado').value = 'operacional';
+                document.getElementById('inputObservacoes').value = '';
                 modal.show();
             });
         }

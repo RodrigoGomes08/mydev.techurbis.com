@@ -1,6 +1,7 @@
 <?php
 
 require "../app/controllers/WebController.php";
+require "../app/controllers/AuthController.php";
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 

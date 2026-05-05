@@ -22,7 +22,7 @@
             <h2 class="fw-bold mt-2">TechUrbis</h2>
             <p class="text-muted">Portal de Administração</p>
         </div>
-        <form id="loginForm">
+        <form method="GET" action="/login" d="loginForm">
             <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input type="text" id="email" class="form-control form-control-lg" placeholder="Insira o seu email:" required>

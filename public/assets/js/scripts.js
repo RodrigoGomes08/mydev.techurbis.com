@@ -25,18 +25,18 @@ if (loginForm) {
         const password = document.getElementById("password").value;
         const errorMsg = document.getElementById("errorMsg");
 
-        if (email === "a@a" && password === "12345") {
-            sessionStorage.setItem('loggedIn', 'true');
+        // if (email === "a@a" && password === "12345") {
+        //     sessionStorage.setItem('loggedIn', 'true');
 
-            // Criar e submeter um form POST para a rota correta
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = "/PortalADMGeral";
-            document.body.appendChild(form);
-            form.submit();
-        } else {
-            errorMsg.style.display = "block";
-        }
+        //     // Criar e submeter um form POST para a rota correta
+        //     const form = document.createElement("form");
+        //     form.method = "POST";
+        //     form.action = "/PortalADMGeral";
+        //     document.body.appendChild(form);
+        //     form.submit();
+        // } else {
+        //     errorMsg.style.display = "block";
+        // }
     });
 }
 
