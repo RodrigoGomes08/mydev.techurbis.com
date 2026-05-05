@@ -1,21 +1,21 @@
 (function () {
     const root = document.body;
- 
+
     // =========================
     // NOTIFICAÇÕES (SIMULADAS)
     // =========================
     let notificacoes = 0;
     const notifCount = document.getElementById("notifCount");
-    const notifList  = document.getElementById("notifList");
- 
+    const notifList = document.getElementById("notifList");
+
     function adicionarNotificacao(mensagem) {
         notificacoes++;
         if (notifCount) notifCount.textContent = notificacoes;
- 
+
         if (notificacoes === 1 && notifList) {
             notifList.innerHTML = "";
         }
- 
+
         if (notifList) {
             const item = document.createElement("li");
             item.className = "dropdown-item";
@@ -28,11 +28,11 @@
             notifList.prepend(item);
         }
     }
- 
-    setTimeout(() => adicionarNotificacao("🗑️ Contentor C atingiu 95%"),  3000);
-    setTimeout(() => adicionarNotificacao("💡 Poste 2 ficou offline"),     7000);
+
+    setTimeout(() => adicionarNotificacao("🗑️ Contentor C atingiu 95%"), 3000);
+    setTimeout(() => adicionarNotificacao("💡 Poste 2 ficou offline"), 7000);
     setTimeout(() => adicionarNotificacao("🅿️ Parque Norte quase cheio"), 11000);
- 
+
     // =========================
     // ATUALIZAR HORA
     // =========================
@@ -43,7 +43,7 @@
             updateTime.textContent = agora.toLocaleDateString('pt-PT') + " — " + agora.toLocaleTimeString('pt-PT');
         }, 1000);
     }
- 
+
     // =========================
     // PROGRESS BARS
     // =========================
@@ -54,12 +54,12 @@
             bar.style.width = value + "%";
             bar.textContent = value + "%";
             bar.classList.remove("progress-bar-success", "progress-bar-warning", "progress-bar-danger");
-            if (value <= 35)       bar.classList.add("progress-bar-success");
-            else if (value <= 80)  bar.classList.add("progress-bar-warning");
-            else                   bar.classList.add("progress-bar-danger");
+            if (value <= 35) bar.classList.add("progress-bar-success");
+            else if (value <= 80) bar.classList.add("progress-bar-warning");
+            else bar.classList.add("progress-bar-danger");
         });
     });
- 
+
     // =========================
     // ALERTAS (página Geral)
     // =========================
@@ -80,48 +80,48 @@
             listaAlertas.appendChild(li);
         });
     }
- 
+
     const ultimaAtualizacao = document.getElementById("ultima-atualizacao");
     if (ultimaAtualizacao) {
         const agora = new Date();
         ultimaAtualizacao.textContent =
             `Última atualização: ${agora.toLocaleDateString('pt-PT')} — ${agora.toLocaleTimeString('pt-PT')}`;
     }
- 
+
     // =========================
     // POSTES (só em PortalADMPostes.html)
     // =========================
-    const listaPostes  = document.getElementById('listaPostes');
-    const campoLabel   = document.getElementById('campoLabel');
-    const searchInput  = document.getElementById('searchInput');
+    const listaPostes = document.getElementById('listaPostes');
+    const campoLabel = document.getElementById('campoLabel');
+    const searchInput = document.getElementById('searchInput');
     const btnPesquisar = document.getElementById('btnPesquisar');
-    const btnLimpar    = document.getElementById('btnLimpar');
+    const btnLimpar = document.getElementById('btnLimpar');
     const btnNovoPoste = document.getElementById('btnNovoPoste');
     const modalPosteEl = document.getElementById('modalPoste');
- 
+
     if (listaPostes && modalPosteEl) {
- 
+
         let postes = [
             { longitude: -8.6291, latitude: 41.1579, estado: 'operacional', observacoes: 'Funcionamento normal' },
-            { longitude: -8.6100, latitude: 41.1496, estado: 'avariado',    observacoes: 'Lâmpada fundida' },
+            { longitude: -8.6100, latitude: 41.1496, estado: 'avariado', observacoes: 'Lâmpada fundida' },
             { longitude: -9.1393, latitude: 38.7223, estado: 'operacional', observacoes: 'Sem ocorrências' },
-            { longitude: -8.4265, latitude: 40.2110, estado: 'manutencao',  observacoes: 'Verificação elétrica agendada' },
+            { longitude: -8.4265, latitude: 40.2110, estado: 'manutencao', observacoes: 'Verificação elétrica agendada' },
         ];
- 
+
         const modal = new bootstrap.Modal(modalPosteEl);
         let campoSelecionado = null;
- 
+
         const estadoConfig = {
-            operacional: { cls: 'badge-status-ok',      icon: 'bi-check-circle',       label: 'Operacional' },
-            avariado:    { cls: 'badge-status-error',    icon: 'bi-x-circle',           label: 'Avariado'    },
-            manutencao:  { cls: 'badge-status-warning',  icon: 'bi-exclamation-circle', label: 'Manutenção'  },
+            operacional: { cls: 'badge-status-ok', icon: 'bi-check-circle', label: 'Operacional' },
+            avariado: { cls: 'badge-status-error', icon: 'bi-x-circle', label: 'Avariado' },
+            manutencao: { cls: 'badge-status-warning', icon: 'bi-exclamation-circle', label: 'Manutenção' },
         };
- 
+
         function badgeHtml(estado) {
             const cfg = estadoConfig[estado] || estadoConfig.operacional;
             return `<span class="badge ${cfg.cls}"><i class="bi ${cfg.icon}"></i> ${cfg.label}</span>`;
         }
- 
+
         function renderTabela(lista) {
             listaPostes.innerHTML = '';
             lista.forEach((p, i) => {
@@ -143,7 +143,7 @@
                     </td>`;
                 listaPostes.appendChild(tr);
             });
- 
+
             document.querySelectorAll('.btn-edit').forEach(btn => {
                 btn.addEventListener('click', function () { abrirModalEditar(parseInt(this.dataset.index)); });
             });
@@ -151,13 +151,13 @@
                 btn.addEventListener('click', function () { removerPoste(parseInt(this.dataset.index)); });
             });
         }
- 
+
         function removerPoste(index) {
             if (!confirm(`Tens a certeza que queres remover o Poste #${index + 1}?`)) return;
             postes.splice(index, 1);
             renderTabela(postes);
         }
- 
+
         function abrirModalEditar(index) {
             const p = postes[index];
             document.getElementById('modalPosteLabel').textContent = `Editar Poste #${index + 1}`;
@@ -168,7 +168,7 @@
             document.getElementById('inputObservacoes').value = p.observacoes;
             modal.show();
         }
- 
+
         if (btnNovoPoste) {
             btnNovoPoste.addEventListener('click', () => {
                 document.getElementById('modalPosteLabel').textContent = 'Adicionar Poste';
@@ -180,29 +180,29 @@
                 modal.show();
             });
         }
- 
+
         document.getElementById('btnGuardarPoste')?.addEventListener('click', () => {
-            const longitude   = parseFloat(document.getElementById('inputLongitude').value);
-            const latitude    = parseFloat(document.getElementById('inputLatitude').value);
-            const estado      = document.getElementById('inputEstado').value;
+            const longitude = parseFloat(document.getElementById('inputLongitude').value);
+            const latitude = parseFloat(document.getElementById('inputLatitude').value);
+            const estado = document.getElementById('inputEstado').value;
             const observacoes = document.getElementById('inputObservacoes').value.trim();
- 
+
             if (isNaN(longitude) || isNaN(latitude)) {
                 alert('Por favor preenche a longitude e latitude corretamente.');
                 return;
             }
- 
+
             const index = document.getElementById('posteIndex').value;
             if (index === '') postes.push({ longitude, latitude, estado, observacoes });
             else postes[parseInt(index)] = { longitude, latitude, estado, observacoes };
- 
+
             modal.hide();
             renderTabela(postes);
         });
- 
+
         // Filtro
         const nomesAmigaveis = { estado: 'Estado', observacoes: 'Observações' };
- 
+
         document.querySelectorAll('[data-campo]').forEach(item => {
             item.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -214,9 +214,9 @@
                 btnPesquisar.disabled = false;
             });
         });
- 
+
         if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') btnPesquisar.click(); });
- 
+
         if (btnPesquisar) btnPesquisar.addEventListener('click', () => {
             const valor = searchInput.value.trim().toLowerCase();
             const resultado = valor
@@ -224,7 +224,7 @@
                 : postes;
             renderTabela(resultado);
         });
- 
+
         if (btnLimpar) btnLimpar.addEventListener('click', () => {
             campoSelecionado = null;
             campoLabel.textContent = 'Campo';
@@ -234,17 +234,17 @@
             btnPesquisar.disabled = true;
             renderTabela(postes);
         });
- 
+
         renderTabela(postes);
     }
- 
+
     // =========================
     // PARQUES (só em PortalADMParques.html)
     // =========================
     const gridParques = document.getElementById('gridParques');
- 
+
     if (gridParques) {
- 
+
         let parques = [
             {
                 nome: 'Parque Central',
@@ -307,7 +307,7 @@
                 lat: 38.8700, lng: -9.0700,
             },
         ];
- 
+
         function getPct(p) { return Math.round((p.ocupados / p.capacidade) * 100); }
         function getClasse(pct) {
             if (pct > 80) return 'critico';
@@ -317,35 +317,35 @@
         function getTipoIcon(tipo) {
             return tipo === 'Subterrâneo' ? '🏗️' : tipo === 'Coberto' ? '🏢' : '☀️';
         }
- 
+
         function atualizarKpis() {
-            const total  = parques.length;
+            const total = parques.length;
             const cheios = parques.filter(p => getPct(p) > 80).length;
-            const media  = Math.round(parques.reduce((s, p) => s + getPct(p), 0) / total);
+            const media = Math.round(parques.reduce((s, p) => s + getPct(p), 0) / total);
             const livres = parques.reduce((s, p) => s + (p.capacidade - p.ocupados), 0);
- 
-            const elTotal  = document.getElementById('pkpi-total');
+
+            const elTotal = document.getElementById('pkpi-total');
             const elCheios = document.getElementById('pkpi-cheios');
-            const elMedia  = document.getElementById('pkpi-media');
+            const elMedia = document.getElementById('pkpi-media');
             const elLivres = document.getElementById('pkpi-livres');
- 
-            if (elTotal)  elTotal.textContent  = total;
+
+            if (elTotal) elTotal.textContent = total;
             if (elCheios) elCheios.textContent = cheios;
-            if (elMedia)  elMedia.textContent  = media + '%';
+            if (elMedia) elMedia.textContent = media + '%';
             if (elLivres) elLivres.textContent = livres;
- 
+
             const sync = document.getElementById('parque-sync-time');
             if (sync) {
                 const now = new Date();
                 sync.textContent = now.toLocaleDateString('pt-PT') + ' — ' + now.toLocaleTimeString('pt-PT');
             }
         }
- 
+
         function renderAlertas(lista) {
             const box = document.getElementById('alertasParques');
             if (!box) return;
             const criticos = lista.filter(p => getPct(p) > 80);
-            const atencao  = lista.filter(p => { const pct = getPct(p); return pct >= 70 && pct <= 80; });
+            const atencao = lista.filter(p => { const pct = getPct(p); return pct >= 70 && pct <= 80; });
             let html = '';
             criticos.forEach(p => {
                 html += `<div class="alert alert-admin alert-danger d-flex align-items-center gap-2 mb-2">
@@ -361,29 +361,29 @@
             });
             box.innerHTML = html;
         }
- 
+
         function renderParques(lista) {
             gridParques.innerHTML = '';
             lista.forEach((p) => {
                 const realIndex = parques.indexOf(p);
-                const pct   = getPct(p);
-                const cls   = getClasse(pct);
+                const pct = getPct(p);
+                const cls = getClasse(pct);
                 const livres = p.capacidade - p.ocupados;
                 const tarifaStr = p.tarifa === 0 ? 'Gratuito' : `${p.tarifa.toFixed(2)} €/h`;
- 
+
                 let alertaHtml = '';
                 if (cls === 'critico') {
                     alertaHtml = `<div class="parque-alerta"><i class="bi bi-exclamation-octagon-fill"></i> Capacidade crítica — redirecionamento recomendado</div>`;
                 } else if (pct >= 70) {
                     alertaHtml = `<div class="parque-alerta atencao"><i class="bi bi-exclamation-triangle-fill"></i> Ocupação elevada — a monitorizar</div>`;
                 }
- 
+
                 const col = document.createElement('div');
                 col.className = 'col-12 col-md-6 col-xl-4 parque-col';
-                col.dataset.nome   = p.nome.toLowerCase();
+                col.dataset.nome = p.nome.toLowerCase();
                 col.dataset.classe = cls;
-                col.dataset.tipo   = p.tipo;
- 
+                col.dataset.tipo = p.tipo;
+
                 col.innerHTML = `
                 <div class="parque-card ${cls} h-100">
                     <div class="parque-card-header">
@@ -455,7 +455,7 @@
                 </div>`;
                 gridParques.appendChild(col);
             });
- 
+
             document.querySelectorAll('.btn-parque-mapa').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const titleEl = document.getElementById('modalMapaParqueTitle');
@@ -466,15 +466,15 @@
                     if (modalEl) new bootstrap.Modal(modalEl).show();
                 });
             });
- 
+
             document.querySelectorAll('.btn-parque-detalhe').forEach(btn => {
                 btn.addEventListener('click', function () { abrirDetalhe(parseInt(this.dataset.index)); });
             });
- 
+
             document.querySelectorAll('.btn-parque-editar').forEach(btn => {
                 btn.addEventListener('click', function () { abrirModalEditar(parseInt(this.dataset.index)); });
             });
- 
+
             document.querySelectorAll('.btn-parque-remover').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const idx = parseInt(this.dataset.index);
@@ -486,15 +486,15 @@
                     }
                 });
             });
- 
+
             renderAlertas(lista);
         }
- 
+
         function abrirDetalhe(index) {
-            const p   = parques[index];
+            const p = parques[index];
             const pct = getPct(p);
             const cls = getClasse(pct);
- 
+
             const hist = [
                 { hora: '08:00', pct: 20 }, { hora: '10:00', pct: 45 },
                 { hora: '12:00', pct: 72 }, { hora: '14:00', pct: 68 },
@@ -505,27 +505,27 @@
                 return `
                 <div class="d-flex flex-column align-items-center" style="flex:1;">
                     <div style="height:80px;display:flex;align-items:flex-end;width:100%;">
-                        <div style="width:100%;height:${h.pct}%;border-radius:4px 4px 0 0;background:${c==='critico'?'#e74c3c':c==='atencao'?'#f39c12':'#2ecc71'};"></div>
+                        <div style="width:100%;height:${h.pct}%;border-radius:4px 4px 0 0;background:${c === 'critico' ? '#e74c3c' : c === 'atencao' ? '#f39c12' : '#2ecc71'};"></div>
                     </div>
                     <div style="font-size:0.7rem;color:#aaa;margin-top:4px;">${h.hora}</div>
                     <div style="font-size:0.72rem;font-weight:700;">${h.pct}%</div>
                 </div>`;
             }).join('');
- 
+
             const titleEl = document.getElementById('modalParqueDetalheTitle');
-            const bodyEl  = document.getElementById('modalParqueDetalheBody');
+            const bodyEl = document.getElementById('modalParqueDetalheBody');
             if (titleEl) titleEl.textContent = p.nome + ' — Detalhes';
             if (bodyEl) bodyEl.innerHTML = `
             <div class="row g-3">
                 <div class="col-md-5">
                     <div class="text-center mb-3">
-                        <div style="font-size:3.5rem;font-weight:800;" class="${cls==='critico'?'text-danger':cls==='atencao'?'text-warning':'text-success'}">${pct}%</div>
+                        <div style="font-size:3.5rem;font-weight:800;" class="${cls === 'critico' ? 'text-danger' : cls === 'atencao' ? 'text-warning' : 'text-success'}">${pct}%</div>
                         <div class="text-muted" style="font-size:0.85rem;">${p.ocupados} / ${p.capacidade} lugares</div>
                     </div>
                     <div class="parque-prog mb-3"><div class="parque-prog-bar ${cls}" style="width:${pct}%"></div></div>
                     <table class="table table-sm table-borderless" style="font-size:0.85rem;">
                         <tr><td class="text-muted">Tipo</td><td><strong>${p.tipo}</strong></td></tr>
-                        <tr><td class="text-muted">Tarifa</td><td><strong>${p.tarifa===0?'Gratuito':p.tarifa.toFixed(2)+' €/h'}</strong></td></tr>
+                        <tr><td class="text-muted">Tarifa</td><td><strong>${p.tarifa === 0 ? 'Gratuito' : p.tarifa.toFixed(2) + ' €/h'}</strong></td></tr>
                         <tr><td class="text-muted">Horário</td><td><strong>${p.horario}</strong></td></tr>
                         <tr><td class="text-muted">Morada</td><td><strong>${p.morada}</strong></td></tr>
                         <tr><td class="text-muted">Lugares MR</td><td><strong>${p.mr}</strong></td></tr>
@@ -562,81 +562,81 @@
             const modalDetalheEl = document.getElementById('modalParqueDetalhe');
             if (modalDetalheEl) new bootstrap.Modal(modalDetalheEl).show();
         }
- 
+
         function abrirModalEditar(index) {
             const p = parques[index];
-            document.getElementById('modalNovoParqueLabel').textContent     = 'Editar ' + p.nome;
-            document.getElementById('parqueEditIndex').value                = index;
-            document.getElementById('inputParqueNome').value                = p.nome;
-            document.getElementById('inputParqueCapacidade').value          = p.capacidade;
-            document.getElementById('inputParqueOcupados').value            = p.ocupados;
-            document.getElementById('inputParqueTipo').value                = p.tipo;
-            document.getElementById('inputParqueTarifa').value              = p.tarifa;
-            document.getElementById('inputParqueMR').value                  = p.mr;
-            document.getElementById('inputParqueEV').value                  = p.ev;
-            document.getElementById('inputParqueMorada').value              = p.morada;
-            document.getElementById('inputParqueLat').value                 = p.lat;
-            document.getElementById('inputParqueLng').value                 = p.lng;
+            document.getElementById('modalNovoParqueLabel').textContent = 'Editar ' + p.nome;
+            document.getElementById('parqueEditIndex').value = index;
+            document.getElementById('inputParqueNome').value = p.nome;
+            document.getElementById('inputParqueCapacidade').value = p.capacidade;
+            document.getElementById('inputParqueOcupados').value = p.ocupados;
+            document.getElementById('inputParqueTipo').value = p.tipo;
+            document.getElementById('inputParqueTarifa').value = p.tarifa;
+            document.getElementById('inputParqueMR').value = p.mr;
+            document.getElementById('inputParqueEV').value = p.ev;
+            document.getElementById('inputParqueMorada').value = p.morada;
+            document.getElementById('inputParqueLat').value = p.lat;
+            document.getElementById('inputParqueLng').value = p.lng;
             new bootstrap.Modal(document.getElementById('modalNovoParque')).show();
         }
- 
+
         document.getElementById('btnNovoParque')?.addEventListener('click', () => {
             document.getElementById('modalNovoParqueLabel').textContent = 'Adicionar Parque';
             document.getElementById('parqueEditIndex').value = '';
-            ['inputParqueNome','inputParqueCapacidade','inputParqueOcupados','inputParqueTarifa',
-             'inputParqueMR','inputParqueEV','inputParqueMorada','inputParqueLat','inputParqueLng'].forEach(id => {
-                document.getElementById(id).value = '';
-            });
+            ['inputParqueNome', 'inputParqueCapacidade', 'inputParqueOcupados', 'inputParqueTarifa',
+                'inputParqueMR', 'inputParqueEV', 'inputParqueMorada', 'inputParqueLat', 'inputParqueLng'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
             document.getElementById('inputParqueTipo').value = 'Coberto';
             new bootstrap.Modal(document.getElementById('modalNovoParque')).show();
         });
- 
+
         document.getElementById('btnGuardarParque')?.addEventListener('click', () => {
-            const nome       = document.getElementById('inputParqueNome').value.trim();
+            const nome = document.getElementById('inputParqueNome').value.trim();
             const capacidade = parseInt(document.getElementById('inputParqueCapacidade').value);
-            const ocupados   = parseInt(document.getElementById('inputParqueOcupados').value);
+            const ocupados = parseInt(document.getElementById('inputParqueOcupados').value);
             if (!nome || isNaN(capacidade) || isNaN(ocupados)) {
                 alert('Preenche pelo menos o nome, capacidade e lugares ocupados.');
                 return;
             }
             const novoParque = {
                 nome, capacidade, ocupados,
-                tipo:    document.getElementById('inputParqueTipo').value,
-                tarifa:  parseFloat(document.getElementById('inputParqueTarifa').value) || 0,
-                mr:      parseInt(document.getElementById('inputParqueMR').value)  || 0,
-                ev:      parseInt(document.getElementById('inputParqueEV').value)  || 0,
-                morada:  document.getElementById('inputParqueMorada').value.trim() || '—',
+                tipo: document.getElementById('inputParqueTipo').value,
+                tarifa: parseFloat(document.getElementById('inputParqueTarifa').value) || 0,
+                mr: parseInt(document.getElementById('inputParqueMR').value) || 0,
+                ev: parseInt(document.getElementById('inputParqueEV').value) || 0,
+                morada: document.getElementById('inputParqueMorada').value.trim() || '—',
                 horario: '00h–24h',
-                lat:     parseFloat(document.getElementById('inputParqueLat').value) || 38.83,
-                lng:     parseFloat(document.getElementById('inputParqueLng').value) || -9.17,
+                lat: parseFloat(document.getElementById('inputParqueLat').value) || 38.83,
+                lng: parseFloat(document.getElementById('inputParqueLng').value) || -9.17,
             };
             const idx = document.getElementById('parqueEditIndex').value;
             if (idx === '') parques.push(novoParque);
             else parques[parseInt(idx)] = novoParque;
- 
+
             bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNovoParque')).hide();
             renderParques(parques);
             atualizarKpis();
         });
- 
+
         // Filtros
         function aplicarFiltros() {
-            const texto  = (document.getElementById('pesquisaParque')?.value  || '').toLowerCase();
+            const texto = (document.getElementById('pesquisaParque')?.value || '').toLowerCase();
             const estado = document.getElementById('filtroParqueEstado')?.value || '';
-            const tipo   = document.getElementById('filtroParqueTipo')?.value   || '';
- 
+            const tipo = document.getElementById('filtroParqueTipo')?.value || '';
+
             document.querySelectorAll('.parque-col').forEach(col => {
-                const matchNome   = !texto  || col.dataset.nome.includes(texto);
+                const matchNome = !texto || col.dataset.nome.includes(texto);
                 const matchEstado = !estado || col.dataset.classe === estado;
-                const matchTipo   = !tipo   || col.dataset.tipo === tipo;
+                const matchTipo = !tipo || col.dataset.tipo === tipo;
                 col.classList.toggle('parque-col-oculto', !(matchNome && matchEstado && matchTipo));
             });
         }
- 
+
         document.getElementById('pesquisaParque')?.addEventListener('input', aplicarFiltros);
         document.getElementById('filtroParqueEstado')?.addEventListener('change', aplicarFiltros);
         document.getElementById('filtroParqueTipo')?.addEventListener('change', aplicarFiltros);
- 
+
         document.getElementById('btnParquesCriticos')?.addEventListener('click', function () {
             const filtro = document.getElementById('filtroParqueEstado');
             if (filtro.value === 'critico') {
@@ -650,7 +650,7 @@
             }
             aplicarFiltros();
         });
- 
+
         renderParques(parques);
         atualizarKpis();
     }
@@ -662,9 +662,9 @@
     if (listaUtilizadores) {
 
         let utilizadores = [
-            { nome: 'João Nicolau',  iniciais: 'JN', cor: 'linear-gradient(135deg,#435ebe,#5f7cff)', cargo: 'Administrador', email: 'joao@gmail.com',  morada: 'Rua das Flores, Porto' },
-            { nome: 'Ana Costa',     iniciais: 'AC', cor: 'linear-gradient(135deg,#27ae60,#2ecc71)', cargo: 'Utilizador',    email: 'ana@gmail.com',   morada: 'Av. Central, Braga'   },
-            { nome: 'Pedro Santos',  iniciais: 'PS', cor: 'linear-gradient(135deg,#f39c12,#f1c40f)', cargo: 'Utilizador',    email: 'pedro@gmail.com', morada: 'Rua do Sol, Lisboa'   },
+            { nome: 'João Nicolau', iniciais: 'JN', cor: 'linear-gradient(135deg,#435ebe,#5f7cff)', cargo: 'Administrador', email: 'joao@gmail.com', morada: 'Rua das Flores, Porto' },
+            { nome: 'Ana Costa', iniciais: 'AC', cor: 'linear-gradient(135deg,#27ae60,#2ecc71)', cargo: 'Utilizador', email: 'ana@gmail.com', morada: 'Av. Central, Braga' },
+            { nome: 'Pedro Santos', iniciais: 'PS', cor: 'linear-gradient(135deg,#f39c12,#f1c40f)', cargo: 'Utilizador', email: 'pedro@gmail.com', morada: 'Rua do Sol, Lisboa' },
         ];
 
         function renderUtilizadores(lista) {
@@ -711,46 +711,46 @@
         }
 
         function atualizarKpisUtil() {
-            const total  = utilizadores.length;
+            const total = utilizadores.length;
             const admins = utilizadores.filter(u => u.cargo === 'Administrador').length;
             const comuns = total - admins;
             const cidades = new Set(utilizadores.map(u => u.morada.split(',')[1]?.trim() || u.morada)).size;
-            const elTotal  = document.getElementById('pkpi-util-total');
+            const elTotal = document.getElementById('pkpi-util-total');
             const elAdmins = document.getElementById('pkpi-util-admins');
             const elComuns = document.getElementById('pkpi-util-comuns');
-            const elCidad  = document.getElementById('pkpi-util-cidades');
-            const elCount  = document.getElementById('util-count');
-            if (elTotal)  elTotal.textContent  = total;
+            const elCidad = document.getElementById('pkpi-util-cidades');
+            const elCount = document.getElementById('util-count');
+            if (elTotal) elTotal.textContent = total;
             if (elAdmins) elAdmins.textContent = admins;
             if (elComuns) elComuns.textContent = comuns;
-            if (elCidad)  elCidad.textContent  = cidades;
-            if (elCount)  elCount.textContent  = `${total} utilizadores registados`;
+            if (elCidad) elCidad.textContent = cidades;
+            if (elCount) elCount.textContent = `${total} utilizadores registados`;
         }
 
         function abrirModalUtil(index) {
             const u = index === -1 ? null : utilizadores[index];
             const modal = document.getElementById('modalUtilizador');
             if (!modal) return;
-            document.getElementById('modalUtilLabel').textContent  = index === -1 ? 'Adicionar Utilizador' : `Editar — ${u.nome}`;
-            document.getElementById('utilIndex').value             = index === -1 ? '' : index;
-            document.getElementById('inputUtilNome').value         = u?.nome   || '';
-            document.getElementById('inputUtilEmail').value        = u?.email  || '';
-            document.getElementById('inputUtilCargo').value        = u?.cargo  || 'Utilizador';
-            document.getElementById('inputUtilMorada').value       = u?.morada || '';
-            document.getElementById('inputUtilPass').value         = '';
+            document.getElementById('modalUtilLabel').textContent = index === -1 ? 'Adicionar Utilizador' : `Editar — ${u.nome}`;
+            document.getElementById('utilIndex').value = index === -1 ? '' : index;
+            document.getElementById('inputUtilNome').value = u?.nome || '';
+            document.getElementById('inputUtilEmail').value = u?.email || '';
+            document.getElementById('inputUtilCargo').value = u?.cargo || 'Utilizador';
+            document.getElementById('inputUtilMorada').value = u?.morada || '';
+            document.getElementById('inputUtilPass').value = '';
             new bootstrap.Modal(modal).show();
         }
 
         document.querySelector('.btn-add-util')?.addEventListener('click', () => abrirModalUtil(-1));
 
         document.getElementById('btnGuardarUtil')?.addEventListener('click', () => {
-            const nome   = document.getElementById('inputUtilNome').value.trim();
-            const email  = document.getElementById('inputUtilEmail').value.trim();
-            const cargo  = document.getElementById('inputUtilCargo').value;
+            const nome = document.getElementById('inputUtilNome').value.trim();
+            const email = document.getElementById('inputUtilEmail').value.trim();
+            const cargo = document.getElementById('inputUtilCargo').value;
             const morada = document.getElementById('inputUtilMorada').value.trim();
             if (!nome || !email) { alert('Nome e email são obrigatórios.'); return; }
-            const iniciais = nome.split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
-            const cores = ['linear-gradient(135deg,#435ebe,#5f7cff)','linear-gradient(135deg,#27ae60,#2ecc71)','linear-gradient(135deg,#f39c12,#f1c40f)','linear-gradient(135deg,#e74c3c,#c0392b)','linear-gradient(135deg,#8e44ad,#9b59b6)'];
+            const iniciais = nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+            const cores = ['linear-gradient(135deg,#435ebe,#5f7cff)', 'linear-gradient(135deg,#27ae60,#2ecc71)', 'linear-gradient(135deg,#f39c12,#f1c40f)', 'linear-gradient(135deg,#e74c3c,#c0392b)', 'linear-gradient(135deg,#8e44ad,#9b59b6)'];
             const cor = cores[Math.floor(Math.random() * cores.length)];
             const idx = document.getElementById('utilIndex').value;
             if (idx === '') {
@@ -784,9 +784,9 @@
     if (secCidade) {
         document.querySelector('.btn-atualizar-ambiente')?.addEventListener('click', function () {
             const vals = {
-                temp:     (20 + Math.random() * 8).toFixed(1) + '°C',
+                temp: (20 + Math.random() * 8).toFixed(1) + '°C',
                 humidade: Math.round(55 + Math.random() * 20) + '%',
-                vento:    Math.round(8 + Math.random() * 15) + ' km/h',
+                vento: Math.round(8 + Math.random() * 15) + ' km/h',
             };
             const grid = this.closest('.parque-card')?.querySelector('.parque-info-grid');
             if (grid) {
@@ -805,21 +805,21 @@
             if (el) el.textContent = 'Histórico Ambiental — Últimas 24h';
             const body = document.getElementById('modalHistoricoBody');
             if (body) {
-                const horas = ['00:00','04:00','08:00','12:00','16:00','20:00','Agora'];
-                const temps = [18.2,17.5,19.1,22.5,23.8,21.4,22.5];
+                const horas = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Agora'];
+                const temps = [18.2, 17.5, 19.1, 22.5, 23.8, 21.4, 22.5];
                 body.innerHTML = `
                 <table class="table table-sm table-hover">
                     <thead><tr><th>Hora</th><th>Temperatura</th><th>Humidade</th><th>Qualidade Ar</th></tr></thead>
-                    <tbody>${horas.map((h,i)=>`<tr><td>${h}</td><td>${temps[i]}°C</td><td>${Math.round(60+Math.random()*15)}%</td><td>Bom</td></tr>`).join('')}</tbody>
+                    <tbody>${horas.map((h, i) => `<tr><td>${h}</td><td>${temps[i]}°C</td><td>${Math.round(60 + Math.random() * 15)}%</td><td>Bom</td></tr>`).join('')}</tbody>
                 </table>`;
             }
             new bootstrap.Modal(document.getElementById('modalHistorico')).show();
         });
 
         document.querySelector('.btn-mapa-trafego')?.addEventListener('click', function () {
-            const titleEl  = document.getElementById('modalMapaCidadeTitle');
+            const titleEl = document.getElementById('modalMapaCidadeTitle');
             const iframeEl = document.getElementById('iframeMapaCidade');
-            if (titleEl)  titleEl.textContent = 'Mapa de Tráfego Pedonal';
+            if (titleEl) titleEl.textContent = 'Mapa de Tráfego Pedonal';
             if (iframeEl) iframeEl.src = 'https://www.google.com/maps?q=38.7223,-9.1393&z=14&output=embed';
             new bootstrap.Modal(document.getElementById('modalMapaCidade')).show();
         });
@@ -830,7 +830,7 @@
             const body = document.getElementById('modalHistoricoBody');
             if (body) body.innerHTML = `
                 <div class="row g-3">
-                    ${[['Zona Centro','Alto','danger'],['Zona Norte','Médio','warning'],['Zona Sul','Baixo','success'],['Zona Industrial','Baixo','success']].map(([z,n,c])=>`
+                    ${[['Zona Centro', 'Alto', 'danger'], ['Zona Norte', 'Médio', 'warning'], ['Zona Sul', 'Baixo', 'success'], ['Zona Industrial', 'Baixo', 'success']].map(([z, n, c]) => `
                     <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value text-${c}">${n}</div><div class="pkpi-label">${z}</div></div></div>`).join('')}
                 </div>`;
             new bootstrap.Modal(document.getElementById('modalHistorico')).show();
