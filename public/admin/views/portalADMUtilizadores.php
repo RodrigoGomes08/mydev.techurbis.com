@@ -156,39 +156,40 @@
                     <h5 class="modal-title" id="modalUtilLabel">Adicionar Utilizador</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" method="POST">
                     <input type="hidden" id="utilIndex">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nome Completo</label>
-                        <input type="text" class="form-control" id="inputUtilNome" placeholder="Ex: João Silva">
+                        <input name="nome" type="text" class="form-control" id="inputUtilNome" placeholder="Ex: João Silva">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Email</label>
-                        <input type="email" class="form-control" id="inputUtilEmail" placeholder="Ex: joao@email.com">
+                        <input name="email" type="email" class="form-control" id="inputUtilEmail" placeholder="Ex: joao@email.com">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Cargo</label>
-                        <select class="form-select" id="inputUtilCargo">
-                            <option value="Utilizador">Utilizador</option>
-                            <option value="Administrador">Administrador</option>
+                        <select name="id_role" class="form-select" id="inputUtilCargo">
+                            <option value="1">Administrador</option>
+                            <option value="2">Trabalhador</option>
+                            <option value="3">Utilizador</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Morada</label>
-                        <input type="text" class="form-control" id="inputUtilMorada"
+                        <input name="morada" type="text" class="form-control" id="inputUtilMorada"
                             placeholder="Ex: Rua das Flores, Porto">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Password <span class="text-muted fw-normal">(deixar em
                                 branco para manter)</span></label>
-                        <input type="password" class="form-control" id="inputUtilPass" placeholder="Nova password">
+                        <input name="password" type="password" class="form-control" id="inputUtilPass" placeholder="Nova password">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg me-1"></i>Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardarUtilSSSSSSSS">
+                    <button type="submit" class="btn btn-primary" id="btnGuardarUtil">
                         <i class="bi bi-floppy me-1"></i>Guardar
                     </button>
                 </div>

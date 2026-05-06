@@ -8,7 +8,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-if($uri === '/admin/' || $uri === '/admin') {
+if($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/') {
     //var_dump($uri);
   (new WebController())->adminGeral();
 }

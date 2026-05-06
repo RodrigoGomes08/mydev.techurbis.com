@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ .'/../models/User.php';
+require_once __DIR__ . '/../models/User.php';
 
 class UserDAO
 {
@@ -41,5 +41,41 @@ class UserDAO
         } else {
             return null;
         }
+    }
+
+    public function createPending($username, $email)
+    {
+        $sql = "
+      INSERT INTO users
+      (
+        id,
+        id_role,
+        nome,
+        data_nascimento,
+        telefone,
+        morada,
+        email,
+        password,
+        ativo,
+        tem_mobilidade_reduzida
+      VALUES (
+        NULL,
+        2,
+        :username,
+        '2000-01-01',
+        '000000000',
+        'N/A',
+        :email,
+        '',
+        0,
+        0
+      )
+    ";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute(['username' => $username, 'email' => $email]);
+
+        return (int) $this->conn->lastInsertId();
     }
 }
