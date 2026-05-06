@@ -1,48 +1,35 @@
 <?php
 
-require "../../app/controllers/WebController.php";
+session_start();
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$base = realpath(__DIR__ . '/../../app/controllers/');
+require $base . '/WebController.php';
+require $base . '/UserController.php';
 
-//$uri = str_replace("mydevpiratas.com/public", "", $uri);
-
+$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
-if($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/') {
-    //var_dump($uri);
-  (new WebController())->adminGeral();
+// ─── PORTAL ADMIN VIEWS ───────────────────────────────────────────────────────
+
+if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/') {
+    (new WebController())->adminGeral();
+
+} elseif ($uri === '/admin/PortalADMCidade') {
+    (new WebController())->adminCidade();
+
+} elseif ($uri === '/admin/PortalADMContentores') {
+    (new WebController())->adminContentores();
+
+} elseif ($uri === '/admin/PortalADMParques') {
+    (new WebController())->adminParques();
+
+} elseif ($uri === '/admin/PortalADMPostes') {
+    (new WebController())->adminPostes();
+
+} elseif ($uri === '/admin/PortalADMUtilizadores') {
+    (new WebController())->adminUtilizadores();
+
+} else {
+    http_response_code(404);
+    echo "Página não encontrada";
 }
-
-elseif($uri === '/admin/PortalADMCidade') {
-    //var_dump($uri);
-  (new WebController())->adminCidade();
-}
-
-elseif($uri === '/admin/PortalADMContentores') {
-    //var_dump($uri);
-  (new WebController())->adminContentores();
-}
-
-elseif($uri === '/admin/PortalADMParques') {
-    //var_dump($uri);
-  (new WebController())->adminParques();
-}
-
-elseif($uri === '/admin/PortalADMPostes') {
-    //var_dump($uri);
-  (new WebController())->adminPostes();
-}
-
-elseif($uri === '/admin/PortalADMUtilizadores') {
-  (new WebController())->adminUtilizadores();
-}
-
-
-
-
-
-
-
-
-
-

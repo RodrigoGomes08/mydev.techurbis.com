@@ -18,7 +18,6 @@ class UserDAO
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        //var_dump($row);
 
         if ($row) {
             $user = new User(
@@ -32,9 +31,6 @@ class UserDAO
                 $row['password'],
                 $row['ativo'],
                 $row['tem_mobilidade_reduzida'],
-                // $row['created_at'],
-                // $row['updated_at'],
-                // $row['deleted_at']
             );
 
             return $row;
@@ -43,39 +39,106 @@ class UserDAO
         }
     }
 
+    public function createUser($nome, $email, $id_role, $morada, $password)
+    {
+        // Verificar se o email já existe
+        $sqlCheck = "SELECT id FROM users WHERE email = :email";
+        $stmtCheck = $this->conn->prepare($sqlCheck);
+        $stmtCheck->bindParam(':email', $email);
+        $stmtCheck->execute();
+
+        if ($stmtCheck->fetch()) {
+            throw new Exception("Email já existe");
+        }
+
+        $passwordHash = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : '';
+
+        $sql = "
+            INSERT INTO users
+            (
+                id,
+                id_role,
+                nome,
+                data_nascimento,
+                telefone,
+                morada,
+                email,
+                password,
+                ativo,
+                tem_mobilidade_reduzida
+            ) VALUES (
+                NULL,
+                :id_role,
+                :nome,
+                '2000-01-01',
+                '000000000',
+                :morada,
+                :email,
+                :password,
+                1,
+                0
+            )
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'id_role' => (int) $id_role,
+            'nome' => $nome,
+            'morada' => $morada,
+            'email' => $email,
+            'password' => $passwordHash,
+        ]);
+
+        return (int) $this->conn->lastInsertId();
+    }
+
     public function createPending($username, $email)
     {
         $sql = "
-      INSERT INTO users
-      (
-        id,
-        id_role,
-        nome,
-        data_nascimento,
-        telefone,
-        morada,
-        email,
-        password,
-        ativo,
-        tem_mobilidade_reduzida
-      VALUES (
-        NULL,
-        2,
-        :username,
-        '2000-01-01',
-        '000000000',
-        'N/A',
-        :email,
-        '',
-        0,
-        0
-      )
-    ";
+        INSERT INTO users
+        (
+            id,
+            id_role,
+            nome,
+            data_nascimento,
+            telefone,
+            morada,
+            email,
+            password,
+            ativo,
+            tem_mobilidade_reduzida
+        ) VALUES (
+            NULL,
+            2,
+            :username,
+            '2000-01-01',
+            '000000000',
+            'N/A',
+            :email,
+            '',
+            0,
+            0
+        )
+        ";
 
         $stmt = $this->conn->prepare($sql);
-
         $stmt->execute(['username' => $username, 'email' => $email]);
 
         return (int) $this->conn->lastInsertId();
+    }
+
+    public function setPasswordAndVerify($userId, $passwordHash)
+    {
+        $sql = "
+        UPDATE users
+        SET password = ?,
+            is_verified = 1,
+            verified_at = NOW(),
+            updated_at = NOW()
+        WHERE id = ?
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$passwordHash, $userId]);
     }
 }
