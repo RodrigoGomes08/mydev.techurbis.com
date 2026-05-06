@@ -13,32 +13,29 @@ if($uri === '/admin/' || $uri === '/admin') {
   (new WebController())->adminGeral();
 }
 
-if($uri === '/admin/PortalADMCidade') {
+elseif($uri === '/admin/PortalADMCidade') {
     //var_dump($uri);
   (new WebController())->adminCidade();
 }
 
-if($uri === '/admin/PortalADMContentores') {
+elseif($uri === '/admin/PortalADMContentores') {
     //var_dump($uri);
   (new WebController())->adminContentores();
 }
 
-if($uri === '/admin/PortalADMParques') {
+elseif($uri === '/admin/PortalADMParques') {
     //var_dump($uri);
   (new WebController())->adminParques();
 }
 
-if($uri === '/admin/PortalADMPostes') {
+elseif($uri === '/admin/PortalADMPostes') {
     //var_dump($uri);
   (new WebController())->adminPostes();
 }
 
-if($uri === '/admin/PortalADMUtilizadores') {
+elseif($uri === '/admin/PortalADMUtilizadores') {
   (new WebController())->adminUtilizadores();
 }
-
-
-
 
 
 

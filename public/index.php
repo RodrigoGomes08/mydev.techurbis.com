@@ -13,6 +13,15 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
   (new WebController())->login();
 } else if ($uri === '/login' && $method === 'POST') {
   (new AuthController())->loginWeb();
+} elseif ($uri === '/logout' && $method === 'GET') {
+
+  $_SESSION['toast'] = [
+    'type' => 'success',
+    'message' => 'Logout efetuado com sucesso!!!'
+  ];
+
+
+  header("Location: /index");
 } elseif ($uri === '/PortalADMGeral') {
   (new WebController())->adminGeral();
 } elseif ($uri === '/PortalADMUtilizadores') {
@@ -25,6 +34,9 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
   (new WebController())->adminParques();
 } elseif ($uri === '/PortalADMCidade') {
   (new WebController())->adminCidade();
+} elseif ($uri === "/teste") {
+
+  echo password_hash("1234", PASSWORD_DEFAULT);
 } else {
   echo "404";
 }

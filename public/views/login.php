@@ -21,7 +21,6 @@
             <i class="bi bi-person-circle login-icon"></i>
             <h2 class="fw-bold mt-2">TechUrbis</h2>
             <p class="text-muted">Portal de Administração</p>
-            <?= var_dump($user); ?>
         </div>
         <form method="POST" action="/login" id="loginForm">
             <div class="mb-3">

@@ -50,7 +50,7 @@
             <a class="nav-link" href="PortalADMPostes"><i class="bi bi-lightbulb"></i> Postes de Iluminação</a>
             <a class="nav-link" href="PortalADMParques"><i class="bi bi-p-circle"></i> Parques de Estacionamento</a>
             <a class="nav-link" href="PortalADMCidade"><i class="bi bi-info-circle"></i> Informações da Cidade</a>
-            <a class="nav-link text-danger mt-auto" href="index.html"><i class="bi bi-box-arrow-right"></i> Sair</a>
+            <a class="nav-link text-danger mt-auto" href="/"><i class="bi bi-box-arrow-right"></i> Sair</a>
         </nav>
     </aside>
 

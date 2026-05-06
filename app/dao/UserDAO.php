@@ -5,7 +5,6 @@ require_once __DIR__ .'/../models/User.php';
 
 class UserDAO
 {
-
     private $conn;
     public function __construct()
     {
@@ -19,7 +18,7 @@ class UserDAO
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        var_dump($row);
+        //var_dump($row);
 
         if ($row) {
             $user = new User(
@@ -33,9 +32,9 @@ class UserDAO
                 $row['password'],
                 $row['ativo'],
                 $row['tem_mobilidade_reduzida'],
-                $row['created_at'],
-                $row['updated_at'],
-                $row['deleted_at']
+                // $row['created_at'],
+                // $row['updated_at'],
+                // $row['deleted_at']
             );
 
             return $row;
