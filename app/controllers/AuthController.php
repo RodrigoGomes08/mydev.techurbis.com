@@ -16,7 +16,8 @@ class AuthController
     {
         $email = trim($_POST['email'] ?? '');
         $password = trim($_POST['password'] ?? '');
-
+        var_dump($email);
+        var_dump($password);
         $passwordEncript = password_hash($password, PASSWORD_DEFAULT);
 
         var_dump($passwordEncript);
@@ -26,7 +27,10 @@ class AuthController
         }
 
         $user = (new UserDAO())->findByEmail($email);
-
+        
+        var_dump("------------------------------");
+        
+        var_dump($user);
         if (!$user) {
             die("Email ou password inválidos");
         }
@@ -49,7 +53,7 @@ class AuthController
             'message' => 'Login Efetuado com sucesso'
         ];
 
-        header("Location: /");
+        header("Location: /admin/PortalADMGeral");
 
     }
 

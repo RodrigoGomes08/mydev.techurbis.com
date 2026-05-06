@@ -21,15 +21,16 @@
             <i class="bi bi-person-circle login-icon"></i>
             <h2 class="fw-bold mt-2">TechUrbis</h2>
             <p class="text-muted">Portal de Administração</p>
+            <?= var_dump($user); ?>
         </div>
-        <form method="GET" action="/login" d="loginForm">
+        <form method="POST" action="/login" id="loginForm">
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input type="text" id="email" class="form-control form-control-lg" placeholder="Insira o seu email:" required>
+                <input type="text" name="email" id="email" class="form-control form-control-lg" placeholder="Insira o seu email:" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input type="password" id="password" class="form-control form-control-lg" placeholder="Insira a sua password:" required>
+                <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Insira a sua password:" required>
             </div>
             <div id="errorMsg" class="text-danger text-center mb-3" style="display:none;">
                 Email ou password incorretos

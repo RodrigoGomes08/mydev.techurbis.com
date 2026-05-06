@@ -14,7 +14,7 @@ class UserDAO
 
     public function findByEmail($email)
     {
-        $sql = "SELECT * FROM users INNER JOIN roles ON users.id_roles = roles.id WHERE users.email = :email AND roles.id = 1;";
+        $sql = "SELECT * FROM users INNER JOIN roles ON users.id_role = roles.id WHERE users.email = :email AND roles.id = 1;";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -24,7 +24,7 @@ class UserDAO
         if ($row) {
             $user = new User(
                 $row['id'],
-                $row['id_roles'],
+                $row['id_role'],
                 $row['nome'],
                 $row['data_nascimento'],
                 $row['telefone'],
