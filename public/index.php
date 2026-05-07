@@ -31,6 +31,8 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 // ─── UTILIZADORES ────────────────────────────────────────────────────────────
 
 } elseif ($uri === '/create-utilizador' && $method === 'POST') {
+    // validar aqui se tem permissões para entrar na route
+
     (new UserController())->createUtilizador();
 
 } elseif ($uri === '/teste') {

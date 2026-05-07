@@ -16,7 +16,6 @@ class UserController
             header("Location: /login");
             exit;
         }
-
         $nome     = trim($_POST['nome']     ?? '');
         $email    = trim($_POST['email']    ?? '');
         $id_role  = trim($_POST['id_role']  ?? '');

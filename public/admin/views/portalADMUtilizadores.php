@@ -13,7 +13,7 @@
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-success btn-sm btn-add-util">
-                    <i class="bi bi-plus-circle me-1"></i>Adicionar Utilizador
+                    <i class="bi bi-plus-circle me-1"></i>Adicionar Utilizador  
                 </button>
             </div>
         </div>
@@ -169,9 +169,15 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Cargo</label>
                         <select name="id_role" class="form-select" id="inputUtilCargo">
-                            <option value="1">Administrador</option>
-                            <option value="2">Trabalhador</option>
-                            <option value="3">Utilizador</option>
+                            <?php $roles = [
+                                ['id' => 1, 'nome' => 'Administrador'],
+                                ['id' => 2, 'nome' => 'Trabalhador'],
+                                ['id' => 3, 'nome' => 'User']
+                            ];?> 
+                            <?php foreach ($roles as $role): ?> 
+                            
+                                <option value="<?= $role['id'] ?>"><?= $role['nome'] ?> </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-3">
