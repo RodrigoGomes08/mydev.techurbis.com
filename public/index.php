@@ -6,8 +6,9 @@ $base = realpath(__DIR__ . '/../app/controllers/');
 require $base . '/WebController.php';
 require $base . '/AuthController.php';
 require $base . '/UserController.php';
+require $base . '/RoleController.php';
 
-$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // ─── PUBLIC ───────────────────────────────────────────────────────────────────
@@ -23,17 +24,18 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 
 } elseif ($uri === '/logout' && $method === 'GET') {
     $_SESSION['toast'] = [
-        'type'    => 'success',
+        'type' => 'success',
         'message' => 'Logout efetuado com sucesso!!!'
     ];
     header("Location: /index");
 
-// ─── UTILIZADORES ────────────────────────────────────────────────────────────
+    // ─── UTILIZADORES ─────────────────────────────────────────────────────────────
 
 } elseif ($uri === '/create-utilizador' && $method === 'POST') {
-    // validar aqui se tem permissões para entrar na route
-
     (new UserController())->createUtilizador();
+
+} elseif ($uri === '/create-role' && $method === 'POST') {   // ← ADICIONAR
+    (new RoleController())->createRole();                     // ← ADICIONAR
 
 } elseif ($uri === '/teste') {
     echo password_hash("1234", PASSWORD_DEFAULT);

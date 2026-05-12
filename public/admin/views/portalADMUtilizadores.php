@@ -13,7 +13,10 @@
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-success btn-sm btn-add-util">
-                    <i class="bi bi-plus-circle me-1"></i>Adicionar Utilizador  
+                    <i class="bi bi-plus-circle me-1"></i>Adicionar Utilizador
+                </button>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalRole">
+                    <i class="bi bi-shield-plus me-1"></i>Adicionar Role
                 </button>
             </div>
         </div>
@@ -71,8 +74,9 @@
             </div>
             <select id="filtroUtilCargo" class="form-select" style="max-width:180px;">
                 <option value="">Todos os cargos</option>
-                <option>Administrador</option>
-                <option>Utilizador</option>
+                <?php foreach ($roles as $role): ?>
+                    <option value="<?= $role->getId() ?>"><?= htmlspecialchars($role->getNome()) ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
 
@@ -146,8 +150,7 @@
     </div>
 </div>
 
-
-<!-- MODAL ADICIONAR / EDITAR UTILIZADOR -->
+<!-- MODAL ADICIONAR UTILIZADOR -->
 <div class="modal fade" id="modalUtilizador" tabindex="-1" aria-labelledby="modalUtilLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -156,27 +159,25 @@
                     <h5 class="modal-title" id="modalUtilLabel">Adicionar Utilizador</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" method="POST">
+                <div class="modal-body">
                     <input type="hidden" id="utilIndex">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nome Completo</label>
-                        <input name="nome" type="text" class="form-control" id="inputUtilNome" placeholder="Ex: João Silva">
+                        <input name="nome" type="text" class="form-control" id="inputUtilNome"
+                            placeholder="Ex: João Silva">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Email</label>
-                        <input name="email" type="email" class="form-control" id="inputUtilEmail" placeholder="Ex: joao@email.com">
+                        <input name="email" type="email" class="form-control" id="inputUtilEmail"
+                            placeholder="Ex: joao@email.com">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Cargo</label>
                         <select name="id_role" class="form-select" id="inputUtilCargo">
-                            <?php $roles = [
-                                ['id' => 1, 'nome' => 'Administrador'],
-                                ['id' => 2, 'nome' => 'Trabalhador'],
-                                ['id' => 3, 'nome' => 'User']
-                            ];?> 
-                            <?php foreach ($roles as $role): ?> 
-                            
-                                <option value="<?= $role['id'] ?>"><?= $role['nome'] ?> </option>
+                            <?php foreach ($roles as $role): ?>
+                                <option value="<?= $role->getId() ?>">
+                                    <?= htmlspecialchars($role->getNome()) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -188,7 +189,8 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Password <span class="text-muted fw-normal">(deixar em
                                 branco para manter)</span></label>
-                        <input name="password" type="password" class="form-control" id="inputUtilPass" placeholder="Nova password">
+                        <input name="password" type="password" class="form-control" id="inputUtilPass"
+                            placeholder="Nova password">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -204,12 +206,41 @@
     </div>
 </div>
 
-<!-- <script src="scripts/scriptsPortal.js"></script>
-<script>
-    if (!sessionStorage.getItem('loggedIn')) { window.location.href = 'login.html'; }
-</script> -->
-</body>
-
-</html>
+<!-- MODAL ADICIONAR ROLE -->
+<div class="modal fade" id="modalRole" tabindex="-1" aria-labelledby="modalRoleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="/create-role" method="POST" id="formRole">
+                <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                    <h5 class="modal-title" id="modalRoleLabel">Adicionar Role</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nome da Role</label>
+                        <input name="nome" type="text" class="form-control" placeholder="Ex: Moderador">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Cor</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <input name="cor" type="color" class="form-control form-control-color" value="#435ebe"
+                                style="width:60px;height:40px;padding:2px;">
+                            <span class="text-muted" style="font-size:0.85rem;">Cor associada à role (usada em badges e
+                                filtros)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-floppy me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>
