@@ -14,7 +14,7 @@ class RoleDAO
 
     public function getAllRoles(): array
     {
-        $sql = "SELECT id, nome, cor FROM roles ORDER BY id ASC";
+        $sql = "SELECT id, nome_role, cor FROM roles ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
@@ -22,29 +22,29 @@ class RoleDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $roles[] = new Role(
                 (int) $row['id'],
-                $row['nome'],
+                $row['nome_role'],
                 $row['cor']
             );
         }
-
+    
         return $roles;
     }
 
     public function createRole(string $nome, string $cor): int
     {
-        $sqlCheck = "SELECT id FROM roles WHERE nome = :nome";
+        $sqlCheck = "SELECT id FROM roles WHERE nome_role = :nome_role";
         $stmtCheck = $this->conn->prepare($sqlCheck);
-        $stmtCheck->bindParam(':nome', $nome);
+        $stmtCheck->bindParam(':nome_role', $nome);
         $stmtCheck->execute();
 
         if ($stmtCheck->fetch()) {
             throw new Exception("Já existe uma role com esse nome.");
         }
 
-        $sql = "INSERT INTO roles (nome, cor) VALUES (:nome, :cor)";
+        $sql = "INSERT INTO roles (nome_role, cor) VALUES (:nome_role, :cor)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
-            'nome' => $nome,
+            'nome_role' => $nome,
             'cor' => $cor,
         ]);
 

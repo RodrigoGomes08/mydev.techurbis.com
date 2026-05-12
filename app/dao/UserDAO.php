@@ -6,21 +6,21 @@ require_once __DIR__ . '/../models/User.php';
 class UserDAO
 {
     private $conn;
+
     public function __construct()
     {
         $this->conn = (new DataBase())->connect();
     }
 
-    public function findByEmail($email)
+    public function getAllUsers()
     {
-        $sql = "SELECT * FROM users INNER JOIN roles ON users.id_role = roles.id WHERE users.email = :email AND roles.id = 1;";
+        $sql = "SELECT * FROM users INNER JOIN roles ON users.id_role = roles.id ORDER BY users.id ASC";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':email', $email);
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $users = [];
 
-        if ($row) {
-            $user = new User(
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $users[] = new User(
                 $row['id'],
                 $row['id_role'],
                 $row['nome'],
@@ -30,9 +30,22 @@ class UserDAO
                 $row['email'],
                 $row['password'],
                 $row['ativo'],
-                $row['tem_mobilidade_reduzida'],
+                $row['tem_mobilidade_reduzida']
             );
+        }
 
+        return $users;
+    }
+
+    public function findByEmail($email)
+    {
+        $sql = "SELECT * FROM users INNER JOIN roles ON users.id_role = roles.id WHERE users.email = :email";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
             return $row;
         } else {
             return null;
@@ -41,7 +54,6 @@ class UserDAO
 
     public function createUser($nome, $email, $id_role, $morada, $password)
     {
-        // Verificar se o email já existe
         $sqlCheck = "SELECT id FROM users WHERE email = :email";
         $stmtCheck = $this->conn->prepare($sqlCheck);
         $stmtCheck->bindParam(':email', $email);
@@ -83,10 +95,10 @@ class UserDAO
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             'id_role' => (int) $id_role,
-            'nome' => $nome,
-            'morada' => $morada,
-            'email' => $email,
-            'password' => $passwordHash,
+            'nome'    => $nome,
+            'morada'  => $morada,
+            'email'   => $email,
+            'password'=> $passwordHash,
         ]);
 
         return (int) $this->conn->lastInsertId();
@@ -95,30 +107,30 @@ class UserDAO
     public function createPending($username, $email)
     {
         $sql = "
-        INSERT INTO users
-        (
-            id,
-            id_role,
-            nome,
-            data_nascimento,
-            telefone,
-            morada,
-            email,
-            password,
-            ativo,
-            tem_mobilidade_reduzida
-        ) VALUES (
-            NULL,
-            2,
-            :username,
-            '2000-01-01',
-            '000000000',
-            'N/A',
-            :email,
-            '',
-            0,
-            0
-        )
+            INSERT INTO users
+            (
+                id,
+                id_role,
+                nome,
+                data_nascimento,
+                telefone,
+                morada,
+                email,
+                password,
+                ativo,
+                tem_mobilidade_reduzida
+            ) VALUES (
+                NULL,
+                2,
+                :username,
+                '2000-01-01',
+                '000000000',
+                'N/A',
+                :email,
+                '',
+                0,
+                0
+            )
         ";
 
         $stmt = $this->conn->prepare($sql);
@@ -130,12 +142,12 @@ class UserDAO
     public function setPasswordAndVerify($userId, $passwordHash)
     {
         $sql = "
-        UPDATE users
-        SET password = ?,
-            is_verified = 1,
-            verified_at = NOW(),
-            updated_at = NOW()
-        WHERE id = ?
+            UPDATE users
+            SET password   = ?,
+                is_verified = 1,
+                verified_at = NOW(),
+                updated_at  = NOW()
+            WHERE id = ?
         ";
 
         $stmt = $this->conn->prepare($sql);

@@ -3,13 +3,13 @@
 class Role
 {
     private int $id;
-    private string $nome;
+    private string $nome_role;
     private string $cor;
 
-    public function __construct(int $id, string $nome, string $cor)
+    public function __construct(int $id, string $nome_role, string $cor)
     {
         $this->id = $id;
-        $this->nome = $nome;
+        $this->nome_role = $nome_role;
         $this->cor = $cor;
     }
 
@@ -22,13 +22,13 @@ class Role
         $this->id = $id;
     }
 
-    public function getNome(): string
+    public function getNomeRole(): string
     {
-        return $this->nome;
+        return $this->nome_role;
     }
-    public function setNome(string $nome): void
+    public function setNomeRole(string $nome_role): void
     {
-        $this->nome = $nome;
+        $this->nome_role = $nome_role;
     }
 
     public function getCor(): string

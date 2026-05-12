@@ -34,8 +34,8 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 } elseif ($uri === '/create-utilizador' && $method === 'POST') {
     (new UserController())->createUtilizador();
 
-} elseif ($uri === '/create-role' && $method === 'POST') {   // ← ADICIONAR
-    (new RoleController())->createRole();                     // ← ADICIONAR
+} elseif ($uri === '/create-role' && $method === 'POST') {
+    (new RoleController())->createRole();   
 
 } elseif ($uri === '/teste') {
     echo password_hash("1234", PASSWORD_DEFAULT);
