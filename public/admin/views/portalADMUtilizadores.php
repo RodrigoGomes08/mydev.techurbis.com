@@ -31,6 +31,7 @@
                     </div>
                     <div>
                         <div class="pkpi-label">Total de Utilizadores</div>
+                        <?= count($users) ?>
                     </div>
                 </div>
             </div>
