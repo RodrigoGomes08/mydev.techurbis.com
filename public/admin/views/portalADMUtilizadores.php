@@ -144,7 +144,16 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                        <button class="btn btn-sm btn-outline-primary me-1 btn-editar-util"
+                                            data-id="<?= $user->getId() ?>"
+                                            data-id-role="<?= $user->getIdRole() ?>"
+                                            data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>"
+                                            data-email="<?= htmlspecialchars($user->getEmail(), ENT_QUOTES) ?>"
+                                            data-morada="<?= htmlspecialchars($user->getMorada(), ENT_QUOTES) ?>"
+                                            data-telefone="<?= htmlspecialchars($user->getTelefone(), ENT_QUOTES) ?>"
+                                            data-nascimento="<?= htmlspecialchars($user->getDataNascimento(), ENT_QUOTES) ?>"
+                                            data-ativo="<?= $user->getAtivo() ?>"
+                                            data-mobilidade="<?= $user->getTemMobilidadeReduzida() ?>">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger">
@@ -318,5 +327,79 @@
         });
     });
 </script>
+
+
+<!-- MODAL EDITAR UTILIZADOR -->
+<div class="modal fade" id="modalEditarUtilizador" tabindex="-1" aria-labelledby="modalEditarUtilLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form action="/admin/update-utilizador" method="POST" id="formEditarUtilizador">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                    <h5 class="modal-title" id="modalEditarUtilLabel">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Utilizador
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nome Completo</label>
+                            <input name="nome" id="edit_nome" type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input name="email" id="edit_email" type="email" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Cargo</label>
+                            <select name="id_role" id="edit_id_role" class="form-select">
+                                <?php foreach ($roles as $role): ?>
+                                    <option value="<?= $role->getId() ?>">
+                                        <?= htmlspecialchars($role->getNomeRole()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Morada</label>
+                            <input name="morada" id="edit_morada" type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Telefone</label>
+                            <input name="telefone" id="edit_telefone" type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Data de Nascimento</label>
+                            <input name="data_nascimento" id="edit_nascimento" type="date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Estado</label>
+                            <select name="ativo" id="edit_ativo" class="form-select">
+                                <option value="1">Ativo</option>
+                                <option value="0">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Mobilidade Reduzida</label>
+                            <select name="tem_mobilidade_reduzida" id="edit_mobilidade" class="form-select">
+                                <option value="0">Não</option>
+                                <option value="1">Sim</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-floppy me-1"></i>Guardar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>

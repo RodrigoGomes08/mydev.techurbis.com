@@ -79,4 +79,51 @@ class UserController
         header("Location: /admin/PortalADMUtilizadores");
         exit;
     }
+
+    public function userUpdate($userId)
+    {
+
+        $id = trim($_POST["id"] ?? '');
+        $id_role = trim($_POST["id_role"] ?? '');
+        $nome = trim($_POST["nome"] ?? '');
+        $data_nascimento = trim($_POST["data_nascimento"] ?? '');
+        $telefone = trim($_POST["telefone"] ?? '');
+        $morada = trim($_POST["morada"] ?? '');
+        $email = trim($_POST["email"] ?? '');
+        $ativo = trim($_POST["ativo"] ?? '');
+        $tem_mobilidade_reduzida = trim($_POST["tem_mobilidade_reduzida"] ?? '');
+
+        if (empty($email) || empty($nome)) {
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'message' => 'Email e nome são obrigatórios.'
+            ];
+            header("Location: /admin/PortalADMUtilizadores");
+            exit;
+        }
+
+        try {
+            $linhasAlteradas = (new UserDAO())->userUpdateDAO($id, $id_role, $nome, $data_nascimento, $telefone, $morada, $email, $ativo, $tem_mobilidade_reduzida);
+
+            if (!$linhasAlteradas) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Nenhuma alteração foi feita (dados iguais aos existentes).'
+                ];
+            } else {
+                $_SESSION['toast'] = [
+                    'type' => 'success',
+                    'message' => "Utilizador \"{$nome}\" atualizado com sucesso!"
+                ];
+            }
+        } catch (Exception $e) {
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+
+        header("Location: /admin/PortalADMUtilizadores");
+        exit;
+    }
 }

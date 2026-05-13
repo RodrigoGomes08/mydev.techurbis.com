@@ -153,4 +153,15 @@ class UserDAO
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$passwordHash, $userId]);
     }
+
+    public function userUpdateDAO($id,$id_role, $nome, $data_nascimento, $telefone, $morada, $email, $ativo, $tem_mobilidade_reduzida){
+        $sql = "UPDATE users SET nome = ?, email = ?, id_role = ?, data_nascimento = ?, telefone = ?, morada = ?, ativo = ?, tem_mobilidade_reduzida = ? WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$nome, $email, $id_role, $data_nascimento, $telefone, $morada, $ativo, $tem_mobilidade_reduzida, $id]);
+
+        $result = $stmt->rowCount();
+
+        return $result;
+    }
 }

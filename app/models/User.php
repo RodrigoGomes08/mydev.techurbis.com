@@ -12,9 +12,6 @@ class User
     private string $password;
     private int $ativo;
     private int $tem_mobilidade_reduzida;
-    private ?string $createdAt;
-    private ?string $updatedAt;
-    private ?string $deletedAt;
 
     public function __construct(
         int $id,
@@ -27,9 +24,6 @@ class User
         string $password,
         int $ativo,
         int $tem_mobilidade_reduzida,
-        ?string $createdAt = null,
-        ?string $updatedAt = null,
-        ?string $deletedAt = null
     ) {
         $this->id = $id;
         $this->id_role = $id_role;
@@ -41,9 +35,6 @@ class User
         $this->password = $password;
         $this->ativo = $ativo;
         $this->tem_mobilidade_reduzida = $tem_mobilidade_reduzida;
-        $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
-        $this->deletedAt = $deletedAt;
     }
 
     public function getId(): int { return $this->id; }
@@ -75,13 +66,4 @@ class User
 
     public function getTemMobilidadeReduzida(): int { return $this->tem_mobilidade_reduzida; }
     public function setTemMobilidadeReduzida(int $valor): void { $this->tem_mobilidade_reduzida = $valor; }
-
-    public function getCreatedAt(): ?string { return $this->createdAt; }
-    public function setCreatedAt(?string $createdAt): void { $this->createdAt = $createdAt; }
-
-    public function getUpdatedAt(): ?string { return $this->updatedAt; }
-    public function setUpdatedAt(?string $updatedAt): void { $this->updatedAt = $updatedAt; }
-
-    public function getDeletedAt(): ?string { return $this->deletedAt; }
-    public function setDeletedAt(?string $deletedAt): void { $this->deletedAt = $deletedAt; }
 }

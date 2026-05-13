@@ -7,7 +7,7 @@ require $base . '/WebController.php';
 require $base . '/UserController.php';
 require $base . '/RoleController.php';
 
-$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // ─── PORTAL ADMIN VIEWS ───────────────────────────────────────────────────────
@@ -29,6 +29,15 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
 
 } elseif ($uri === '/admin/PortalADMUtilizadores') {
     (new UserController())->showPortalADMUtilizadores();
+
+} elseif ($uri === '/admin/update-utilizador' && $method === 'POST') {
+    (new UserController())->userUpdate($_POST['id'] ?? null);
+    $_SESSION['toast'] = [
+        'type' => 'success',
+        'message' => 'Utilizador atualizado com sucesso!'
+    ];
+    header("Location: /admin/PortalADMUtilizadores");
+    exit;
 
 } else {
     http_response_code(404);
