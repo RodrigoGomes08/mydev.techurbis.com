@@ -234,7 +234,7 @@
                         <select name="id_role" class="form-select">
                             <?php foreach ($roles as $role): ?>
                                 <option value="<?= $role->getId() ?>">
-                                    <?= htmlspecialchars($role->getNome()) ?>
+                                    <?= htmlspecialchars($role->getNomeRole()) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

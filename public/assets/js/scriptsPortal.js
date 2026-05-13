@@ -1,4 +1,5 @@
 (function () {
+    document.addEventListener("DOMContentLoaded", function () {
     const root = document.body;
 
     // =========================
@@ -47,17 +48,15 @@
     // =========================
     // PROGRESS BARS
     // =========================
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".progress-bar-custom").forEach(bar => {
-            const value = parseInt(bar.dataset.value, 10);
-            if (isNaN(value)) return;
-            bar.style.width = value + "%";
-            bar.textContent = value + "%";
-            bar.classList.remove("progress-bar-success", "progress-bar-warning", "progress-bar-danger");
-            if (value <= 35) bar.classList.add("progress-bar-success");
-            else if (value <= 80) bar.classList.add("progress-bar-warning");
-            else bar.classList.add("progress-bar-danger");
-        });
+    document.querySelectorAll(".progress-bar-custom").forEach(bar => {
+        const value = parseInt(bar.dataset.value, 10);
+        if (isNaN(value)) return;
+        bar.style.width = value + "%";
+        bar.textContent = value + "%";
+        bar.classList.remove("progress-bar-success", "progress-bar-warning", "progress-bar-danger");
+        if (value <= 35) bar.classList.add("progress-bar-success");
+        else if (value <= 80) bar.classList.add("progress-bar-warning");
+        else bar.classList.add("progress-bar-danger");
     });
 
     // =========================
@@ -656,125 +655,30 @@
     }
 
     // =========================
-    // UTILIZADORES
+    // UTILIZADORES (server-side)
     // =========================
-    const listaUtilizadores = document.getElementById('listaUtilizadores');
-    if (listaUtilizadores) {
+    // Os modais #modalUtilizador e #modalRole são abertos directamente via
+    // data-bs-toggle/data-bs-target no HTML — não é necessário código JS para os abrir.
+    // Este bloco trata apenas da pesquisa e filtro de cargo na tabela server-side.
 
-        let utilizadores = [
-            { nome: 'João Nicolau', iniciais: 'JN', cor: 'linear-gradient(135deg,#435ebe,#5f7cff)', cargo: 'Administrador', email: 'joao@gmail.com', morada: 'Rua das Flores, Porto' },
-            { nome: 'Ana Costa', iniciais: 'AC', cor: 'linear-gradient(135deg,#27ae60,#2ecc71)', cargo: 'Utilizador', email: 'ana@gmail.com', morada: 'Av. Central, Braga' },
-            { nome: 'Pedro Santos', iniciais: 'PS', cor: 'linear-gradient(135deg,#f39c12,#f1c40f)', cargo: 'Utilizador', email: 'pedro@gmail.com', morada: 'Rua do Sol, Lisboa' },
-        ];
+    const secUtilizadores = document.getElementById('utilizadores');
+    if (secUtilizadores) {
 
-        function renderUtilizadores(lista) {
-            listaUtilizadores.innerHTML = '';
-            lista.forEach((u) => {
-                const ri = utilizadores.indexOf(u);
-                const cargoBadge = u.cargo === 'Administrador'
-                    ? `<span class="parque-tag" style="background:#fde8e8;color:#e74c3c;"><i class="bi bi-shield-fill me-1"></i>Administrador</span>`
-                    : `<span class="parque-tag"><i class="bi bi-person-fill me-1"></i>Utilizador</span>`;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div style="width:36px;height:36px;border-radius:50%;background:${u.cor};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.85rem;flex-shrink:0;">${u.iniciais}</div>
-                            <strong>${u.nome}</strong>
-                        </div>
-                    </td>
-                    <td>${cargoBadge}</td>
-                    <td>${u.email}</td>
-                    <td><span class="badge bg-secondary">••••••••</span></td>
-                    <td><i class="bi bi-geo-alt text-muted me-1"></i>${u.morada}</td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-outline-primary btn-edit-util" data-index="${ri}"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger btn-del-util" data-index="${ri}"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>`;
-                listaUtilizadores.appendChild(tr);
-            });
-
-            document.querySelectorAll('.btn-edit-util').forEach(btn => {
-                btn.addEventListener('click', function () { abrirModalUtil(parseInt(this.dataset.index)); });
-            });
-            document.querySelectorAll('.btn-del-util').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const idx = parseInt(this.dataset.index);
-                    if (confirm(`Remover "${utilizadores[idx].nome}"?`)) {
-                        utilizadores.splice(idx, 1);
-                        renderUtilizadores(utilizadores);
-                        atualizarKpisUtil();
-                    }
-                });
-            });
-        }
-
-        function atualizarKpisUtil() {
-            const total = utilizadores.length;
-            const admins = utilizadores.filter(u => u.cargo === 'Administrador').length;
-            const comuns = total - admins;
-            const cidades = new Set(utilizadores.map(u => u.morada.split(',')[1]?.trim() || u.morada)).size;
-            const elTotal = document.getElementById('pkpi-util-total');
-            const elAdmins = document.getElementById('pkpi-util-admins');
-            const elComuns = document.getElementById('pkpi-util-comuns');
-            const elCidad = document.getElementById('pkpi-util-cidades');
-            const elCount = document.getElementById('util-count');
-            if (elTotal) elTotal.textContent = total;
-            if (elAdmins) elAdmins.textContent = admins;
-            if (elComuns) elComuns.textContent = comuns;
-            if (elCidad) elCidad.textContent = cidades;
-            if (elCount) elCount.textContent = `${total} utilizadores registados`;
-        }
-
-        function abrirModalUtil(index) {
-            const u = index === -1 ? null : utilizadores[index];
-            const modal = document.getElementById('modalUtilizador');
-            if (!modal) return;
-            document.getElementById('modalUtilLabel').textContent = index === -1 ? 'Adicionar Utilizador' : `Editar — ${u.nome}`;
-            document.getElementById('utilIndex').value = index === -1 ? '' : index;
-            document.getElementById('inputUtilNome').value = u?.nome || '';
-            document.getElementById('inputUtilEmail').value = u?.email || '';
-            document.getElementById('inputUtilCargo').value = u?.cargo || 'Utilizador';
-            document.getElementById('inputUtilMorada').value = u?.morada || '';
-            document.getElementById('inputUtilPass').value = '';
-            new bootstrap.Modal(modal).show();
-        }
-
-        document.querySelector('.btn-add-util')?.addEventListener('click', () => abrirModalUtil(-1));
-
-        document.getElementById('btnGuardarUtil')?.addEventListener('click', () => {
-            const nome = document.getElementById('inputUtilNome').value.trim();
-            const email = document.getElementById('inputUtilEmail').value.trim();
-            const cargo = document.getElementById('inputUtilCargo').value;
-            const morada = document.getElementById('inputUtilMorada').value.trim();
-            if (!nome || !email) { alert('Nome e email são obrigatórios.'); return; }
-            const iniciais = nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
-            const cores = ['linear-gradient(135deg,#435ebe,#5f7cff)', 'linear-gradient(135deg,#27ae60,#2ecc71)', 'linear-gradient(135deg,#f39c12,#f1c40f)', 'linear-gradient(135deg,#e74c3c,#c0392b)', 'linear-gradient(135deg,#8e44ad,#9b59b6)'];
-            const cor = cores[Math.floor(Math.random() * cores.length)];
-            const idx = document.getElementById('utilIndex').value;
-            if (idx === '') {
-                utilizadores.push({ nome, iniciais, cor, cargo, email, morada });
-            } else {
-                const i = parseInt(idx);
-                utilizadores[i] = { ...utilizadores[i], nome, iniciais, cargo, email, morada };
-            }
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalUtilizador')).hide();
-            renderUtilizadores(utilizadores);
-            atualizarKpisUtil();
-        });
-
+        // Pesquisa em tempo real por nome / email
         document.getElementById('searchUtil')?.addEventListener('input', function () {
-            const t = this.value.toLowerCase();
-            renderUtilizadores(utilizadores.filter(u => u.nome.toLowerCase().includes(t) || u.email.toLowerCase().includes(t)));
-        });
-        document.getElementById('filtroUtilCargo')?.addEventListener('change', function () {
-            const v = this.value;
-            renderUtilizadores(v ? utilizadores.filter(u => u.cargo === v) : utilizadores);
+            const termo = this.value.toLowerCase();
+            document.querySelectorAll('table.table-admin tbody tr[data-role]').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(termo) ? '' : 'none';
+            });
         });
 
-        renderUtilizadores(utilizadores);
-        atualizarKpisUtil();
+        // Filtro por cargo (role)
+        document.getElementById('filtroUtilCargo')?.addEventListener('change', function () {
+            const roleId = this.value;
+            document.querySelectorAll('table.table-admin tbody tr[data-role]').forEach(row => {
+                row.style.display = (!roleId || row.dataset.role === roleId) ? '' : 'none';
+            });
+        });
     }
 
     // =========================
@@ -869,4 +773,5 @@
         });
     }
 
+    }); // fim DOMContentLoaded
 })();
