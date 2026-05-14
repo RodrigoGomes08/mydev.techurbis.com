@@ -85,7 +85,7 @@
             <select id="filtroUtilCargo" class="form-select" style="max-width:180px;">
                 <option value="">Todos os cargos</option>
                 <?php foreach ($roles as $role): ?>
-                    <option value="<?= $role->getId() ?>"><?= htmlspecialchars($role->getNomeRole()) ?></option>
+                    <option value="<?= $role->getIdRole() ?>"><?= htmlspecialchars($role->getNomeRole()) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -117,7 +117,7 @@
                                 // Encontrar o nome da role correspondente
                                 $roleNome = 'Desconhecido';
                                 foreach ($roles as $role) {
-                                    if ($role->getId() === $user->getIdRole()) {
+                                    if ($role->getIdRole() === $user->getIdRole()) {
                                         $roleNome = $role->getNomeRole();
                                         break;
                                     }
@@ -145,8 +145,7 @@
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-primary me-1 btn-editar-util"
-                                            data-id="<?= $user->getId() ?>"
-                                            data-id-role="<?= $user->getIdRole() ?>"
+                                            data-id="<?= $user->getId() ?>" data-id-role="<?= $user->getIdRole() ?>"
                                             data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>"
                                             data-email="<?= htmlspecialchars($user->getEmail(), ENT_QUOTES) ?>"
                                             data-morada="<?= htmlspecialchars($user->getMorada(), ENT_QUOTES) ?>"
@@ -156,11 +155,11 @@
                                             data-mobilidade="<?= $user->getTemMobilidadeReduzida() ?>">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <<button class="btn btn-sm btn-outline-danger btn-eliminar-util"
-    data-id="<?= $user->getId() ?>"
-    data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>">
-    <i class="bi bi-trash"></i>
-</button>
+                                        <button class="btn btn-sm btn-outline-danger btn-eliminar-util"
+                                            data-id="<?= $user->getId() ?>"
+                                            data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -237,7 +236,7 @@
                         <label class="form-label fw-semibold">Cargo</label>
                         <select name="id_role" class="form-select">
                             <?php foreach ($roles as $role): ?>
-                                <option value="<?= $role->getId() ?>">
+                                <option value="<?= $role->getIdRole() ?>">
                                     <?= htmlspecialchars($role->getNomeRole()) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -324,7 +323,8 @@
 
 
 <!-- MODAL EDITAR UTILIZADOR -->
-<div class="modal fade" id="modalEditarUtilizador" tabindex="-1" aria-labelledby="modalEditarUtilLabel" aria-hidden="true">
+<div class="modal fade" id="modalEditarUtilizador" tabindex="-1" aria-labelledby="modalEditarUtilLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <form action="/admin/update-utilizador" method="POST" id="formEditarUtilizador">
@@ -349,7 +349,7 @@
                             <label class="form-label fw-semibold">Cargo</label>
                             <select name="id_role" id="edit_id_role" class="form-select">
                                 <?php foreach ($roles as $role): ?>
-                                    <option value="<?= $role->getId() ?>">
+                                    <option value="<?= $role->getIdRole() ?>">
                                         <?= htmlspecialchars($role->getNomeRole()) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -422,6 +422,6 @@
             </div>
         </div>
     </div>
-</div>  
+</div>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>

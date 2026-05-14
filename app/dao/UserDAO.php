@@ -14,7 +14,7 @@ class UserDAO
 
     public function getAllUsers()
     {
-        $sql = "SELECT * FROM users INNER JOIN roles ON users.id_role = roles.id ORDER BY users.id ASC";
+        $sql = "SELECT users.id, users.id_role, users.nome, users.data_nascimento, users.telefone, users.morada, users.email, users.password, users.ativo, users.tem_mobilidade_reduzida FROM users INNER JOIN roles ON users.id_role = roles.id ORDER BY users.id ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $users = [];

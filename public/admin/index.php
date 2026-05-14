@@ -32,12 +32,9 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
 
 } elseif ($uri === '/admin/update-utilizador' && $method === 'POST') {
     (new UserController())->userUpdate($_POST['id'] ?? null);
-    $_SESSION['toast'] = [
-        'type' => 'success',
-        'message' => 'Utilizador atualizado com sucesso!'
-    ];
-    header("Location: /admin/PortalADMUtilizadores");
-    exit;
+
+} elseif ($method === 'POST' && preg_match('#^/admin/delete-utilizador/(\d+)$#', $uri, $m)) {
+    (new UserController())->userDelete((int)$m[1]);
 
 } else {
     http_response_code(404);

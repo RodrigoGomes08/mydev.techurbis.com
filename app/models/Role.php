@@ -2,24 +2,24 @@
 
 class Role
 {
-    private int $id;
+    private int $id_role;
     private string $nome_role;
     private string $cor;
 
-    public function __construct(int $id, string $nome_role, string $cor)
+    public function __construct(int $id_role, string $nome_role, string $cor)
     {
-        $this->id = $id;
+        $this->id_role = $id_role;
         $this->nome_role = $nome_role;
         $this->cor = $cor;
     }
 
-    public function getId(): int
+    public function getIdRole(): int
     {
-        return $this->id;
+        return $this->id_role;
     }
-    public function setId(int $id): void
+    public function setIdRole(int $id_role): void
     {
-        $this->id = $id;
+        $this->id_role = $id_role;
     }
 
     public function getNomeRole(): string
