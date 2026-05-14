@@ -882,6 +882,73 @@
           modalEditar.show();
         });
       }
+
+      // Eliminar utilizador — abrir modal de confirmação
+const modalEliminarEl = document.getElementById("modalEliminarUtilizador");
+if (modalEliminarEl) {
+  const modalEliminar = new bootstrap.Modal(modalEliminarEl);
+  let rowParaEliminar = null;
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".btn-eliminar-util");
+    if (!btn) return;
+
+    const userId = btn.dataset.id;
+    const nome   = btn.dataset.nome;
+
+    // Preencher o modal com o nome do utilizador
+    document.getElementById("eliminar_util_nome").textContent = nome || "este utilizador";
+    document.getElementById("eliminar_util_id").value = userId;
+
+    // Guardar a linha da tabela para a remover após sucesso
+    rowParaEliminar = btn.closest("tr");
+
+    modalEliminar.show();
+  });
+
+  // Confirmar eliminação
+  document.getElementById("btnConfirmarEliminar")?.addEventListener("click", function () {
+    const userId = document.getElementById("eliminar_util_id").value;
+
+    fetch(`/admin/delete-utilizador/${userId}`, { method: "POST" })
+      .then(r => r.json())
+      .then(data => {
+        modalEliminar.hide();
+        if (data.success) {
+          rowParaEliminar?.remove();
+          rowParaEliminar = null;
+          // Mostrar toast de sucesso (reutiliza o sistema existente de toasts se existir)
+          mostrarToastJS("success", data.message || "Utilizador eliminado com sucesso!");
+        } else {
+          mostrarToastJS("error", data.message || "Erro ao eliminar utilizador.");
+        }
+      })
+      .catch(() => {
+        modalEliminar.hide();
+        mostrarToastJS("error", "Erro de ligação ao servidor.");
+      });
+  });
+}
+
+// Helper para toast no lado cliente (caso não haja redirect com $_SESSION['toast'])
+function mostrarToastJS(tipo, mensagem) {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+  const id = "toast-" + Date.now();
+  const bg  = tipo === "success" ? "bg-success" : "bg-danger";
+  const icon = tipo === "success" ? "bi-check-circle" : "bi-x-circle";
+  container.insertAdjacentHTML("beforeend", `
+    <div id="${id}" class="toast align-items-center text-white ${bg} border-0 show" role="alert">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi ${icon} me-2"></i>${mensagem}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  `);
+  setTimeout(() => document.getElementById(id)?.remove(), 4000);
+}
     }
 
     // =========================

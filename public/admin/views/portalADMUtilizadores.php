@@ -156,9 +156,11 @@
                                             data-mobilidade="<?= $user->getTemMobilidadeReduzida() ?>">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <<button class="btn btn-sm btn-outline-danger btn-eliminar-util"
+    data-id="<?= $user->getId() ?>"
+    data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>">
+    <i class="bi bi-trash"></i>
+</button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -166,14 +168,6 @@
                         </tbody>
                     </table>
                 </div>
-                <nav>
-                    <ul class="pagination pagination-admin justify-content-end mt-3">
-                        <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Próximo</a></li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </section>
@@ -401,5 +395,33 @@
         </div>
     </div>
 </div>
+<!-- MODAL CONFIRMAR ELIMINAÇÃO -->
+<div class="modal fade" id="modalEliminarUtilizador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminação
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-person-x" style="font-size:3rem;color:#e74c3c;"></i>
+                <p class="mt-3 mb-1">Tens a certeza que queres eliminar o utilizador</p>
+                <p class="fw-bold fs-5" id="eliminar_util_nome"></p>
+                <p class="text-muted" style="font-size:0.85rem;">Esta ação é irreversível.</p>
+                <input type="hidden" id="eliminar_util_id">
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">
+                    <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>  
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>

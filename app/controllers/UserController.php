@@ -128,10 +128,18 @@ class UserController
     }
 
     public function userDelete($userId) {
+    header('Content-Type: application/json');
+    try {
         $linhasAlteradas = (new UserDAO())->userDeleteDAO($userId);
 
         if (!$linhasAlteradas) {
-            throw new Exception("Erro ao alterar os dados");
+            echo json_encode(['success' => false, 'message' => 'Utilizador não encontrado.']);
+        } else {
+            echo json_encode(['success' => true, 'message' => 'Utilizador eliminado com sucesso!']);
         }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
+    exit;
+}
 }

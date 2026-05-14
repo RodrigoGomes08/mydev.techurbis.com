@@ -37,7 +37,13 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 } elseif ($uri === '/create-role' && $method === 'POST') {
     (new RoleController())->createRole();   
 
-} elseif ($uri === '/teste') {
+} // POST /admin/delete-utilizador/{id}
+else if ($method === 'POST' && preg_match('#^/admin/delete-utilizador/(\d+)$#', $uri, $m)) {
+    (new UserController())->userDelete((int)$m[1]);
+} 
+
+
+elseif ($uri === '/teste') {
     echo password_hash("1234", PASSWORD_DEFAULT);
 
 } else {
