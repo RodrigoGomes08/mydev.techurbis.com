@@ -126,4 +126,12 @@ class UserController
         header("Location: /admin/PortalADMUtilizadores");
         exit;
     }
+
+    public function userDelete($userId) {
+        $linhasAlteradas = (new UserDAO())->userDeleteDAO($userId);
+
+        if (!$linhasAlteradas) {
+            throw new Exception("Erro ao alterar os dados");
+        }
+    }
 }

@@ -164,4 +164,15 @@ class UserDAO
 
         return $result;
     }
+
+    public function userDeleteDAO($userId){
+        $sql = "DELETE FROM users WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$userId]);
+
+        $resul = $stmt->rowCount();
+
+        return $resul;
+    }
 }
