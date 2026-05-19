@@ -97,215 +97,72 @@
     }
 
     // =========================
-    // POSTES (só em PortalADMPostes.html)
+    // POSTES (server-side)
     // =========================
-    const listaPostes = document.getElementById("listaPostes");
-    const campoLabel = document.getElementById("campoLabel");
-    const searchInput = document.getElementById("searchInput");
-    const btnPesquisar = document.getElementById("btnPesquisar");
-    const btnLimpar = document.getElementById("btnLimpar");
-    const btnNovoPoste = document.getElementById("btnNovoPoste");
-    const modalPosteEl = document.getElementById("modalPoste");
+    // A tabela é renderizada pelo PHP. Este bloco trata dos modais de editar e eliminar.
 
-    if (listaPostes && modalPosteEl) {
-      let postes = [
-        {
-          longitude: -8.6291,
-          latitude: 41.1579,
-          estado: "operacional",
-          observacoes: "Funcionamento normal",
-        },
-        {
-          longitude: -8.61,
-          latitude: 41.1496,
-          estado: "avariado",
-          observacoes: "Lâmpada fundida",
-        },
-        {
-          longitude: -9.1393,
-          latitude: 38.7223,
-          estado: "operacional",
-          observacoes: "Sem ocorrências",
-        },
-        {
-          longitude: -8.4265,
-          latitude: 40.211,
-          estado: "manutencao",
-          observacoes: "Verificação elétrica agendada",
-        },
-      ];
+    const secPostes = document.getElementById("postes");
+    if (secPostes) {
+      // Modal editar
+      const modalEditarPosteEl = document.getElementById("modalEditarPoste");
+      if (modalEditarPosteEl) {
+        const modalEditarPoste = new bootstrap.Modal(modalEditarPosteEl);
 
-      const modal = new bootstrap.Modal(modalPosteEl);
-      let campoSelecionado = null;
+        document.addEventListener("click", function (e) {
+          const btn = e.target.closest(".btn-editar-poste");
+          if (!btn) return;
 
-      const estadoConfig = {
-        operacional: {
-          cls: "badge-status-ok",
-          icon: "bi-check-circle",
-          label: "Operacional",
-        },
-        avariado: {
-          cls: "badge-status-error",
-          icon: "bi-x-circle",
-          label: "Avariado",
-        },
-        manutencao: {
-          cls: "badge-status-warning",
-          icon: "bi-exclamation-circle",
-          label: "Manutenção",
-        },
-      };
+          const d = btn.dataset;
+          document.getElementById("edit_poste_id").value       = d.id;
+          document.getElementById("edit_poste_longitude").value = d.longitude;
+          document.getElementById("edit_poste_latitude").value  = d.latitude;
+          document.getElementById("edit_poste_id_cidade").value = d.idCidade;
+          document.getElementById("edit_poste_id_estado").value = d.idEstado;
+          document.getElementById("edit_poste_observacao").value = d.observacao;
 
-      function badgeHtml(estado) {
-        const cfg = estadoConfig[estado] || estadoConfig.operacional;
-        return `<span class="badge ${cfg.cls}"><i class="bi ${cfg.icon}"></i> ${cfg.label}</span>`;
-      }
-
-      function renderTabela(lista) {
-        listaPostes.innerHTML = "";
-        lista.forEach((p, i) => {
-          const realIndex = postes.indexOf(p);
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-                    <td><strong>#${i + 1}</strong></td>
-                    <td>${p.longitude}</td>
-                    <td>${p.latitude}</td>
-                    <td>${badgeHtml(p.estado)}</td>
-                    <td>${p.observacoes}</td>
-                    <td class="d-flex gap-2">
-                        <button class="btn btn-outline-primary btn-edit" data-index="${realIndex}">
-                            <i class="bi bi-pencil me-1"></i>Editar
-                        </button>
-                        <button class="btn btn-outline-danger btn-remove" data-index="${realIndex}">
-                            <i class="bi bi-trash me-1"></i>Remover
-                        </button>
-                    </td>`;
-          listaPostes.appendChild(tr);
-        });
-
-        document.querySelectorAll(".btn-edit").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            abrirModalEditar(parseInt(this.dataset.index));
-          });
-        });
-        document.querySelectorAll(".btn-remove").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            removerPoste(parseInt(this.dataset.index));
-          });
+          modalEditarPoste.show();
         });
       }
 
-      function removerPoste(index) {
-        if (
-          !confirm(`Tens a certeza que queres remover o Poste #${index + 1}?`)
-        )
-          return;
-        postes.splice(index, 1);
-        renderTabela(postes);
-      }
+      // Modal eliminar
+      const modalEliminarPosteEl = document.getElementById("modalEliminarPoste");
+      if (modalEliminarPosteEl) {
+        const modalEliminarPoste = new bootstrap.Modal(modalEliminarPosteEl);
+        let rowPosteParaEliminar = null;
 
-      function abrirModalEditar(index) {
-        const p = postes[index];
-        document.getElementById("modalPosteLabel").textContent =
-          `Editar Poste #${index + 1}`;
-        document.getElementById("posteIndex").value = index;
-        document.getElementById("inputLongitude").value = p.longitude;
-        document.getElementById("inputLatitude").value = p.latitude;
-        document.getElementById("inputEstado").value = p.estado;
-        document.getElementById("inputObservacoes").value = p.observacoes;
-        modal.show();
-      }
+        document.addEventListener("click", function (e) {
+          const btn = e.target.closest(".btn-eliminar-poste");
+          if (!btn) return;
 
-      if (btnNovoPoste) {
-        btnNovoPoste.addEventListener("click", () => {
-          document.getElementById("modalPosteLabel").textContent =
-            "Adicionar Poste";
-          document.getElementById("posteIndex").value = "";
-          document.getElementById("inputLongitude").value = "";
-          document.getElementById("inputLatitude").value = "";
-          document.getElementById("inputEstado").value = "operacional";
-          document.getElementById("inputObservacoes").value = "";
-          modal.show();
+          const posteId = btn.dataset.id;
+          document.getElementById("eliminar_poste_id_display").textContent = "#" + posteId;
+          document.getElementById("eliminar_poste_id").value = posteId;
+          rowPosteParaEliminar = btn.closest("tr");
+
+          modalEliminarPoste.show();
+        });
+
+        document.getElementById("btnConfirmarEliminarPoste")?.addEventListener("click", function () {
+          const posteId = document.getElementById("eliminar_poste_id").value;
+
+          fetch(`/admin/delete-poste/${posteId}`, { method: "POST" })
+            .then(r => r.json())
+            .then(data => {
+              modalEliminarPoste.hide();
+              if (data.success) {
+                rowPosteParaEliminar?.remove();
+                rowPosteParaEliminar = null;
+                mostrarToastJS("success", data.message || "Poste eliminado com sucesso!");
+              } else {
+                mostrarToastJS("error", data.message || "Erro ao eliminar poste.");
+              }
+            })
+            .catch(() => {
+              modalEliminarPoste.hide();
+              mostrarToastJS("error", "Erro de ligação ao servidor.");
+            });
         });
       }
-
-      document
-        .getElementById("btnGuardarPoste")
-        ?.addEventListener("click", () => {
-          const longitude = parseFloat(
-            document.getElementById("inputLongitude").value,
-          );
-          const latitude = parseFloat(
-            document.getElementById("inputLatitude").value,
-          );
-          const estado = document.getElementById("inputEstado").value;
-          const observacoes = document
-            .getElementById("inputObservacoes")
-            .value.trim();
-
-          if (isNaN(longitude) || isNaN(latitude)) {
-            alert("Por favor preenche a longitude e latitude corretamente.");
-            return;
-          }
-
-          const index = document.getElementById("posteIndex").value;
-          if (index === "")
-            postes.push({ longitude, latitude, estado, observacoes });
-          else
-            postes[parseInt(index)] = {
-              longitude,
-              latitude,
-              estado,
-              observacoes,
-            };
-
-          modal.hide();
-          renderTabela(postes);
-        });
-
-      // Filtro
-      const nomesAmigaveis = { estado: "Estado", observacoes: "Observações" };
-
-      document.querySelectorAll("[data-campo]").forEach((item) => {
-        item.addEventListener("click", function (e) {
-          e.preventDefault();
-          campoSelecionado = this.dataset.campo;
-          campoLabel.textContent = nomesAmigaveis[campoSelecionado];
-          searchInput.disabled = false;
-          searchInput.placeholder = `Pesquisar por ${nomesAmigaveis[campoSelecionado].toLowerCase()}...`;
-          searchInput.focus();
-          btnPesquisar.disabled = false;
-        });
-      });
-
-      if (searchInput)
-        searchInput.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") btnPesquisar.click();
-        });
-
-      if (btnPesquisar)
-        btnPesquisar.addEventListener("click", () => {
-          const valor = searchInput.value.trim().toLowerCase();
-          const resultado = valor
-            ? postes.filter((p) =>
-                String(p[campoSelecionado]).toLowerCase().includes(valor),
-              )
-            : postes;
-          renderTabela(resultado);
-        });
-
-      if (btnLimpar)
-        btnLimpar.addEventListener("click", () => {
-          campoSelecionado = null;
-          campoLabel.textContent = "Campo";
-          searchInput.value = "";
-          searchInput.disabled = true;
-          searchInput.placeholder = "Pesquisar...";
-          btnPesquisar.disabled = true;
-          renderTabela(postes);
-        });
-
-      renderTabela(postes);
     }
 
     // =========================
