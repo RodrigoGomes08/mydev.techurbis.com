@@ -113,9 +113,9 @@
           if (!btn) return;
 
           const d = btn.dataset;
-          document.getElementById("edit_poste_id").value       = d.id;
+          document.getElementById("edit_poste_id").value = d.id;
           document.getElementById("edit_poste_longitude").value = d.longitude;
-          document.getElementById("edit_poste_latitude").value  = d.latitude;
+          document.getElementById("edit_poste_latitude").value = d.latitude;
           document.getElementById("edit_poste_id_cidade").value = d.idCidade;
           document.getElementById("edit_poste_id_estado").value = d.idEstado;
           document.getElementById("edit_poste_observacao").value = d.observacao;
@@ -741,60 +741,60 @@
       }
 
       // Eliminar utilizador — abrir modal de confirmação
-const modalEliminarEl = document.getElementById("modalEliminarUtilizador");
-if (modalEliminarEl) {
-  const modalEliminar = new bootstrap.Modal(modalEliminarEl);
-  let rowParaEliminar = null;
+      const modalEliminarEl = document.getElementById("modalEliminarUtilizador");
+      if (modalEliminarEl) {
+        const modalEliminar = new bootstrap.Modal(modalEliminarEl);
+        let rowParaEliminar = null;
 
-  document.addEventListener("click", function (e) {
-    const btn = e.target.closest(".btn-eliminar-util");
-    if (!btn) return;
+        document.addEventListener("click", function (e) {
+          const btn = e.target.closest(".btn-eliminar-util");
+          if (!btn) return;
 
-    const userId = btn.dataset.id;
-    const nome   = btn.dataset.nome;
+          const userId = btn.dataset.id;
+          const nome = btn.dataset.nome;
 
-    // Preencher o modal com o nome do utilizador
-    document.getElementById("eliminar_util_nome").textContent = nome || "este utilizador";
-    document.getElementById("eliminar_util_id").value = userId;
+          // Preencher o modal com o nome do utilizador
+          document.getElementById("eliminar_util_nome").textContent = nome || "este utilizador";
+          document.getElementById("eliminar_util_id").value = userId;
 
-    // Guardar a linha da tabela para a remover após sucesso
-    rowParaEliminar = btn.closest("tr");
+          // Guardar a linha da tabela para a remover após sucesso
+          rowParaEliminar = btn.closest("tr");
 
-    modalEliminar.show();
-  });
+          modalEliminar.show();
+        });
 
-  // Confirmar eliminação
-  document.getElementById("btnConfirmarEliminar")?.addEventListener("click", function () {
-    const userId = document.getElementById("eliminar_util_id").value;
+        // Confirmar eliminação
+        document.getElementById("btnConfirmarEliminar")?.addEventListener("click", function () {
+          const userId = document.getElementById("eliminar_util_id").value;
 
-    fetch(`/admin/delete-utilizador/${userId}`, { method: "POST" })
-      .then(r => r.json())
-      .then(data => {
-        modalEliminar.hide();
-        if (data.success) {
-          rowParaEliminar?.remove();
-          rowParaEliminar = null;
-          // Mostrar toast de sucesso (reutiliza o sistema existente de toasts se existir)
-          mostrarToastJS("success", data.message || "Utilizador eliminado com sucesso!");
-        } else {
-          mostrarToastJS("error", data.message || "Erro ao eliminar utilizador.");
-        }
-      })
-      .catch(() => {
-        modalEliminar.hide();
-        mostrarToastJS("error", "Erro de ligação ao servidor.");
-      });
-  });
-}
+          fetch(`/admin/delete-utilizador/${userId}`, { method: "POST" })
+            .then(r => r.json())
+            .then(data => {
+              modalEliminar.hide();
+              if (data.success) {
+                rowParaEliminar?.remove();
+                rowParaEliminar = null;
+                // Mostrar toast de sucesso (reutiliza o sistema existente de toasts se existir)
+                mostrarToastJS("success", data.message || "Utilizador eliminado com sucesso!");
+              } else {
+                mostrarToastJS("error", data.message || "Erro ao eliminar utilizador.");
+              }
+            })
+            .catch(() => {
+              modalEliminar.hide();
+              mostrarToastJS("error", "Erro de ligação ao servidor.");
+            });
+        });
+      }
 
-// Helper para toast no lado cliente (caso não haja redirect com $_SESSION['toast'])
-function mostrarToastJS(tipo, mensagem) {
-  const container = document.getElementById("toast-container");
-  if (!container) return;
-  const id = "toast-" + Date.now();
-  const bg  = tipo === "success" ? "bg-success" : "bg-danger";
-  const icon = tipo === "success" ? "bi-check-circle" : "bi-x-circle";
-  container.insertAdjacentHTML("beforeend", `
+      // Helper para toast no lado cliente (caso não haja redirect com $_SESSION['toast'])
+      function mostrarToastJS(tipo, mensagem) {
+        const container = document.getElementById("toast-container");
+        if (!container) return;
+        const id = "toast-" + Date.now();
+        const bg = tipo === "success" ? "bg-success" : "bg-danger";
+        const icon = tipo === "success" ? "bi-check-circle" : "bi-x-circle";
+        container.insertAdjacentHTML("beforeend", `
     <div id="${id}" class="toast align-items-center text-white ${bg} border-0 show" role="alert">
       <div class="d-flex">
         <div class="toast-body">
@@ -804,8 +804,8 @@ function mostrarToastJS(tipo, mensagem) {
       </div>
     </div>
   `);
-  setTimeout(() => document.getElementById(id)?.remove(), 4000);
-}
+        setTimeout(() => document.getElementById(id)?.remove(), 4000);
+      }
     }
 
     // =========================
@@ -887,16 +887,16 @@ function mostrarToastJS(tipo, mensagem) {
             body.innerHTML = `
                 <div class="row g-3">
                     ${[
-                      ["Zona Centro", "Alto", "danger"],
-                      ["Zona Norte", "Médio", "warning"],
-                      ["Zona Sul", "Baixo", "success"],
-                      ["Zona Industrial", "Baixo", "success"],
-                    ]
-                      .map(
-                        ([z, n, c]) => `
+                ["Zona Centro", "Alto", "danger"],
+                ["Zona Norte", "Médio", "warning"],
+                ["Zona Sul", "Baixo", "success"],
+                ["Zona Industrial", "Baixo", "success"],
+              ]
+                .map(
+                  ([z, n, c]) => `
                     <div class="col-6"><div class="pkpi-card flex-column text-center p-3"><div class="pkpi-value text-${c}">${n}</div><div class="pkpi-label">${z}</div></div></div>`,
-                      )
-                      .join("")}
+                )
+                .join("")}
                 </div>`;
           new bootstrap.Modal(document.getElementById("modalHistorico")).show();
         });
@@ -940,4 +940,106 @@ function mostrarToastJS(tipo, mensagem) {
         });
     }
   }); // fim DOMContentLoaded
+
+  // =========================
+  // PARQUES (server-side) — substitui o bloco anterior de dados hardcoded
+  // =========================
+  const secParques = document.getElementById("parques");
+
+  if (secParques) {
+
+    // ── Pesquisa em tempo real ──────────────────────────────────────────
+    document.getElementById("searchParque")?.addEventListener("input", function () {
+      const termo = this.value.toLowerCase();
+      document.querySelectorAll("#tabelaParques tbody tr[data-nome]").forEach(row => {
+        row.style.display = row.dataset.nome.includes(termo) ? "" : "none";
+      });
+    });
+
+    // ── Filtro por tipo ─────────────────────────────────────────────────
+    document.getElementById("filtroParqueTipo")?.addEventListener("change", function () {
+      const tipo = this.value;
+      document.querySelectorAll("#tabelaParques tbody tr[data-tipo]").forEach(row => {
+        row.style.display = (!tipo || row.dataset.tipo === tipo) ? "" : "none";
+      });
+    });
+
+    // ── Botão Mapa ──────────────────────────────────────────────────────
+    document.addEventListener("click", function (e) {
+      const btn = e.target.closest(".btn-parque-mapa");
+      if (!btn) return;
+
+      const titleEl = document.getElementById("modalMapaParqueTitle");
+      const iframeEl = document.getElementById("iframeMapaParque");
+      if (titleEl) titleEl.textContent = btn.dataset.nome + " — Localização";
+      if (iframeEl) iframeEl.src = `https://www.google.com/maps?q=${btn.dataset.lat},${btn.dataset.lng}&z=16&output=embed`;
+
+      new bootstrap.Modal(document.getElementById("modalMapaParque")).show();
+    });
+
+    // ── Botão Editar ────────────────────────────────────────────────────
+    const modalEditarParqueEl = document.getElementById("modalEditarParque");
+    if (modalEditarParqueEl) {
+      const modalEditarParque = new bootstrap.Modal(modalEditarParqueEl);
+
+      document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".btn-editar-parque");
+        if (!btn) return;
+
+        const d = btn.dataset;
+        document.getElementById("edit_parque_id").value = d.id;
+        document.getElementById("edit_parque_id_display").value = d.id;
+        document.getElementById("edit_parque_id_cidade").value = d.idCidade;
+        document.getElementById("edit_parque_nome").value = d.nome;
+        document.getElementById("edit_parque_num_max_lugares").value = d.numMaxLugares;
+        document.getElementById("edit_parque_tipo").value = d.tipo;
+        document.getElementById("edit_parque_tarifa").value = d.tarifa;
+        document.getElementById("edit_parque_latitude").value = d.latitude;
+        document.getElementById("edit_parque_longitude").value = d.longitude;
+
+        document.getElementById("modalEditarParqueLabel").textContent = "Editar " + d.nome;
+
+        modalEditarParque.show();
+      });
+    }
+
+    // ── Botão Eliminar ──────────────────────────────────────────────────
+    const modalEliminarParqueEl = document.getElementById("modalEliminarParque");
+    if (modalEliminarParqueEl) {
+      const modalEliminarParque = new bootstrap.Modal(modalEliminarParqueEl);
+      let rowParqueParaEliminar = null;
+
+      document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".btn-eliminar-parque");
+        if (!btn) return;
+
+        document.getElementById("eliminar_parque_nome_display").textContent = btn.dataset.nome;
+        document.getElementById("eliminar_parque_id").value = btn.dataset.id;
+        rowParqueParaEliminar = btn.closest("tr");
+
+        modalEliminarParque.show();
+      });
+
+      document.getElementById("btnConfirmarEliminarParque")?.addEventListener("click", function () {
+        const parqueId = document.getElementById("eliminar_parque_id").value;
+
+        fetch(`/admin/delete-parque/${parqueId}`, { method: "POST" })
+          .then(r => r.json())
+          .then(data => {
+            modalEliminarParque.hide();
+            if (data.success) {
+              rowParqueParaEliminar?.remove();
+              rowParqueParaEliminar = null;
+              mostrarToastJS("success", data.message || "Parque eliminado com sucesso!");
+            } else {
+              mostrarToastJS("error", data.message || "Erro ao eliminar parque.");
+            }
+          })
+          .catch(() => {
+            modalEliminarParque.hide();
+            mostrarToastJS("error", "Erro de ligação ao servidor.");
+          });
+      });
+    }
+  }
 })();

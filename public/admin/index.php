@@ -8,8 +8,9 @@ require $base . '/UserController.php';
 require $base . '/RoleController.php';
 require $base . '/PosteController.php';
 require $base . '/ContentorController.php';
+require $base . '/ParqueController.php';
 
-$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // ─── PORTAL ADMIN VIEWS ───────────────────────────────────────────────────────
@@ -20,10 +21,21 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
 } elseif ($uri === '/admin/PortalADMCidade') {
     (new WebController())->adminCidade();
 
-} elseif ($uri === '/admin/PortalADMParques') {
-    (new WebController())->adminParques();
+    // ─── PARQUES ──────────────────────────────────────────────────────────────────
 
-// ─── CONTENTORES ──────────────────────────────────────────────────────────────
+} elseif ($uri === '/admin/PortalADMParques') {
+    (new ParqueController())->showPortalADMParques();
+
+} elseif ($uri === '/admin/create-parque' && $method === 'POST') {
+    (new ParqueController())->createParque();
+
+} elseif ($uri === '/admin/update-parque' && $method === 'POST') {
+    (new ParqueController())->parqueUpdate($_POST['id'] ?? null);
+
+} elseif ($method === 'POST' && preg_match('#^/admin/delete-parque/(\d+)$#', $uri, $m)) {
+    (new ParqueController())->parqueDelete((int) $m[1]);
+
+    // ─── CONTENTORES ──────────────────────────────────────────────────────────────
 
 } elseif ($uri === '/admin/PortalADMContentores') {
     (new ContentorController())->showPortalADMContentores();
@@ -35,9 +47,9 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
     (new ContentorController())->ContentorUpdate($_POST['id'] ?? null);
 
 } elseif ($method === 'POST' && preg_match('#^/admin/delete-contentor/(\d+)$#', $uri, $m)) {
-    (new ContentorController())->ContentorDelete((int)$m[1]);
+    (new ContentorController())->ContentorDelete((int) $m[1]);
 
-// ─── POSTES ───────────────────────────────────────────────────────────────────
+    // ─── POSTES ───────────────────────────────────────────────────────────────────
 
 } elseif ($uri === '/admin/PortalADMPostes') {
     (new PosteController())->showPortalADMPostes();
@@ -49,9 +61,9 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
     (new PosteController())->PosteUpdate($_POST['id'] ?? null);
 
 } elseif ($method === 'POST' && preg_match('#^/admin/delete-poste/(\d+)$#', $uri, $m)) {
-    (new PosteController())->PosteDelete((int)$m[1]);
+    (new PosteController())->PosteDelete((int) $m[1]);
 
-// ─── UTILIZADORES ─────────────────────────────────────────────────────────────
+    // ─── UTILIZADORES ─────────────────────────────────────────────────────────────
 
 } elseif ($uri === '/admin/PortalADMUtilizadores') {
     (new UserController())->showPortalADMUtilizadores();
@@ -60,7 +72,7 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
     (new UserController())->userUpdate($_POST['id'] ?? null);
 
 } elseif ($method === 'POST' && preg_match('#^/admin/delete-utilizador/(\d+)$#', $uri, $m)) {
-    (new UserController())->userDelete((int)$m[1]);
+    (new UserController())->userDelete((int) $m[1]);
 
 } else {
     http_response_code(404);
