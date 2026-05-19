@@ -6,9 +6,10 @@ $base = realpath(__DIR__ . '/../../app/controllers/');
 require $base . '/WebController.php';
 require $base . '/UserController.php';
 require $base . '/RoleController.php';
-require $base . '/PosteController.php'; // ← adicionado
+require $base . '/PosteController.php';
+require $base . '/ContentorController.php';
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // ─── PORTAL ADMIN VIEWS ───────────────────────────────────────────────────────
@@ -19,16 +20,27 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
 } elseif ($uri === '/admin/PortalADMCidade') {
     (new WebController())->adminCidade();
 
-} elseif ($uri === '/admin/PortalADMContentores') {
-    (new WebController())->adminContentores();
-
 } elseif ($uri === '/admin/PortalADMParques') {
     (new WebController())->adminParques();
+
+// ─── CONTENTORES ──────────────────────────────────────────────────────────────
+
+} elseif ($uri === '/admin/PortalADMContentores') {
+    (new ContentorController())->showPortalADMContentores();
+
+} elseif ($uri === '/admin/create-contentor' && $method === 'POST') {
+    (new ContentorController())->createContentor();
+
+} elseif ($uri === '/admin/update-contentor' && $method === 'POST') {
+    (new ContentorController())->ContentorUpdate($_POST['id'] ?? null);
+
+} elseif ($method === 'POST' && preg_match('#^/admin/delete-contentor/(\d+)$#', $uri, $m)) {
+    (new ContentorController())->ContentorDelete((int)$m[1]);
 
 // ─── POSTES ───────────────────────────────────────────────────────────────────
 
 } elseif ($uri === '/admin/PortalADMPostes') {
-    (new PosteController())->showPortalADMPostes(); // ← corrigido (era WebController)
+    (new PosteController())->showPortalADMPostes();
 
 } elseif ($uri === '/admin/create-poste' && $method === 'POST') {
     (new PosteController())->createPoste();
