@@ -1042,4 +1042,128 @@
       });
     }
   }
+
+  // ── Botão Só Críticos ─────────────────────────────────────────────────────────
+  const btnParquesCriticos = document.getElementById('btnParquesCriticos');
+  if (btnParquesCriticos) {
+    let soCriticos = false;
+    btnParquesCriticos.addEventListener('click', function () {
+      soCriticos = !soCriticos;
+      this.classList.toggle('btn-outline-danger', !soCriticos);
+      this.classList.toggle('btn-danger', soCriticos);
+      document.querySelectorAll('[data-id][data-nome]').forEach(col => {
+        const card = col.querySelector('.parque-card');
+        if (!card) return;
+        if (soCriticos) {
+          col.style.display = card.classList.contains('critico') ? '' : 'none';
+        } else {
+          col.style.display = '';
+        }
+      });
+    });
+  }
+
+  // ── Hora da última sincronização ─────────────────────────────────────────────
+  document.getElementById('parque-sync-time').textContent = new Date().toLocaleString('pt-PT');
+
+  // ── Filtros ───────────────────────────────────────────────────────────────────
+  function aplicarFiltroParques() {
+    const texto = (document.getElementById('searchParque')?.value || '').toLowerCase();
+    const tipo = document.getElementById('filtroParqueTipo')?.value || '';
+
+    document.querySelectorAll('[data-id][data-nome]').forEach(col => {
+      const matchNome = !texto || col.dataset.nome.toLowerCase().includes(texto);
+      const matchTipo = !tipo || col.dataset.tipo === tipo;
+      col.style.display = (matchNome && matchTipo) ? '' : 'none';
+    });
+  }
+
+  document.getElementById('searchParque')?.addEventListener('input', aplicarFiltroParques);
+  document.getElementById('filtroParqueTipo')?.addEventListener('change', aplicarFiltroParques);
+
+  // ── Modal Mapa ─────────────────────────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-mapa-parque');
+    if (!btn) return;
+    const lat = btn.dataset.lat;
+    const lng = btn.dataset.lng;
+    const nome = btn.dataset.nome;
+    document.getElementById('modalMapaParqueTitle').textContent = nome + ' — Localização';
+    document.getElementById('mapaParqueIframe').src =
+      `https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+  });
+
+  // ── Modal Detalhes ─────────────────────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-detalhe-parque');
+    if (!btn) return;
+    const col = btn.closest('[data-id]');
+    if (!col) return;
+
+    const nome = col.dataset.nome || '—';
+    const tipo = col.dataset.tipo || '—';
+    const lugares = col.dataset.numMaxLugares || '—';
+    const tarifa = col.dataset.tarifa || '0';
+    const lat = col.dataset.latitude || '—';
+    const lng = col.dataset.longitude || '—';
+    const tarifaStr = parseFloat(tarifa) === 0 ? 'Gratuito' : parseFloat(tarifa).toFixed(2) + ' €/h';
+
+    const tipoIconMap = { 'Coberto': 'bi-building', 'Subterrâneo': 'bi-layers-fill', 'Descoberto': 'bi-sun' };
+    const icon = tipoIconMap[tipo] || 'bi-p-circle';
+
+    document.getElementById('modalDetalheParqueTitle').textContent = nome + ' — Detalhes';
+    document.getElementById('modalDetalheParqueBody').innerHTML = `
+        <div class="text-center mb-3">
+            <div class="pkpi-icon mx-auto mb-2" style="background:#f0f3ff;color:#435ebe;width:60px;height:60px;border-radius:14px;font-size:1.8rem;display:flex;align-items:center;justify-content:center;">
+                <i class="bi ${icon}"></i>
+            </div>
+            <div style="font-size:2.8rem;font-weight:800;" class="text-primary">${lugares}</div>
+            <div class="text-muted">lugares disponíveis</div>
+        </div>
+        <table class="table table-sm table-borderless" style="font-size:0.9rem;">
+            <tr><td class="text-muted">Nome</td><td><strong>${nome}</strong></td></tr>
+            <tr><td class="text-muted">Tipo</td><td>${tipo}</td></tr>
+            <tr><td class="text-muted">Capacidade Máx.</td><td>${lugares} lugares</td></tr>
+            <tr><td class="text-muted">Tarifa</td><td><strong>${tarifaStr}</strong></td></tr>
+            <tr><td class="text-muted">Coordenadas</td><td>${lat}, ${lng}</td></tr>
+            <tr><td class="text-muted">Última sincronização</td><td><strong>${new Date().toLocaleString('pt-PT')}</strong></td></tr>
+        </table>`;
+    new bootstrap.Modal(document.getElementById('modalDetalheParque')).show();
+  });
+
+  // ── Modal Editar ──────────────────────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-editar-parque');
+    if (!btn) return;
+    const col = btn.closest('[data-id]');
+    if (!col) return;
+
+    document.getElementById('edit-parque-id').value = col.dataset.id;
+    document.getElementById('edit-parque-id-cidade').value = col.dataset.idCidade;
+    document.getElementById('edit-parque-nome').value = col.dataset.nome;
+    document.getElementById('edit-parque-num-max-lugares').value = col.dataset.numMaxLugares;
+    document.getElementById('edit-parque-tipo').value = col.dataset.tipo;
+    document.getElementById('edit-parque-tarifa').value = col.dataset.tarifa;
+    document.getElementById('edit-parque-latitude').value = col.dataset.latitude;
+    document.getElementById('edit-parque-longitude').value = col.dataset.longitude;
+  });
+
+  // ── Eliminar parque (AJAX) ────────────────────────────────────────────────────
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-eliminar-parque');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    if (!confirm(`Tem a certeza que deseja eliminar o parque #${id}?`)) return;
+
+    fetch(`/admin/delete-parque/${id}`, { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          btn.closest('[data-id]')?.remove();
+        } else {
+          alert('Erro: ' + data.message);
+        }
+      })
+      .catch(() => alert('Erro de comunicação com o servidor.'));
+  });
 })();

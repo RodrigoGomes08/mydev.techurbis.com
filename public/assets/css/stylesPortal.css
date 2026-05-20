@@ -483,6 +483,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -496,70 +497,141 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
 }
-.pkpi-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.08); }
-.pkpi-icon {
-    width:44px; height:44px; border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.3rem; flex-shrink:0;
+
+.pkpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
-.pkpi-value { font-size:1.5rem; font-weight:700; line-height:1; }
-.pkpi-label { font-size:0.75rem; color:#7b8190; margin-top:2px; }
+
+.pkpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.pkpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pkpi-label {
+    font-size: 0.75rem;
+    color: #7b8190;
+    margin-top: 2px;
+}
 
 /* ── Card do parque ───────────────────────────────── */
 .parque-card {
     background: white;
     border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
     border-top: 4px solid #e6e9f0;
     overflow: hidden;
     transition: all 0.3s ease;
     height: 100%;
 }
-.parque-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.1); }
-.parque-card.critico { border-top-color: #e74c3c; }
-.parque-card.atencao  { border-top-color: #f39c12; }
-.parque-card.normal   { border-top-color: #2ecc71; }
+
+.parque-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+.parque-card.critico {
+    border-top-color: #e74c3c;
+}
+
+.parque-card.atencao {
+    border-top-color: #f39c12;
+}
+
+.parque-card.normal {
+    border-top-color: #2ecc71;
+}
 
 .parque-card-header {
     padding: 1.25rem 1.25rem 0.75rem;
     border-bottom: 1px solid #f0f0f0;
 }
+
 .parque-titulo {
-    font-weight: 700; font-size: 1rem; color: #2c3e50;
-    display: flex; align-items: center; justify-content: space-between;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
 .parque-subtitulo {
-    font-size: 0.8rem; color: #7b8190; margin-top: 2px;
-    display: flex; align-items: center; gap: 6px;
+    font-size: 0.8rem;
+    color: #7b8190;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* Ocupação grande */
 .parque-ocupacao-wrap {
     padding: 1rem 1.25rem 0.5rem;
 }
+
 .parque-pct-num {
-    font-size: 2.2rem; font-weight: 800; line-height: 1;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
 }
-.parque-pct-num.critico { color: #e74c3c; }
-.parque-pct-num.atencao  { color: #f39c12; }
-.parque-pct-num.normal   { color: #2ecc71; }
+
+.parque-pct-num.critico {
+    color: #e74c3c;
+}
+
+.parque-pct-num.atencao {
+    color: #f39c12;
+}
+
+.parque-pct-num.normal {
+    color: #2ecc71;
+}
 
 .parque-prog {
-    height: 10px; border-radius: 20px; background: #eef1f6;
-    margin: 0.5rem 0 0.25rem; overflow: hidden;
+    height: 10px;
+    border-radius: 20px;
+    background: #eef1f6;
+    margin: 0.5rem 0 0.25rem;
+    overflow: hidden;
 }
+
 .parque-prog-bar {
-    height: 100%; border-radius: 20px; transition: width 0.6s ease;
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.6s ease;
 }
-.parque-prog-bar.critico { background: linear-gradient(90deg,#e74c3c,#c0392b); }
-.parque-prog-bar.atencao  { background: linear-gradient(90deg,#f1c40f,#f39c12); }
-.parque-prog-bar.normal   { background: linear-gradient(90deg,#2ecc71,#27ae60); }
+
+.parque-prog-bar.critico {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.parque-prog-bar.atencao {
+    background: linear-gradient(90deg, #f1c40f, #f39c12);
+}
+
+.parque-prog-bar.normal {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
 
 .parque-lugares-label {
-    font-size:0.78rem; color:#7b8190;
+    font-size: 0.78rem;
+    color: #7b8190;
 }
 
 /* Grid info */
@@ -570,44 +642,115 @@ body {
     padding: 0.75rem 1.25rem;
     border-top: 1px solid #f0f0f0;
 }
+
 .parque-info-item {
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
-.parque-info-label { font-size: 0.72rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
-.parque-info-value { font-size: 0.88rem; font-weight: 600; color: #2c3e50; margin-top: 1px; }
+
+.parque-info-label {
+    font-size: 0.72rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.parque-info-value {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-top: 1px;
+}
 
 /* Tags especiais */
 .parque-tags {
-    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
     padding: 0 1.25rem 0.75rem;
 }
+
 .parque-tag {
-    font-size:0.73rem; padding:2px 9px; border-radius:20px;
-    background:#f0f3ff; color:#435ebe; font-weight:600;
-    display:flex; align-items:center; gap:3px;
+    font-size: 0.73rem;
+    padding: 2px 9px;
+    border-radius: 20px;
+    background: #f0f3ff;
+    color: #435ebe;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
-.parque-tag.ev    { background:#e6f9ef; color:#27ae60; }
-.parque-tag.mr    { background:#fff4e0; color:#f39c12; }
-.parque-tag.tipo  { background:#f0f3ff; color:#435ebe; }
+
+.parque-tag.ev {
+    background: #e6f9ef;
+    color: #27ae60;
+}
+
+.parque-tag.mr {
+    background: #fff4e0;
+    color: #f39c12;
+}
+
+.parque-tag.tipo {
+    background: #f0f3ff;
+    color: #435ebe;
+}
 
 /* Ações */
 .parque-actions {
     padding: 0.75rem 1.25rem 1.25rem;
-    display: flex; gap: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
     border-top: 1px solid #f0f0f0;
 }
-.parque-actions .btn { font-size: 0.8rem; flex: 1; }
+
+.parque-actions .btn {
+    font-size: 0.8rem;
+    flex: 1;
+}
 
 /* Alerta inline */
 .parque-alerta {
     margin: 0 1.25rem 0.75rem;
-    font-size: 0.78rem; background: #fde8e8; color: #e74c3c;
-    border-radius: 8px; padding: 6px 10px;
-    display: flex; align-items: center; gap: 5px;
+    font-size: 0.78rem;
+    background: #fde8e8;
+    color: #e74c3c;
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
+
 .parque-alerta.atencao {
-    background: #fff4e0; color: #f39c12;
+    background: #fff4e0;
+    color: #f39c12;
 }
 
 /* Ocultos por filtro */
-.parque-col-oculto { display: none !important; }
+.parque-col-oculto {
+    display: none !important;
+}
+
+/* ========================= PARQUES — GRUPO CIDADE ========================= */
+.grupo-cidade>button {
+    transition: all 0.2s ease;
+}
+
+.grupo-cidade>button:hover {
+    background: #f0f3ff !important;
+    border-color: var(--primary-color) !important;
+}
+
+.grupo-cidade>button[aria-expanded="true"] {
+    background: #eef1ff !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* ========================= PARQUES — ALERTAS ZONA ========================= */
+#alertasParques .alert {
+    border-radius: 10px;
+    font-size: 0.88rem;
+}
