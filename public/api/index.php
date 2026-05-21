@@ -28,13 +28,14 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
         "message" => "id e nome são obrigatórios"
     ], 200);
     exit;
-
+} elseif ($uri === '/signup' && $method === 'POST') {
+    (new AuthController())->singupApi();
 } elseif ($uri === '/login' && $method === 'POST') {
     (new AuthController())->loginApi();
-} elseif ($uri === '/home' && $method === 'GET') {
+}elseif ($uri === '/home' && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
     // Só posso fazer com token válido
-    $users = (new UserController())->getAllDataToHome($dataToken->id);
+    //$users = (new UserController())->getAllDataToHome($dataToken->id);
 } else {
 
     $dataResponse = [

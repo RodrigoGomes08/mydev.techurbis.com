@@ -143,37 +143,37 @@ class UserController
     exit;
 }
 
-public function getAllDataToHome($userId)
-    {
-        try {
-            $users = (new UserDAO())->arrayUsersDAO();
-            $emailVerifications = (new EmailVerificationDAO())->getEmailVerificationsByUserId($userId);
-            // Contar os users
-            $countUsers = (new UserDAO()->countUsersDAO());
+// public function getAllDataToHome($userId)
+//     {
+//         try {
+//             $users = (new UserDAO())->arrayUsersDAO();
+//             $emailVerifications = (new EmailVerificationDAO())->getEmailVerificationsByUserId($userId);
+//             // Contar os users
+//             $countUsers = (new UserDAO()->countUsersDAO());
 
-            $dataResponse = [
-                'success' => true,
-                'message' => "Operação realizada com sucesso.",
-                'data' => [
-                    'users' => $users,
-                    'emails_verifification' => $emailVerifications,
-                    'num_utilizadore' => 10,
-                    'num_emails' => 10
-                ]
-            ];
+//             $dataResponse = [
+//                 'success' => true,
+//                 'message' => "Operação realizada com sucesso.",
+//                 'data' => [
+//                     'users' => $users,
+//                     'emails_verifification' => $emailVerifications,
+//                     'num_utilizadore' => 10,
+//                     'num_emails' => 10
+//                 ]
+//             ];
 
-            Utils::jsonResponse($dataResponse, 200);
+//             Utils::jsonResponse($dataResponse, 200);
 
-        } catch (Exception $e) {
-            $dataResponse = [
-                'success' => false,
-                'message' => $e->getMessage(),
-                'data' => []
-            ];
+//         } catch (Exception $e) {
+//             $dataResponse = [
+//                 'success' => false,
+//                 'message' => $e->getMessage(),
+//                 'data' => []
+//             ];
 
-            Utils::jsonResponse($dataResponse, 401);
+//             Utils::jsonResponse($dataResponse, 401);
 
-            exit;
-        }
-    }
+//             exit;
+//         }
+//     }
 }

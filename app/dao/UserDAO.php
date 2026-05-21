@@ -178,17 +178,17 @@ class UserDAO
         return $resul;
     }
 
-    public function countUsersDAO()
-    {
-        $sql = "
-    SELECT COUNT(*) FROM users;
-    ";
+    // public function countUsersDAO()
+    // {
+    //     $sql = "
+    // SELECT COUNT(*) FROM users;
+    // ";
 
-        $stmt = $this->conn->prepare($sql);
+    //     $stmt = $this->conn->prepare($sql);
 
-        $stmt->execute();
+    //     $stmt->execute();
 
-        $numUsers = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $numUsers;
-    }
+    //     $numUsers = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     return $numUsers;
+    // }
 }
