@@ -43,8 +43,8 @@ $lastSync = date('d/m/Y H:i:s');
                 <button class="btn btn-outline-danger btn-sm" id="btnContCriticos">
                     <i class="bi bi-exclamation-triangle me-1"></i>Só Críticos
                 </button>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCriarContentor">
-                    <i class="bi bi-plus-lg me-1"></i>Novo Contentor
+                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCriarContentor">
+                    <i class="bi bi-plus-lg me-1"></i>Adicionar Contentor
                 </button>
             </div>
         </div>
@@ -204,7 +204,8 @@ $lastSync = date('d/m/Y H:i:s');
                                     <div class="modal-content">
                                         <div class="modal-header" style="background:var(--primary-gradient);color:white;">
                                             <h5 class="modal-title"><i class="bi bi-geo-alt me-2"></i>Localização —
-                                                <?= htmlspecialchars($c->getIdentificacao()) ?></h5>
+                                                <?= htmlspecialchars($c->getIdentificacao()) ?>
+                                            </h5>
                                             <button type="button" class="btn-close btn-close-white"
                                                 data-bs-dismiss="modal"></button>
                                         </div>

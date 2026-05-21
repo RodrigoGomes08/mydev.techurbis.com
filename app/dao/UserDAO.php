@@ -95,10 +95,10 @@ class UserDAO
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             'id_role' => (int) $id_role,
-            'nome'    => $nome,
-            'morada'  => $morada,
-            'email'   => $email,
-            'password'=> $passwordHash,
+            'nome' => $nome,
+            'morada' => $morada,
+            'email' => $email,
+            'password' => $passwordHash,
         ]);
 
         return (int) $this->conn->lastInsertId();
@@ -154,7 +154,8 @@ class UserDAO
         $stmt->execute([$passwordHash, $userId]);
     }
 
-    public function userUpdateDAO($id,$id_role, $nome, $data_nascimento, $telefone, $morada, $email, $ativo, $tem_mobilidade_reduzida){
+    public function userUpdateDAO($id, $id_role, $nome, $data_nascimento, $telefone, $morada, $email, $ativo, $tem_mobilidade_reduzida)
+    {
         $sql = "UPDATE users SET nome = ?, email = ?, id_role = ?, data_nascimento = ?, telefone = ?, morada = ?, ativo = ?, tem_mobilidade_reduzida = ? WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
@@ -165,7 +166,8 @@ class UserDAO
         return $result;
     }
 
-    public function userDeleteDAO($userId){
+    public function userDeleteDAO($userId)
+    {
         $sql = "DELETE FROM users WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
@@ -174,5 +176,19 @@ class UserDAO
         $resul = $stmt->rowCount();
 
         return $resul;
+    }
+
+    public function countUsersDAO()
+    {
+        $sql = "
+    SELECT COUNT(*) FROM users;
+    ";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute();
+
+        $numUsers = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $numUsers;
     }
 }
