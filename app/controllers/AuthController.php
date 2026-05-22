@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . "/../config/DatabaseSingle.php";
 require_once __DIR__ . '/../dao/UserDao.php';
 //require_once __DIR__ . '/../dao/EmailVerificationDao.php';
 
@@ -120,6 +120,42 @@ class AuthController
         $_SESSION['flash_success'] = "Conta criada. Enviámos um email para verificares (link expira em 5 min).";
         header("Location: /login");
         exit;
+    }
+
+    public function singupApi()
+    {
+        $pdo = DataBaseSingle::connect();
+
+        $pdo->beginTransaction();
+
+        try {
+            $nome = trim($_POST['nome'] ?? '');
+            $dataNascimento = trim($_POST['data_nascimento'] ?? '');
+            $telefone = trim($_POST['telefone'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+            $morada = trim($_POST['morada'] ?? '');
+            $tem_mobilidade_reduzida = trim($_POST['tem_mobilidade_reduzida'] ?? '');
+
+            if ($nome === '' || $dataNascimento === '' || $telefone === '' || $email === '' || $password === '' || $morada === '' || $tem_mobilidade_reduzida === '') {
+                throw new Exception("Todos os dados são obrigatórios.");
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Email inválido.");
+            }
+
+            $userDao = new UserDAO();
+
+            if ($userDao->findByEmail($email)) {
+                throw new Exception("Já existe conta com este email.");
+            }
+
+            //-------------:)
+
+        } catch (Exception $e) {
+            echo ('olá');
+        }
     }
 
     public function verifyEmailForm()

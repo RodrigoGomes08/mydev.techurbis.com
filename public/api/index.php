@@ -1,12 +1,11 @@
 <?php
-
 require __DIR__ . '/../../vendor/autoload.php';
 
 
 require_once __DIR__ . "/../../app/utils/Utils.php";
 require_once __DIR__ . "/../../app/controllers/AuthController.php";
-require_once __DIR__ . "/../../app/controllers/UserController.php";
-require_once __DIR__ . "/../../app/middleware/AuthMiddlewareAPI.php";
+//require_once __DIR__ . "/../../app/controllers/UserController.php";
+//require_once __DIR__ . "/../../app/middleware/AuthMiddlewareAPI.php";
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -20,6 +19,8 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = str_replace("/api", "", $uri);
 //var_dump($uri);
 $method = $_SERVER['REQUEST_METHOD'];
+
+
 
 if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
