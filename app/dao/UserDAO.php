@@ -104,7 +104,7 @@ class UserDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function createPending($username, $email)
+    public function createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, $ativo, $tem_mobilidade_reduzida)
     {
         $sql = "
             INSERT INTO users
@@ -122,19 +122,28 @@ class UserDAO
             ) VALUES (
                 NULL,
                 2,
-                :username,
-                '2000-01-01',
-                '000000000',
-                'N/A',
+                :nome,
+                :data_nascimento,
+                :telefone,
+                :morada,
                 :email,
-                '',
-                0,
-                0
+                :password,
+                :ativo,
+                :tem_mobilidade_reduzida
             )
         ";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['username' => $username, 'email' => $email]);
+        $stmt->execute([
+            'nome' => $nome,
+            'data_nascimento' => $dataNascimento,
+            'telefone' => $telefone,
+            'morada' => $morada,
+            'email' => $email,
+            'password' => $password,
+            'ativo' => $ativo,
+            'tem_mobilidade_reduzida' => $tem_mobilidade_reduzida
+        ]);
 
         return (int) $this->conn->lastInsertId();
     }

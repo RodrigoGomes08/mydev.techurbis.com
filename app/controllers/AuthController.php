@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . "/../config/DatabaseSingle.php";
 require_once __DIR__ . '/../dao/UserDao.php';
-//require_once __DIR__ . '/../dao/EmailVerificationDao.php';
+require_once __DIR__ . '/../dao/EmailVerificationDao.php';
+require_once __DIR__ . '/../services/MyMailerService.php';
 
 
 class AuthController
@@ -124,7 +125,7 @@ class AuthController
 
     public function singupApi()
     {
-        $pdo = DataBaseSingle::connect();
+        $pdo = DatabaseSingle::connect();
 
         $pdo->beginTransaction();
 
@@ -153,8 +154,52 @@ class AuthController
 
             //-------------:)
 
+            $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, 0,  $tem_mobilidade_reduzida);
+                
+            $verDao = new EmailVerificationDAO();
+            $token = $verDao->createForUser($userId, 300);
+
+            // 3) baseUrl dinâmico (vhosts)
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $baseUrl = $scheme . '://' . $host;
+
+            // 4) link para clicar no email
+            $link = $baseUrl . "/verify-email?token=" . urlencode($token);
+
+            // 5) envia email via Mailer (PHPMailer/Mailtrap)
+            $subject = "Verifica o teu email (expira em 5 min)";
+            $html = "
+          <div style='font-family: Arial, sans-serif;'>
+            <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
+            <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
+            <p><a href='{$link}'>{$link}</a></p>
+            <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
+          </div>
+        ";
+
+            (new MyMailerService())->send($email, $subject, $html);
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Signup realizado com sucesso',
+                'data' => [],
+            ];
+
+            $pdo->commit();
+
+            Utils::jsonResponse($responseData, 200);
+
         } catch (Exception $e) {
-            echo ('olá');
+            $pdo->rollback();
+
+            $responseData = [
+                'success' => false,
+                'message' => 'Erro ao efetuar a operação.',
+                'data' => [],
+            ];
+
+            Utils::jsonResponse($responseData, 400);
         }
     }
 
