@@ -1,6 +1,7 @@
 {
   "require": {
-    "firebase/php-jwt": "6.x-dev"
+    "firebase/php-jwt": "6.x-dev",
+    "phpmailer/phpmailer": "^7.1"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

@@ -69,11 +69,11 @@ class AuthController
          * @TODO validar se existe utilizador logado
          */
 
-        $username = trim($_POST["username"] ?? '');
+        $nome = trim($_POST["nome"] ?? '');
         $email = trim($_POST["email"] ?? '');
         $password = trim($_POST["password"] ?? '');
 
-        if ($username === '' || $email === '') {
+        if ($nome === '' || $email === '') {
             die("Todos os campos são obrigatórios");
         }
 
@@ -90,7 +90,7 @@ class AuthController
         //Criar um utilizador no estad o pendente
         $userDAO = new UserDAO();
 
-        $userId = $userDAO->createPending($username, $email);
+        $userId = $userDAO->createPending($nome, $email);
 
         $verDAO = new emailVerificationDAO();
 
@@ -108,7 +108,7 @@ class AuthController
         $subject = "Verifica o teu email (expira em 5 min)";
         $html = "
             <div style='font-family: Arial, sans-serif;'>
-            <h2>Olá, " . htmlspecialchars($username) . "!</h2>
+            <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
             <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
             <p><a href='{$link}'>{$link}</a></p>
             <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
