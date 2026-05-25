@@ -1,8 +1,16 @@
 <?php
 require_once __DIR__ . "/../config/DatabaseSingle.php";
+require_once __DIR__ . "/../utils/Utils.php";
 require_once __DIR__ . '/../dao/UserDao.php';
 require_once __DIR__ . '/../dao/EmailVerificationDao.php';
+require_once __DIR__ . "/../config/jwtConfig.php";
 require_once __DIR__ . '/../services/MyMailerService.php';
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\BeforeValidException;
 
 
 class AuthController
@@ -61,6 +69,41 @@ class AuthController
         header("Location: /admin/");
 
     }
+
+    public function loginApi()
+{
+    $email = $_POST["email"] ?? null;
+    $password = $_POST["password"] ?? null;
+
+    $user = (new UserDAO())->findByEmail($email);
+
+    if (!$user || !password_verify($password, $user['password'])) {
+        echo json_encode(["error" => "login inválido"]);
+        return;
+    }
+
+    $payload = [
+        "iat" => time(),
+        "exp" => time() + 3600,
+        "data" => [
+            "id" => $user['id'],
+            "role" => $user['id_role'] === 1 ? 'admin' : 'user',
+        ]
+    ];
+
+    $jwt = JWT::encode($payload, JwtConfig::$secret, 'HS256');
+
+    $responseData = [
+        'success' => true,
+        'message' => 'Login realizado com sucesso',
+        'data' => [
+            'user' => $user,
+            'jwt' => $jwt
+        ],
+    ];
+
+    Utils::jsonResponse($responseData, 200);
+}
 
     public function signupWeb()
     {
@@ -154,8 +197,8 @@ class AuthController
 
             //-------------:)
 
-            $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, 0,  $tem_mobilidade_reduzida);
-                
+            $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, 0, $tem_mobilidade_reduzida);
+
             $verDao = new EmailVerificationDAO();
             $token = $verDao->createForUser($userId, 300);
 
