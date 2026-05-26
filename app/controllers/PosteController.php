@@ -129,4 +129,23 @@ class PosteController
     }
     exit;
 }
+
+// API
+public function posteListApi()
+    {
+        // if (empty($_SESSION['token'])) {
+        //     header("Location: /login");
+        //     exit;
+        // }
+
+        $posteDAO = new PosteDAO();
+        $postes = $posteDAO->getAllPostes();
+
+        
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Lista de postes obtida com sucesso.',
+            'data' => $postes
+        ]);
+    }
 }
