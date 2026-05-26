@@ -9,6 +9,7 @@ require_once __DIR__ . "/../../app/middleware/AuthMiddlewareAPI.php";
 require_once __DIR__ . "/../../app/controllers/ContentorController.php";
 require_once __DIR__ . "/../../app/controllers/PosteController.php";
 require_once __DIR__ . "/../../app/controllers/ParqueController.php";
+require_once __DIR__ . "/../../app/controllers/SensorController.php";
 
 
 use Firebase\JWT\JWT;
@@ -57,6 +58,12 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 } elseif($uri === '/parquesDetails' && $method === 'GET'){
     AuthMiddlewareApi::check();
     (new ParqueController())->parqueDetailsApi();
+} elseif ($uri === '/sensores' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    (new SensorController())->sensorListApi();
+} elseif($uri === '/sensoresDetails' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    (new SensorController())->sensorDetailsApi();
 } elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->valorSensorTemp();
