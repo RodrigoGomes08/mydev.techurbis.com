@@ -1,5 +1,19 @@
 <?php
 
-class JwtConfig {
-    public static $secret = "chave_super_secreta_com_32_ou_mais_caracteres_aqui";
+class JwtConfig
+{
+
+    public static function getSignature()
+    {
+        return "FCP";
+    }
+
+    public static function getConfig($data)
+    {
+        return [
+            'iat' => time(),
+            'exp' => time() + 3600,
+            "data" => $data
+        ];
+    }
 }
