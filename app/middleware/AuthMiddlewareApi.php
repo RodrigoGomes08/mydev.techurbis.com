@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../config/JwtConfig.php";
+require_once __DIR__ . "/../config/jwtConfig.php";
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -35,7 +35,7 @@ class AuthMiddlewareAPI
 
             $decoded = JWT::decode(
                 $token,
-                new Key(JwtConfig::getSignature(), 'HS256')
+                new Key(JwtConfig::$secret, 'HS256')
             );
 
             return $decoded->data;

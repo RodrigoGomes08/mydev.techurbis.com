@@ -4,8 +4,12 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 require_once __DIR__ . "/../../app/utils/Utils.php";
 require_once __DIR__ . "/../../app/controllers/AuthController.php";
-//require_once __DIR__ . "/../../app/controllers/UserController.php";
+require_once __DIR__ . "/../../app/controllers/UserController.php";
 require_once __DIR__ . "/../../app/middleware/AuthMiddlewareAPI.php";
+require_once __DIR__ . "/../../app/dao/ContentorDAO.php";
+require_once __DIR__ . "/../../app/dao/PosteDAO.php";
+require_once __DIR__ . "/../../app/dao/ParqueDAO.php";
+
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -36,15 +40,14 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
     // Só posso fazer com token válido
     //$users = (new UserController())->getAllDataToHome($dataToken->id);
 } elseif ($uri === '/contentores' && $method === 'GET'){
-    var_dump("contentor");
     AuthMiddlewareApi::check();
-    (new ContentorController())->contentorListApi();
+    (new ContentorController())->ContentorListApi();
 } elseif ($uri === '/postes' && $method === 'GET') {
     AuthMiddlewareApi::check();
-    (new PosteController())->posteListApi();
+    (new PosteController())->PosteListApi();
 } elseif ($uri === '/parques' && $method === 'GET'){
     AuthMiddlewareApi::check();
-    var_dump("parques");
+    (new ParqueController())->ParqueListApi();
 }
 
 

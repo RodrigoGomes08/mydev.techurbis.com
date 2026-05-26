@@ -105,4 +105,6 @@ class ContentorDAO
 
         return $stmt->rowCount();
     }
+
+    
 }
