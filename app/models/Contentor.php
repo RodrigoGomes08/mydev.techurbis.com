@@ -1,6 +1,6 @@
 <?php
 
-class Contentor
+class Contentor implements JsonSerializable
 {
     // =========================
     // ATRIBUTOS
@@ -48,6 +48,22 @@ class Contentor
     // =========================
     // GETTERS E SETTERS
     // =========================
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'id' => $this->id,
+            'id_cidade' => $this->id_cidade,
+            'id_estado' => $this->id_estado,
+            'capacidade_max' => $this->capacidade_max,
+            'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
+            'tipo' => $this->tipo,
+            'identificacao' => $this->identificacao,
+            'observacao' => $this->observacao,
+            'is_full' => $this->is_full,
+        ];
+    }
 
     // ID
     public function getId(): int

@@ -137,7 +137,21 @@ class ContentorController
 
     public function contentorListApi(): void
     {
-        $contentores = (new ContentorDAO())->findAll();
+        // if (empty($_SESSION['token'])) {
+        //     header("Location: /login");
+        //     exit;
+        // }
+
+        $contentorDAO = new ContentorDAO();
+        $contentores = $contentorDAO->getAllContentores();
+
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Lista de contentores obtida com sucesso.',
+            'data' => $contentores
+        ]);
     }
+
+    
     
 }
