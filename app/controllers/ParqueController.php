@@ -135,4 +135,23 @@ class ParqueController
         }
         exit;
     }
+
+    // API
+    public function parqueListApi()
+    {
+        // if (empty($_SESSION['token'])) {
+        //     header("Location: /login");
+        //     exit;
+        // }
+
+        $parqueDAO = new ParqueDAO();
+        $parques = $parqueDAO->getAllParques();
+        var_dump($parques);
+
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Lista de parques obtida com sucesso.',
+            'data' => $parques
+        ]);
+    }
 }
