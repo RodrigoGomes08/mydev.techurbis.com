@@ -37,20 +37,36 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
     (new AuthController())->loginApi();
 } elseif ($uri === '/home' && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
-    // Só posso fazer com token válido
-    //$users = (new UserController())->getAllDataToHome($dataToken->id);
+    $valorTemp = (new SensorController())->valorSensorTemp();
+    $valorHum = (new SensorController())->valorSensorHum();
 } elseif ($uri === '/contentores' && $method === 'GET'){
     AuthMiddlewareApi::check();
     (new ContentorController())->contentorListApi();
+} elseif($uri === '/contentoresDetails' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    (new ContentorController())->contentorDetailsApi();
 } elseif ($uri === '/postes' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new PosteController())->posteListApi();
+} elseif($uri === '/postesDetails' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    (new PosteController())->posteDetailsApi();
 } elseif ($uri === '/parques' && $method === 'GET'){
     AuthMiddlewareApi::check();
     (new ParqueController())->parqueListApi();
-    //var_dump($data);
+} elseif($uri === '/parquesDetails' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    (new ParqueController())->parqueDetailsApi();
+} elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new SensorController())->valorSensorTemp();
+} elseif ($uri === '/sensor/valor-hum' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new SensorController())->valorSensorHum();
+} elseif ($uri === '/sensor/valor-distancia' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    (new SensorController())->valorSensorDistancia();
 }
-
 
 
 
