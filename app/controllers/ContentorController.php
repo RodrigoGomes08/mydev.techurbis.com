@@ -135,5 +135,9 @@ class ContentorController
         exit;
     }
 
+    public function contentorListApi(): void
+    {
+        $contentores = (new ContentorDAO())->findAll();
+    }
     
 }

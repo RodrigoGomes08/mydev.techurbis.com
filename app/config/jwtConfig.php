@@ -2,18 +2,6 @@
 
 class JwtConfig
 {
-
-    public static function getSignature()
-    {
-        return "FCP";
-    }
-
-    public static function getConfig($data)
-    {
-        return [
-            'iat' => time(),
-            'exp' => time() + 3600,
-            "data" => $data
-        ];
-    }
+    public static $secret = "SUPER_SECRET_KEY_COM_32_OU_MAIS_CARATERES";
 }
+
