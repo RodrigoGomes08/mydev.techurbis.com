@@ -246,6 +246,13 @@ class AuthController
         }
     }
 
+    // ------------------------------
+    // API dos Postes
+    // ------------------------------
+    public function listaPosteWeb() {
+        
+    }
+
     public function verifyEmailForm()
     {
         $token = $_GET['token'] ?? '';
@@ -255,7 +262,7 @@ class AuthController
             exit();
         }
 
-        // TOken válido
+        // Token válido
         $this->view('verify-email', [
             'token' => $token,
             'userId' => 1

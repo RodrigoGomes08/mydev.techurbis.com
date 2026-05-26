@@ -4,6 +4,9 @@ require_once __DIR__ . '/../dao/PosteDAO.php';
 
 class PosteController
 {
+
+    
+
     private function view($name, $data = [])
     {
         extract($data, EXTR_SKIP);

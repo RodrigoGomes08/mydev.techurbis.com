@@ -5,7 +5,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . "/../../app/utils/Utils.php";
 require_once __DIR__ . "/../../app/controllers/AuthController.php";
 //require_once __DIR__ . "/../../app/controllers/UserController.php";
-//require_once __DIR__ . "/../../app/middleware/AuthMiddlewareAPI.php";
+require_once __DIR__ . "/../../app/middleware/AuthMiddlewareAPI.php";
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -20,8 +20,6 @@ $uri = str_replace("/api", "", $uri);
 //var_dump($uri);
 $method = $_SERVER['REQUEST_METHOD'];
 
-
-
 if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
     Utils::jsonResponse([
@@ -33,11 +31,28 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
     (new AuthController())->singupApi();
 } elseif ($uri === '/login' && $method === 'POST') {
     (new AuthController())->loginApi();
-}elseif ($uri === '/home' && $method === 'GET') {
+} elseif ($uri === '/home' && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
     // Só posso fazer com token válido
     //$users = (new UserController())->getAllDataToHome($dataToken->id);
-} else {
+} elseif ($uri === '/contentores' && $method === 'GET'){
+    var_dump("contentor");
+    AuthMiddlewareApi::check();
+    (new ContentorController())->contentorListApi();
+} elseif ($uri === '/postes' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new PosteController())->posteListApi();
+} elseif ($uri === '/parques' && $method === 'GET'){
+    AuthMiddlewareApi::check();
+    var_dump("parques");
+}
+
+
+
+
+
+
+else {
 
     $dataResponse = [
         'success' => false,

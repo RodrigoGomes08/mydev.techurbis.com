@@ -35,11 +35,11 @@ class ContentorController
         $id = trim($_POST['id'] ?? '');
         $id_cidade = trim($_POST['id_cidade'] ?? '');
         $id_estado = trim($_POST['id_estado'] ?? '');
-        $capacidade_max = trim($_POST['capacidade_max'] ??'');
+        $capacidade_max = trim($_POST['capacidade_max'] ?? '');
         $longitude = trim($_POST['longitude'] ?? '');
         $latitude = trim($_POST['latitude'] ?? '');
         $tipo = trim($_POST['tipo'] ?? '');
-        $identificacao = trim($_POST['identificacao'] ??'');
+        $identificacao = trim($_POST['identificacao'] ?? '');
         $observacao = trim($_POST['observacao'] ?? '');
 
         if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
@@ -117,20 +117,23 @@ class ContentorController
         exit;
     }
 
-    public function ContentorDelete($contentorId) {
-    header('Content-Type: application/json');
-    try {
-        $linhasAlteradas = (new ContentorDAO())->contentorDeleteDAO($contentorId);
+    public function ContentorDelete($contentorId)
+    {
+        header('Content-Type: application/json');
+        try {
+            $linhasAlteradas = (new ContentorDAO())->contentorDeleteDAO($contentorId);
 
-        if (!$linhasAlteradas) {
-            echo json_encode(['success' => false, 'message' => 'Contentor não encontrado.']);
-        } else {
-            echo json_encode(['success' => true, 'message' => 'Contentor eliminado com sucesso!']);
+            if (!$linhasAlteradas) {
+                echo json_encode(['success' => false, 'message' => 'Contentor não encontrado.']);
+            } else {
+                echo json_encode(['success' => true, 'message' => 'Contentor eliminado com sucesso!']);
+            }
+
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
     }
-    exit;
-}
+
+    
 }
