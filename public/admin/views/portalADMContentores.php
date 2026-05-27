@@ -66,7 +66,7 @@ $lastSync = date('d/m/Y H:i:s');
                     <div class="pkpi-icon" style="background:#fde8e8;color:#e74c3c;"><i
                             class="bi bi-exclamation-triangle-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-danger"><?= $totalCriticos ?></div>
+                        <div class="pkpi-value text-danger"><?= $numContentorPorEstado['contentores_criticos'] ?></div>
                         <div class="pkpi-label">Críticos (Cheios)</div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ $lastSync = date('d/m/Y H:i:s');
                     <div class="pkpi-icon" style="background:#fff4e0;color:#f39c12;"><i
                             class="bi bi-dash-circle-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-warning"><?= $totalAtencao ?></div>
+                        <div class="pkpi-value text-warning"><?= $numContentorPorEstado['contentores_em_atencao'] ?></div>
                         <div class="pkpi-label">Em Atenção</div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ $lastSync = date('d/m/Y H:i:s');
                     <div class="pkpi-icon" style="background:#e6f9ef;color:#27ae60;"><i
                             class="bi bi-check-circle-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-success"><?= $totalNormal ?></div>
+                        <div class="pkpi-value text-success"><?= $numContentorPorEstado['contentores_normais'] ?></div>
                         <div class="pkpi-label">Normais</div>
                     </div>
                 </div>
@@ -148,10 +148,10 @@ $lastSync = date('d/m/Y H:i:s');
                         <?php foreach ($cidade['contentores'] as $item):
                             $c = $item['obj'];
                             $estado = $item['estado'];
-                            $corPonto = match ($estado) { 'critico' => '#e74c3c', 'atencao' => '#f39c12', default => '#2ecc71'};
-                            $labelEstado = match ($estado) { 'critico' => 'Cheio', 'atencao' => 'Atenção', default => 'Normal'};
-                            $tagClass = match ($estado) { 'critico' => '', 'atencao' => 'mr', default => 'ev'};
-                            $barPct = match ($estado) { 'critico' => 100, 'atencao' => 65, default => 30};
+                            $corPonto = match ($c->estado['nome']) { 'critico' => '#e74c3c', 'atencao' => '#f39c12', default => '#2ecc71'};
+                            $labelEstado = match ($c->estado['nome']) { 'critico' => 'Cheio', 'atencao' => 'Atenção', default => 'Normal'};
+                            $tagClass = match ($c->estado['nome']) { 'critico' => '', 'atencao' => 'mr', default => 'ev'};
+                            $barPct = match ($c->estado['nome']) { 'critico' => 100, 'atencao' => 65, default => 30};
                             $mMapaId = 'modalMapa_' . $c->getId();
                             $mEditId = 'modalEdit_' . $c->getId();
                             $mDeleteId = 'modalDelete_' . $c->getId();
@@ -168,13 +168,13 @@ $lastSync = date('d/m/Y H:i:s');
                                         </div>
                                         <div class="parque-subtitulo">
                                             <i class="bi bi-circle-fill" style="color:<?= $corPonto ?>;font-size:0.5rem;"></i>
-                                            <?= $labelEstado ?>
+                                            <?= $c->estado['nome'] ?>
                                         </div>
                                     </div>
                                     <div class="parque-ocupacao-wrap">
-                                        <div class="parque-pct-num <?= $estado ?>"><?= $labelEstado ?></div>
+                                        <div class="parque-pct-num <?=  $c->estado['nome'] ?>"><?=  $c->estado['nome'] ?></div>
                                         <div class="parque-prog">
-                                            <div class="parque-prog-bar <?= $estado ?>" style="width:<?= $barPct ?>%;"></div>
+                                            <div class="parque-prog-bar <?=  $c->estado['nome'] ?>" style="width:<?= $c->peso['peso'] ?>%;"></div>
                                         </div>
                                         <div class="parque-lugares-label">
                                             Cap. máx.: <?= $c->getCapacidadeMax() ?>L &nbsp;·&nbsp;
@@ -257,11 +257,11 @@ $lastSync = date('d/m/Y H:i:s');
                                                     <div class="col-6">
                                                         <label class="form-label fw-semibold">Estado</label>
                                                         <select name="id_estado" class="form-select" required>
-                                                            <option value="1" <?= $c->getIdEstado() === 1 ? 'selected' : '' ?>>
+                                                            <option value="4" <?= $c->getIdEstado() === 4 ? 'selected' : '' ?>>
                                                                 Normal</option>
-                                                            <option value="2" <?= $c->getIdEstado() === 2 ? 'selected' : '' ?>>
+                                                            <option value="5" <?= $c->getIdEstado() === 5 ? 'selected' : '' ?>>
                                                                 Atenção</option>
-                                                            <option value="3" <?= $c->getIdEstado() === 3 ? 'selected' : '' ?>>
+                                                            <option value="6" <?= $c->getIdEstado() === 6 ? 'selected' : '' ?>>
                                                                 Crítico</option>
                                                         </select>
                                                     </div>

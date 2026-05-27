@@ -12,17 +12,24 @@ class ContentorController
 
     public function showPortalADMContentores()
     {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
+        try {
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
+
+            $contentorDAO = new ContentorDAO();
+            $contentores = $contentorDAO->getAllContentores();
+            $numContentorPorEstado = $contentorDAO->numContentorEstado();
+
+            $this->view('portalADMContentores', [
+                'contentores' => $contentores,
+                'numContentorPorEstado' => $numContentorPorEstado
+            ]);
+        } catch (Exception $e) {
+
         }
 
-        $contentorDAO = new ContentorDAO();
-        $contentores = $contentorDAO->getAllContentores();
-
-        $this->view('portalADMContentores', [
-            'contentores' => $contentores
-        ]);
     }
 
     public function createContentor()
@@ -133,6 +140,13 @@ class ContentorController
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
+    }
+
+    public function numContentorEstado() {
+        $contentorDAO = new ContentorDAO();
+        $contentores = $contentorDAO->numContentorEstado();
+
+        return $contentores;
     }
 
     public function contentorListApi(): void
