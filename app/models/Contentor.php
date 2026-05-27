@@ -17,6 +17,9 @@ class Contentor
     private string $observacao;
     private bool $is_full;
 
+    public $estado;
+    public $peso;
+
     // =========================
     // CONSTRUTOR
     // =========================
@@ -31,7 +34,9 @@ class Contentor
         string $tipo,
         string $identificacao,
         ?string $observacao = '',
-        ?bool $is_full = false
+        ?bool $is_full = false,
+        $estado = [],
+        $peso = []
     ) {
         $this->id = $id;
         $this->id_cidade = $id_cidade;
@@ -43,6 +48,8 @@ class Contentor
         $this->identificacao = $identificacao;
         $this->observacao = $observacao ?? '';
         $this->is_full = $is_full ?? false;
+        $this->estado = $estado ?? [];
+        $this->peso = $peso ?? [];
     }
 
     // =========================

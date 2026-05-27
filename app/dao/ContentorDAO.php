@@ -22,6 +22,9 @@ class ContentorDAO
         $contentores = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $estado = $this->getEstadoContentorById($row['id']);
+            $peso = $this->getPesoContentorById($row['id']);
+
             $contentores[] = new Contentor(
                 (int) $row['id'],
                 (int) $row['id_cidade'],
@@ -32,11 +35,47 @@ class ContentorDAO
                 $row['tipo'],
                 $row['identificacao'],
                 $row['observacao'],
-                (bool) $row['is_full']
+                (bool) $row['is_full'],
+                $estado,
+                $peso
             );
         }
 
         return $contentores;
+    }
+
+    public function getPesoContentorById($id)
+    {
+        $sql = 'SELECT c.identificacao, c.tipo, MAX(cl.data_leitura) AS ultima_leitura, cl.peso
+            FROM contentores c
+            INNER JOIN contentor_leituras cl ON c.id = cl.id_contentor
+            WHERE c.id = ?
+            GROUP BY c.id, c.identificacao, c.tipo, cl.peso
+            ORDER BY cl.peso DESC;
+        ';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
+
+        $peso = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $peso;
+    }
+
+    public function getEstadoContentorById($id)
+    {
+        $sql = 'SELECT e.id, e.nome, e.cor 
+            FROM estados e
+            INNER JOIN contentores c ON e.id = c.id_estado
+            WHERE c.id = ?
+        ';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
+
+        $estadoContentor = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $estadoContentor;
+
     }
 
     public function findByID($id)
@@ -70,15 +109,15 @@ class ContentorDAO
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
-            'id'            => $id,
-            'id_cidade'     => $id_cidade,
-            'id_estado'     => $id_estado,
-            'capacidade_max'=> $capacidade_max,
-            'longitude'     => $longitude,
-            'latitude'      => $latitude,
-            'tipo'          => $tipo,
+            'id' => $id,
+            'id_cidade' => $id_cidade,
+            'id_estado' => $id_estado,
+            'capacidade_max' => $capacidade_max,
+            'longitude' => $longitude,
+            'latitude' => $latitude,
+            'tipo' => $tipo,
             'identificacao' => $identificacao,
-            'observacao'    => $observacao,
+            'observacao' => $observacao,
         ]);
 
         return (int) $this->conn->lastInsertId();
@@ -104,5 +143,18 @@ class ContentorDAO
         $stmt->execute([$id]);
 
         return $stmt->rowCount();
+    }
+
+    public function numContentorEstado()
+    {
+        $sql = "SELECT SUM(CASE WHEN e.nome = 'critico' THEN 1 ELSE 0 END) AS contentores_criticos, SUM(CASE WHEN e.nome = 'normal' THEN 1 ELSE 0 END) AS contentores_normais, SUM(CASE WHEN e.nome = 'atencao' THEN 1 ELSE 0 END) AS contentores_em_atencao
+                FROM contentores c
+                INNER JOIN estados e ON c.id_estado = e.id;
+            ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

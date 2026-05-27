@@ -5,7 +5,7 @@ require_once __DIR__ . '/../dao/PosteDAO.php';
 class PosteController
 {
 
-    
+
 
     private function view($name, $data = [])
     {
@@ -15,17 +15,23 @@ class PosteController
 
     public function showPortalADMPostes()
     {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
+        try {
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
+
+            $posteDAO = new PosteDAO();
+            $postes = $posteDAO->getAllPostes();
+            $numPostePorEstado = $posteDAO->numPosteEstado();
+
+            $this->view('portalADMPostes', [
+                'postes' => $postes,
+                'numPostePorEstado' => $numPostePorEstado
+            ]);
+        } catch (Exception $e) {
+
         }
-
-        $posteDAO = new PosteDAO();
-        $postes = $posteDAO->getAllPostes();
-
-        $this->view('portalADMPostes', [
-            'postes' => $postes
-        ]);
     }
 
     public function createPoste()
@@ -70,26 +76,25 @@ class PosteController
         exit;
     }
 
-    public function PosteUpdate($id)
+    public function posteUpdate($id)
     {
-
-        $id = trim($_POST["id"] ?? '');
-        $id_cidade = trim($_POST["id_cidade"] ?? '');
-        $id_estado = trim($_POST["id_estado"] ?? '');
-        $longitude = trim($_POST["longitude"] ?? '');
-        $latitude = trim($_POST["latitude"] ?? '');
-        $observacao = trim($_POST["observacao"] ?? '');
-
-        if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude) || empty($observacao)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos são obrigatórios.'
-            ];
-            header("Location: /admin/PortalADMPostes");
-            exit;
-        }
-
         try {
+            $id = trim($_POST["id"] ?? '');
+            $id_cidade = trim($_POST["id_cidade"] ?? '');
+            $id_estado = trim($_POST["id_estado"] ?? '');
+            $longitude = trim($_POST["longitude"] ?? '');
+            $latitude = trim($_POST["latitude"] ?? '');
+            $observacao = trim($_POST["observacao"] ?? '');
+
+            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude) || empty($observacao)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos são obrigatórios.'
+                ];
+                header("Location: /admin/PortalADMPostes");
+                exit;
+            }
+
             $linhasAlteradas = (new PosteDAO())->posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude, $observacao);
 
             if (!$linhasAlteradas) {
@@ -114,19 +119,29 @@ class PosteController
         exit;
     }
 
-    public function PosteDelete($postId) {
-    header('Content-Type: application/json');
-    try {
-        $linhasAlteradas = (new PosteDAO())->posteDeleteDAO($postId);
+    public function numPosteEstado()
+    {
+        $posteDAO = new PosteDAO();
+        $postes = $posteDAO->numPosteEstado();
 
-        if (!$linhasAlteradas) {
-            echo json_encode(['success' => false, 'message' => 'Poste não encontrado.']);
-        } else {
-            echo json_encode(['success' => true, 'message' => 'Poste eliminado com sucesso!']);
-        }
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        return $postes;
     }
-    exit;
-}
+
+    public function PosteDelete($postId)
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $linhasAlteradas = (new PosteDAO())->posteDeleteDAO($postId);
+
+            if (!$linhasAlteradas) {
+                echo json_encode(['success' => false, 'message' => 'Poste não encontrado.']);
+            } else {
+                echo json_encode(['success' => true, 'message' => 'Poste eliminado com sucesso!']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
 }

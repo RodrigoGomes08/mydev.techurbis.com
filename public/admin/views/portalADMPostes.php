@@ -36,7 +36,9 @@
                 <div class="pkpi-card">
                     <div class="pkpi-icon" style="background:#e6f9ef;color:#27ae60;"><i class="bi bi-check-circle-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-success">QUERIE</div>
+                        <div class="pkpi-value text-success">
+                            <?= $numPostePorEstado['candeeiros_operacionais'] ?>
+                        </div>
                         <div class="pkpi-label">Operacionais</div>
                     </div>
                 </div>
@@ -45,7 +47,7 @@
                 <div class="pkpi-card">
                     <div class="pkpi-icon" style="background:#fde8e8;color:#e74c3c;"><i class="bi bi-x-circle-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-danger">QUERIE</div>
+                        <div class="pkpi-value text-danger"><?= $numPostePorEstado['candeeiros_avariados'] ?></div>
                         <div class="pkpi-label">Avariados</div>
                     </div>
                 </div>
@@ -54,7 +56,7 @@
                 <div class="pkpi-card">
                     <div class="pkpi-icon" style="background:#fff4e0;color:#f39c12;"><i class="bi bi-tools"></i></div>
                     <div>
-                        <div class="pkpi-value text-warning">QUERIE</div>
+                        <div class="pkpi-value text-warning"><?= $numPostePorEstado['candeeiros_em_manutencao'] ?></div>
                         <div class="pkpi-label">Em Manutenção</div>
                     </div>
                 </div>

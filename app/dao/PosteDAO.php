@@ -64,11 +64,11 @@ class PosteDAO
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
-            'id'         => $id,
-            'id_cidade'  => $id_cidade,
-            'id_estado'  => $id_estado,
-            'longitude'  => $longitude,
-            'latitude'   => $latitude,
+            'id' => $id,
+            'id_cidade' => $id_cidade,
+            'id_estado' => $id_estado,
+            'longitude' => $longitude,
+            'latitude' => $latitude,
             'observacao' => $observacao,
         ]);
 
@@ -93,5 +93,19 @@ class PosteDAO
         $stmt->execute([$id]);
 
         return $stmt->rowCount();
+    }
+
+    public function numPosteEstado()
+    {
+        $sql = "
+        SELECT SUM(CASE WHEN e.nome = 'avariado' THEN 1 ELSE 0 END) AS candeeiros_avariados, SUM(CASE WHEN e.nome = 'operacional' THEN 1 ELSE 0 END) AS candeeiros_operacionais, SUM(CASE WHEN e.nome = 'manutencao' THEN 1 ELSE 0 END) AS candeeiros_em_manutencao
+            FROM candeeiro_urbanos cu
+            INNER JOIN estados e ON cu.id_estado = e.id;
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
