@@ -71,39 +71,39 @@ class AuthController
     }
 
     public function loginApi()
-{
-    $email = $_POST["email"] ?? null;
-    $password = $_POST["password"] ?? null;
+    {
+        $email = $_POST["email"] ?? null;
+        $password = $_POST["password"] ?? null;
 
-    $user = (new UserDAO())->findByEmail($email);
+        $user = (new UserDAO())->findByEmail($email);
 
-    if (!$user || !password_verify($password, $user['password'])) {
-        echo json_encode(["error" => "login inválido"]);
-        return;
+        if (!$user || !password_verify($password, $user['password'])) {
+            echo json_encode(["error" => "login inválido"]);
+            return;
+        }
+
+        $payload = [
+            "iat" => time(),
+            "exp" => time() + 3600,
+            "data" => [
+                "id" => $user['id'],
+                "role" => $user['id_role'] === 1 ? 'admin' : 'user',
+            ]
+        ];
+
+        $jwt = JWT::encode($payload, JwtConfig::$secret, 'HS256');
+
+        $responseData = [
+            'success' => true,
+            'message' => 'Login realizado com sucesso',
+            'data' => [
+                'user' => $user,
+                'jwt' => $jwt
+            ],
+        ];
+
+        Utils::jsonResponse($responseData, 200);
     }
-
-    $payload = [
-        "iat" => time(),
-        "exp" => time() + 3600,
-        "data" => [
-            "id" => $user['id'],
-            "role" => $user['id_role'] === 1 ? 'admin' : 'user',
-        ]
-    ];
-
-    $jwt = JWT::encode($payload, JwtConfig::$secret, 'HS256');
-
-    $responseData = [
-        'success' => true,
-        'message' => 'Login realizado com sucesso',
-        'data' => [
-            'user' => $user,
-            'jwt' => $jwt
-        ],
-    ];
-
-    Utils::jsonResponse($responseData, 200);
-}
 
     public function signupWeb()
     {
@@ -213,12 +213,12 @@ class AuthController
             // 5) envia email via Mailer (PHPMailer/Mailtrap)
             $subject = "Verifica o teu email (expira em 5 min)";
             $html = "
-          <div style='font-family: Arial, sans-serif;'>
+            <div style='font-family: Arial, sans-serif;'>
             <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
             <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
             <p><a href='{$link}'>{$link}</a></p>
             <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
-          </div>
+            </div>
         ";
 
             (new MyMailerService())->send($email, $subject, $html);
@@ -249,8 +249,9 @@ class AuthController
     // ------------------------------
     // API dos Postes
     // ------------------------------
-    public function listaPosteWeb() {
-        
+    public function listaPosteWeb()
+    {
+
     }
 
     public function verifyEmailForm()

@@ -1,6 +1,6 @@
 <?php
 
-class Parque
+class Parque implements JsonSerializable
 {
 
     private int $id;
@@ -31,6 +31,21 @@ class Parque
         $this->longitude = $longitude;
         $this->latitude = $latitude;
     }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'id' => $this->id,
+            'id_cidade' => $this->id_cidade,
+            'nome' => $this->nome,
+            'num_max_lugares' => $this->num_max_lugares,
+            'tipo' => $this->tipo,
+            'tarifa' => $this->tarifa,
+            'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
+        ];
+    }
+
 
     // ID
     public function getId(): int

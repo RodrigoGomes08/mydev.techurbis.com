@@ -1,6 +1,6 @@
 <?php
 
-class Poste
+class Poste implements JsonSerializable
 {
     private int $id;
     private int $id_cidade;
@@ -18,6 +18,18 @@ class Poste
         $this->longitude = $longitude;
         $this->latitude = $latitude;
         $this->observacao = $observacao ?? '';
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'id' => $this->id,
+            'id_cidade' => $this->id_cidade,
+            'id_estado' => $this->id_estado,
+            'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
+            'observacao' => $this->observacao
+        ];
     }
 
     public function getId(): int

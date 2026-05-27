@@ -33,7 +33,6 @@ class ParqueDAO
                 (float) $row['latitude']
             );
         }
-
         return $parques;
     }
 
