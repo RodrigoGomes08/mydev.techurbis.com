@@ -16,14 +16,7 @@ class SensorDAO
 
     public function getAllSensores()
     {
-        $sql = "SELECT 
-                    s.id            AS sensor_id,
-                    s.id_cidade,
-                    s.nome,
-                    sl.id           AS leitura_id,
-                    sl.data_leitura,
-                    sl.leitura_string,
-                    sl.leitura_num
+        $sql = "SELECT s.id AS sensor_id, s.id_cidade, s.nome, sl.id AS leitura_id, sl.data_leitura, sl.leitura_string, sl.leitura_num
                 FROM sensores s
                 LEFT JOIN sensor_leituras sl ON s.id = sl.id_sensor
                 ORDER BY s.id ASC, sl.data_leitura DESC";
@@ -63,14 +56,7 @@ class SensorDAO
 
     public function findByID($id)
     {
-        $sql = "SELECT 
-                    s.id            AS sensor_id,
-                    s.id_cidade,
-                    s.name,
-                    sl.id           AS leitura_id,
-                    sl.data_leitura,
-                    sl.leitura_string,
-                    sl.leitura_num
+        $sql = "SELECT s.id AS sensor_id, s.id_cidade, s.nome, sl.id AS leitura_id, sl.data_leitura, sl.leitura_string, sl.leitura_num
                 FROM sensores s
                 LEFT JOIN sensor_leituras sl ON s.id = sl.id_sensor
                 WHERE s.id = :id
@@ -87,7 +73,7 @@ class SensorDAO
                 $sensor = new Sensor(
                     (int) $row['sensor_id'],
                     (int) $row['id_cidade'],
-                    $row['name']
+                    $row['nome']
                 );
             }
 

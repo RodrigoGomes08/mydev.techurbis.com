@@ -17,6 +17,34 @@ class SensorController
     public function valorSensorDistancia()
     {
         //Método para obter o valor do sensor de distância
+        $json = file_get_contents("php://input");
+            // Converter JSON para array PHP
+            $data = json_decode($json, true);
+
+            // Verificar se chegou corretamente
+            if ($data) {
+
+                $dist = $data["dist_value"];
+                $date = $data["date"];
+
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Valor recebido com sucesso",
+                    "data" => [
+                        "distancia" => $dist,
+                        "data_leitura" => $date
+                    ]
+                ]);
+
+            } else {
+
+               echo json_encode([
+                    "success" => false,
+                    "message" => "Erro ao receber JSON",
+                    "data" => [
+                    ]
+                ]);
+            }
     }
 
     public function sensorListApi()

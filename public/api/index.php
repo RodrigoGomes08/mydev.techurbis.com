@@ -29,7 +29,7 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
     Utils::jsonResponse([
         "success" => true,
-        "message" => "id e nome são obrigatórios"
+        "message" => "id e nome"
     ], 200);
     exit;
 } elseif ($uri === '/signup' && $method === 'POST') {
@@ -70,8 +70,7 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 } elseif ($uri === '/sensor/valor-hum' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->valorSensorHum();
-} elseif ($uri === '/sensor/valor-distancia' && $method === 'GET'){
-    AuthMiddlewareApi::check();
+} elseif ($uri === '/sensor/valor-distancia' && $method === 'POST'){
     (new SensorController())->valorSensorDistancia();
 }
 
