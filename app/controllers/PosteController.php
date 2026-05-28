@@ -162,4 +162,23 @@ class PosteController
             'data' => $postes
         ]);
     }
+
+    public function posteDetailApi($id) {
+        try {
+            $postes = (new PosteDAO())->findByID($id); //---------
+
+            if(!$postes) {
+                throw new Exception("Poste não encontrado");
+            }
+
+             Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Detalhe do poste obtido com sucesso.',
+            'data' => $postes
+        ]);
+
+        } catch (Exception $e) {
+
+        }
+    }
 }
