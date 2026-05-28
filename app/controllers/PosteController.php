@@ -1,5 +1,7 @@
 <?php
 
+use Composer\DependencyResolver\Transaction;
+
 require_once __DIR__ . '/../dao/PosteDAO.php';
 
 class PosteController
@@ -144,7 +146,7 @@ class PosteController
         }
         exit;
     }
-// API
+    // API
     public function posteListApi()
     {
         // if (empty($_SESSION['token'])) {
@@ -155,7 +157,7 @@ class PosteController
         $posteDAO = new PosteDAO();
         $postes = $posteDAO->getAllPostes();
 
-        
+
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Lista de postes obtida com sucesso.',
@@ -163,19 +165,38 @@ class PosteController
         ]);
     }
 
-    public function posteDetailApi($id) {
+    public function posteDetailApi($id)
+    {
         try {
-            $postes = (new PosteDAO())->findByID($id); //---------
+            $postes = (new PosteDAO())->findByID($id);
 
-            if(!$postes) {
+            if (!$postes) {
                 throw new Exception("Poste não encontrado");
             }
 
-             Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Detalhe do poste obtido com sucesso.',
-            'data' => $postes
-        ]);
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do poste obtido com sucesso.',
+                'data' => $postes
+            ]);
+
+        } catch (Exception $e) {
+
+        }
+    }
+
+    public function posteDetailObsApi($id)
+    {
+
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+            $posteDAO = new PosteDAO();
+            $postes = (new PosteDAO())->findByID($id);
+            $posteDAO->posteInsertObsDAO($id);
+
+            $pdo->commit();
 
         } catch (Exception $e) {
 

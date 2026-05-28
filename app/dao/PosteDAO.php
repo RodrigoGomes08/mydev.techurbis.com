@@ -108,4 +108,14 @@ class PosteDAO
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function posteInsertObsDAO($id)
+    {
+        $sql = "UPDATE candeeiro_urbanos SET observacao = ? WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
+
+        return $stmt->rowCount();
+    }
 }
