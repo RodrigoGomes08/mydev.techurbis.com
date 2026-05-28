@@ -76,7 +76,8 @@ class AuthController
         $password = $_POST["password"] ?? null;
 
         $user = (new UserDAO())->findByEmail($email);
-
+        $role = (new RoleDAO())->findRoleById($user['id_role']);
+        
         if (!$user || !password_verify($password, $user['password'])) {
             echo json_encode(["error" => "login inválido"]);
             return;
@@ -87,7 +88,7 @@ class AuthController
             "exp" => time() + 3600,
             "data" => [
                 "id" => $user['id'],
-                "role" => $user['id_role'] === 1 ? 'admin' : 'user',
+                "role" => $role['id'],
             ]
         ];
 
@@ -98,6 +99,7 @@ class AuthController
             'message' => 'Login realizado com sucesso',
             'data' => [
                 'user' => $user,
+                'role' => $role,
                 'jwt' => $jwt
             ],
         ];
@@ -179,9 +181,9 @@ class AuthController
             $email = trim($_POST['email'] ?? '');
             $password = trim($_POST['password'] ?? '');
             $morada = trim($_POST['morada'] ?? '');
-            $tem_mobilidade_reduzida = trim($_POST['tem_mobilidade_reduzida'] ?? '');
+            $tem_mobilidade_reduzida = trim($_POST['tem_mobilidade_reduzida'] ?? 1);
 
-            if ($nome === '' || $dataNascimento === '' || $telefone === '' || $email === '' || $password === '' || $morada === '' || $tem_mobilidade_reduzida === '') {
+            if ($nome === '' || $dataNascimento === '' || $telefone === '' || $email === '' || $password === '' || $morada === '') {
                 throw new Exception("Todos os dados são obrigatórios.");
             }
 
@@ -238,7 +240,7 @@ class AuthController
 
             $responseData = [
                 'success' => false,
-                'message' => 'Erro ao efetuar a operação.',
+                'message' => 'Erro ao efetuar a operação.' . $e->getMessage(),
                 'data' => [],
             ];
 
