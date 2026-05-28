@@ -72,10 +72,15 @@ elseif ($uri === '/postes' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new PosteController())->posteDetailApi($id);
+<<<<<<< HEAD
 
 } elseif ($uri === '/postesdetailobs' && $method === 'GET') {
+=======
+} elseif (preg_match('#^/postes/(\d+)$#', $uri, $m) && $method === "POST") {
+>>>>>>> 4ac33aa7e383df8a4e560f3a4b07154b09f3928b
     AuthMiddlewareApi::check();
-    (new PosteController())->posteDetailObsApi();
+    $id = (int) $m[1];
+    (new PosteController())->posteDetailObsApi($id);
 } 
 
 //==================================================
