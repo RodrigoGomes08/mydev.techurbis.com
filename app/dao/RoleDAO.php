@@ -50,4 +50,18 @@ class RoleDAO
 
         return (int) $this->conn->lastInsertId();
     }
+
+    public function findRoleById(int $id)
+    {
+        $sql = "SELECT id, nome_role, cor FROM roles WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $row;
+        }
+
+        return null;
+    }
 }
