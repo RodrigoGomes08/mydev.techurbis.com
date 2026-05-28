@@ -34,8 +34,10 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
     exit;
 } elseif ($uri === '/signup' && $method === 'POST') {
     (new AuthController())->singupApi();
+
 } elseif ($uri === '/login' && $method === 'POST') {
     (new AuthController())->loginApi();
+
 } elseif ($uri === '/home' && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
     $valorTemp = (new SensorController())->valorSensorTemp();
@@ -48,10 +50,12 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 elseif ($uri === '/contentores' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new ContentorController())->contentorListApi();
+
 } elseif (preg_match('#^/contentores/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new ContentorController())->contentorDetailApi($id);
+
 } elseif ($uri === '/contentoresdetailsobs' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new PosteController())->contentorDetailObsApi();
@@ -63,10 +67,12 @@ elseif ($uri === '/contentores' && $method === 'GET') {
 elseif ($uri === '/postes' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new PosteController())->posteListApi();
+
 } elseif (preg_match('#^/postes/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new PosteController())->posteDetailApi($id);
+
 } elseif ($uri === '/postesdetailobs' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new PosteController())->posteDetailObsApi();
@@ -78,13 +84,15 @@ elseif ($uri === '/postes' && $method === 'GET') {
 elseif ($uri === '/parques' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new ParqueController())->parqueListApi();
+
 } elseif (preg_match('#^/parques/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
-    (new PosteController())->parqueDetailApi($id);
+    (new ParqueController())->parqueDetailApi($id);
+
 } elseif ($uri === '/parquesdetailobs' && $method === 'GET') {
     AuthMiddlewareApi::check();
-    (new PosteController())->posteDetailObsApi();
+    (new ParqueController())->parqueDetailObsApi();
 } 
 
 //==================================================
@@ -93,13 +101,15 @@ elseif ($uri === '/parques' && $method === 'GET') {
 elseif ($uri === '/sensores' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->sensorListApi();
+
 } elseif (preg_match('#^/sensores/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
-    (new PosteController())->sensorDetailApi($id);
+    (new SensorController())->sensorDetailApi($id);
+
 } elseif ($uri === '/sensoresdetailobs' && $method === 'GET') {
     AuthMiddlewareApi::check();
-    (new PosteController())->sensorDetailObsApi();
+    (new SensorController())->sensorDetailObsApi();
 } 
 
 //==================================================
@@ -108,9 +118,11 @@ elseif ($uri === '/sensores' && $method === 'GET') {
 elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->valorSensorTemp();
+
 } elseif ($uri === '/sensor/valor-hum' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->valorSensorHum();
+    
 } elseif ($uri === '/sensor/valor-distancia' && $method === 'POST') {
     (new SensorController())->valorSensorDistancia();
 } 

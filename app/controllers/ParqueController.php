@@ -20,8 +20,12 @@ class ParqueController
         $parqueDAO = new ParqueDAO();
         $parques = $parqueDAO->getAllParques();
 
+        $estadoDAO = new EstadoDAO();
+        $estados = $estadoDAO->getAllEstados();
+
         $this->view('portalADMParques', [
-            'parques' => $parques
+            'parques' => $parques,
+            'estados' => $estados
         ]);
     }
 
@@ -153,5 +157,24 @@ class ParqueController
             'message' => 'Lista de parques obtida com sucesso.',
             'data' => $parques
         ]);
+    }
+
+    public function parqueDetailApi($id) {
+        try {
+            $parques = (new ParqueDAO())->findByID($id); //---------
+
+            if(!$parques) {
+                throw new Exception("Parque não encontrado");
+            }
+
+             Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Detalhe do parque obtido com sucesso.',
+            'data' => $parques
+        ]);
+
+        } catch (Exception $e) {
+
+        }
     }
 }
