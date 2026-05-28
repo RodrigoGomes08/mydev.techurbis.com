@@ -187,6 +187,8 @@ class UserDAO
         return $resul;
     }
 
+    
+
     // public function countUsersDAO()
     // {
     //     $sql = "
