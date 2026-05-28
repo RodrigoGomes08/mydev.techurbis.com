@@ -40,47 +40,80 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
     $valorTemp = (new SensorController())->valorSensorTemp();
     $valorHum = (new SensorController())->valorSensorHum();
-} elseif ($uri === '/contentores' && $method === 'GET'){
+}
+
+//==================================================
+// CONTENTORES
+//==================================================
+elseif ($uri === '/contentores' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new ContentorController())->contentorListApi();
-} elseif($uri === '/contentoresdetails' && $method === 'GET'){
+} elseif (preg_match('#^/contentores/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
-    (new ContentorController())->contentorDetailsApi();
-} elseif ($uri === '/postes' && $method === 'GET') {
+    $id = (int) $m[1];
+    (new ContentorController())->contentorDetailApi($id);
+} elseif ($uri === '/contentoresdetailsobs' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new PosteController())->contentorDetailObsApi();
+}
+
+//==================================================
+// POSTES
+//==================================================
+elseif ($uri === '/postes' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new PosteController())->posteListApi();
-} elseif(preg_match('#^/postes/(\d+)$#', $uri, $m) && $method === "GET") {
+} elseif (preg_match('#^/postes/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
-    $id = (int)$m[1];
+    $id = (int) $m[1];
     (new PosteController())->posteDetailApi($id);
-} elseif($uri === '/postesdetails' && $method === 'GET'){
-     AuthMiddlewareApi::check();
-     (new PosteController())->posteDetailsApi();
-}elseif ($uri === '/parques' && $method === 'GET'){
+} elseif ($uri === '/postesdetailobs' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new PosteController())->posteDetailObsApi();
+} 
+
+//==================================================
+// PARQUES
+//==================================================
+elseif ($uri === '/parques' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new ParqueController())->parqueListApi();
-} elseif($uri === '/parquesdetails' && $method === 'GET'){
+} elseif (preg_match('#^/parques/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
-    (new ParqueController())->parqueDetailsApi();
-} elseif ($uri === '/sensores' && $method === 'GET'){
+    $id = (int) $m[1];
+    (new PosteController())->parqueDetailApi($id);
+} elseif ($uri === '/parquesdetailobs' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new PosteController())->posteDetailObsApi();
+} 
+
+//==================================================
+// SENSORES
+//==================================================
+elseif ($uri === '/sensores' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->sensorListApi();
-} elseif($uri === '/sensoresdetails' && $method === 'GET'){
+} elseif (preg_match('#^/sensores/(\d+)$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
-    (new SensorController())->sensorDetailsApi();
-} elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
+    $id = (int) $m[1];
+    (new PosteController())->sensorDetailApi($id);
+} elseif ($uri === '/sensoresdetailobs' && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    (new PosteController())->sensorDetailObsApi();
+} 
+
+//==================================================
+// SENSORES_VALOR
+//==================================================
+elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->valorSensorTemp();
 } elseif ($uri === '/sensor/valor-hum' && $method === 'GET') {
     AuthMiddlewareApi::check();
     (new SensorController())->valorSensorHum();
-} elseif ($uri === '/sensor/valor-distancia' && $method === 'POST'){
+} elseif ($uri === '/sensor/valor-distancia' && $method === 'POST') {
     (new SensorController())->valorSensorDistancia();
-}
-
-
-
-
+} 
 
 else {
 
