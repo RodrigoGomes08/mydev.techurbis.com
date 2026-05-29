@@ -170,7 +170,9 @@ class PosteController
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Lista de postes obtida com sucesso.',
-            'data' => $postes
+            'data' => [
+                "postes" => $postes
+            ]
         ]);
     }
 
@@ -186,7 +188,9 @@ class PosteController
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Detalhe do poste obtido com sucesso.',
-                'data' => $postes
+                'data' => [
+                "postes" => $postes
+            ]
             ]);
 
         } catch (Exception $e) {
@@ -231,7 +235,9 @@ class PosteController
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Observação inserida com sucesso.',
-            'data' => $postesObs
+            'data' => [
+                "ObservacoesPostes" => $postesObs
+            ]
         ]);
     } catch (Exception $e) {
         Utils::jsonResponse([
