@@ -27,9 +27,13 @@ class PosteController
             $postes = $posteDAO->getAllPostes();
             $numPostePorEstado = $posteDAO->numPosteEstado();
 
+            $estadoDAO = new EstadoDAO();
+            $estados = $estadoDAO->getAllEstados();
+
             $this->view('portalADMPostes', [
                 'postes' => $postes,
                 'numPostePorEstado' => $numPostePorEstado,
+                'estados' => $estados
             ]);
 
             $this->view('portalADMPostes', [
@@ -53,9 +57,8 @@ class PosteController
         $id_estado = trim($_POST['id_estado'] ?? '');
         $longitude = trim($_POST['longitude'] ?? '');
         $latitude = trim($_POST['latitude'] ?? '');
-        $observacao = trim($_POST['observacao'] ?? '');
 
-        if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude) || empty($observacao)) {
+        if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude)) {
             $_SESSION['toast'] = [
                 'type' => 'error',
                 'message' => 'Todos os campos são obrigatórios.'
@@ -66,7 +69,7 @@ class PosteController
 
         try {
             $posteDAO = new PosteDAO();
-            $posteDAO->createPoste($id, $id_cidade, $id_estado, $longitude, $latitude, $observacao);
+            $posteDAO->createPoste($id, $id_cidade, $id_estado, $longitude, $latitude);
 
             $_SESSION['toast'] = [
                 'type' => 'success',
@@ -91,9 +94,8 @@ class PosteController
             $id_estado = trim($_POST["id_estado"] ?? '');
             $longitude = trim($_POST["longitude"] ?? '');
             $latitude = trim($_POST["latitude"] ?? '');
-            $observacao = trim($_POST["observacao"] ?? '');
 
-            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude) || empty($observacao)) {
+            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -102,7 +104,7 @@ class PosteController
                 exit;
             }
 
-            $linhasAlteradas = (new PosteDAO())->posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude, $observacao);
+            $linhasAlteradas = (new PosteDAO())->posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude);
 
             if (!$linhasAlteradas) {
                 $_SESSION['toast'] = [
@@ -160,7 +162,7 @@ class PosteController
         // }
 
         $posteDAO = new PosteDAO();
-        $postes = $posteDAO->getAllPostes();
+        $postes = $posteDAO->getAllPostesAPI();
 
 
         Utils::jsonResponse([
@@ -190,6 +192,11 @@ class PosteController
             ]);
 
         } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'Poste não encontrado.',
+                'data' => []
+            ], 404);
 
         }
     }
@@ -207,7 +214,11 @@ class PosteController
             $pdo->commit();
 
         } catch (Exception $e) {
-
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'Poste não encontrado.',
+                'data' => []
+            ], 404);
         }
     }
 
@@ -232,7 +243,7 @@ class PosteController
             'success' => true,
             'message' => 'Observação inserida com sucesso.',
             'data' => [
-                "ObservacoesPostes" => $postesObs
+                "postes" => $postesObs
             ]
         ]);
     } catch (Exception $e) {

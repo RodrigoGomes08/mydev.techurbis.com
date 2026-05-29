@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/Poste.php';
+require_once __DIR__ . '/EstadoDAO.php';
 
 class PosteDAO
 {
@@ -20,13 +21,33 @@ class PosteDAO
         $postes = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
             $postes[] = new Poste(
                 $row['id'],
                 $row['id_cidade'],
                 $row['id_estado'],
                 $row['longitude'],
-                $row['latitude']
+                $row['latitude'],
             );
+        }
+
+        return $postes;
+    }
+
+    public function getAllPostesAPI()
+    {
+        $sql = "SELECT id, id_cidade, id_estado, longitude, latitude FROM candeeiro_urbanos ORDER BY id ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $postes = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+            $estado = (new EstadoDAO())->findByID($row['id_estado']);
+
+            $row['estado'] = $estado;
+
+            $postes[] = $row;
         }
 
         return $postes;
@@ -107,14 +128,14 @@ class PosteDAO
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-        public function insertObs($id_candeeiro_urbano, $texto)
-{
-    $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
+    public function insertObs($id_candeeiro_urbano, $texto)
+    {
+        $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
             VALUES (?, ?)";
 
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$id_candeeiro_urbano, $texto]);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id_candeeiro_urbano, $texto]);
 
-    return $stmt->rowCount();
-}
+        return $stmt->rowCount();
+    }
 }
