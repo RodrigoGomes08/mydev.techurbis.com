@@ -20,12 +20,8 @@ class ParqueController
         $parqueDAO = new ParqueDAO();
         $parques = $parqueDAO->getAllParques();
 
-        $estadoDAO = new EstadoDAO();
-        $estados = $estadoDAO->getAllEstados();
-
         $this->view('portalADMParques', [
             'parques' => $parques,
-            'estados' => $estados
         ]);
     }
 

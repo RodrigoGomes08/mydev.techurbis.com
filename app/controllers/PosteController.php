@@ -27,13 +27,9 @@ class PosteController
             $postes = $posteDAO->getAllPostes();
             $numPostePorEstado = $posteDAO->numPosteEstado();
 
-            $estadoDAO = new EstadoDAO();
-            $estados = $estadoDAO->getAllEstados();
-
             $this->view('portalADMPostes', [
                 'postes' => $postes,
                 'numPostePorEstado' => $numPostePorEstado,
-                'estados' => $estados
             ]);
 
             $this->view('portalADMPostes', [

@@ -22,13 +22,9 @@ class ContentorController
             $contentores = $contentorDAO->getAllContentores();
             $numContentorPorEstado = $contentorDAO->numContentorEstado();
 
-            $estadoDAO = new EstadoDAO();
-            $estados = $estadoDAO->getAllEstados();
-
             $this->view('portalADMContentores', [
                 'contentores' => $contentores,
                 'numContentorPorEstado' => $numContentorPorEstado,
-                'estados' => $estados
             ]);
         } catch (Exception $e) {
 
