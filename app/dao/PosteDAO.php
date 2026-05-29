@@ -46,7 +46,6 @@ class PosteDAO
             $estado = (new EstadoDAO())->findByID($row['id_estado']);
 
             $row['estado'] = $estado;
-
             $postes[] = $row;
         }
 
