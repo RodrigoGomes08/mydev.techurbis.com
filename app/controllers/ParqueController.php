@@ -159,19 +159,20 @@ class ParqueController
         ]);
     }
 
-    public function parqueDetailApi($id) {
+    public function parqueDetailApi($id)
+    {
         try {
-            $parques = (new ParqueDAO())->findByID($id); //---------
+            $parques = (new ParqueDAO())->findByID($id);
 
-            if(!$parques) {
+            if (!$parques) {
                 throw new Exception("Parque não encontrado");
             }
 
-             Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Detalhe do parque obtido com sucesso.',
-            'data' => $parques
-        ]);
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do parque obtido com sucesso.',
+                'data' => $parques
+            ]);
 
         } catch (Exception $e) {
 

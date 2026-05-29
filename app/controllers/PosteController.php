@@ -203,7 +203,6 @@ class PosteController
         try {
             $posteDAO = new PosteDAO();
             $postes = (new PosteDAO())->findByID($id);
-            $posteDAO->posteInsertObsDAO($id);
 
             $pdo->commit();
 
@@ -211,4 +210,35 @@ class PosteController
 
         }
     }
+
+    public function insertObsEmPostesApi($id)
+{
+    // $id já vem da URL, não precisas de o ler do POST
+    $texto = trim($_POST["texto"] ?? '');
+
+    if (empty($id) || empty($texto)) {
+        Utils::jsonResponse([
+            'success' => false,
+            'message' => 'ID e texto são obrigatórios.',
+            'data' => null
+        ], 400);
+        return;
+    }
+
+    try {
+        $postesObs = (new PosteDAO())->insertObs($id, $texto);
+
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Observação inserida com sucesso.',
+            'data' => $postesObs
+        ]);
+    } catch (Exception $e) {
+        Utils::jsonResponse([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'data' => null
+        ], 500);
+    }
+}
 }

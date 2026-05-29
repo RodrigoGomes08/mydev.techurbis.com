@@ -14,7 +14,7 @@ class PosteDAO
 
     public function getAllPostes()
     {
-        $sql = "SELECT id, id_cidade, id_estado, longitude, latitude, observacao FROM candeeiro_urbanos ORDER BY id ASC";
+        $sql = "SELECT id, id_cidade, id_estado, longitude, latitude FROM candeeiro_urbanos ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $postes = [];
@@ -25,8 +25,7 @@ class PosteDAO
                 $row['id_cidade'],
                 $row['id_estado'],
                 $row['longitude'],
-                $row['latitude'],
-                $row['observacao']
+                $row['latitude']
             );
         }
 
@@ -44,7 +43,7 @@ class PosteDAO
         return $row ?: null;
     }
 
-    public function createPoste($id, $id_cidade, $id_estado, $longitude, $latitude, $observacao)
+    public function createPoste($id, $id_cidade, $id_estado, $longitude, $latitude)
     {
         $sqlCheck = "SELECT id FROM candeeiro_urbanos WHERE id = :id";
         $stmtCheck = $this->conn->prepare($sqlCheck);
@@ -57,9 +56,9 @@ class PosteDAO
 
         $sql = "
             INSERT INTO candeeiro_urbanos
-                (id, id_cidade, id_estado, longitude, latitude, observacao)
+                (id, id_cidade, id_estado, longitude, latitude)
             VALUES
-                (:id, :id_cidade, :id_estado, :longitude, :latitude, :observacao)
+                (:id, :id_cidade, :id_estado, :longitude, :latitude)
         ";
 
         $stmt = $this->conn->prepare($sql);
@@ -69,18 +68,17 @@ class PosteDAO
             'id_estado' => $id_estado,
             'longitude' => $longitude,
             'latitude' => $latitude,
-            'observacao' => $observacao,
         ]);
 
         return (int) $this->conn->lastInsertId();
     }
 
-    public function posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude, $observacao)
+    public function posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude)
     {
-        $sql = "UPDATE candeeiro_urbanos SET id_cidade = ?, id_estado = ?, longitude = ?, latitude = ?, observacao = ? WHERE id = ?";
+        $sql = "UPDATE candeeiro_urbanos SET id_cidade = ?, id_estado = ?, longitude = ?, latitude = ? WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_cidade, $id_estado, $longitude, $latitude, $observacao, $id]);
+        $stmt->execute([$id_cidade, $id_estado, $longitude, $latitude, $id]);
 
         return $stmt->rowCount();
     }
@@ -109,13 +107,14 @@ class PosteDAO
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function posteInsertObsDAO($id)
-    {
-        $sql = "UPDATE candeeiro_urbanos SET observacao = ? WHERE id = ?";
+        public function insertObs($id_candeeiro_urbano, $texto)
+{
+    $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
+            VALUES (?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id_candeeiro_urbano, $texto]);
 
-        return $stmt->rowCount();
-    }
+    return $stmt->rowCount();
+}
 }

@@ -14,7 +14,7 @@ class ContentorDAO
 
     public function getAllContentores()
     {
-        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, observacao, is_full
+        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full
                 FROM contentores
                 ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
@@ -34,7 +34,6 @@ class ContentorDAO
                 (float) $row['latitude'],
                 $row['tipo'],
                 $row['identificacao'],
-                $row['observacao'],
                 (bool) $row['is_full'],
                 $estado,
                 $peso
@@ -89,7 +88,7 @@ class ContentorDAO
         return $row ?: null;
     }
 
-    public function createContentor($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao)
+    public function createContentor($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao)
     {
         $sqlCheck = "SELECT id FROM contentores WHERE id = :id";
         $stmtCheck = $this->conn->prepare($sqlCheck);
@@ -102,9 +101,9 @@ class ContentorDAO
 
         $sql = "
             INSERT INTO contentores
-                (id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, observacao, is_full)
+                (id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full)
             VALUES
-                (:id, :id_cidade, :id_estado, :capacidade_max, :longitude, :latitude, :tipo, :identificacao, :observacao, 0)
+                (:id, :id_cidade, :id_estado, :capacidade_max, :longitude, :latitude, :tipo, :identificacao, 0)
         ";
 
         $stmt = $this->conn->prepare($sql);
@@ -117,20 +116,19 @@ class ContentorDAO
             'latitude' => $latitude,
             'tipo' => $tipo,
             'identificacao' => $identificacao,
-            'observacao' => $observacao,
         ]);
 
         return (int) $this->conn->lastInsertId();
     }
 
-    public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao)
+    public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao)
     {
         $sql = "UPDATE contentores
-                SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?, observacao = ?
+                SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?
                 WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao, $id]);
+        $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $id]);
 
         return $stmt->rowCount();
     }
@@ -157,4 +155,15 @@ class ContentorDAO
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function insertObs($id_contentor, $texto)
+{
+    $sql = "INSERT INTO contentor_observacoes (id_contentor, texto)
+            VALUES (?, ?)";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id_contentor, $texto]);
+
+    return $stmt->rowCount();
+}
 }

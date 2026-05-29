@@ -7,17 +7,15 @@ class Poste implements JsonSerializable
     private int $id_estado;
     private string $longitude;
     private string $latitude;
-    private ?string $observacao;
 
 
-    public function __construct(int $id, int $id_cidade, int $id_estado, string $longitude, string $latitude, ?string $observacao)
+    public function __construct(int $id, int $id_cidade, int $id_estado, string $longitude, string $latitude)
     {
         $this->id = $id;
         $this->id_cidade = $id_cidade;
         $this->id_estado = $id_estado;
         $this->longitude = $longitude;
         $this->latitude = $latitude;
-        $this->observacao = $observacao ?? '';
     }
 
     public function jsonSerialize(): mixed
@@ -28,7 +26,6 @@ class Poste implements JsonSerializable
             'id_estado' => $this->id_estado,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
-            'observacao' => $this->observacao
         ];
     }
 
@@ -74,13 +71,4 @@ class Poste implements JsonSerializable
     {
         $this->latitude = $latitude;
     }
-    public function getObservacao(): string
-    {
-        return $this->observacao;
-    }
-    public function setObservacao(?string $observacao): void
-    {
-        $this->observacao = $observacao ?? '';
-    }
-
 }

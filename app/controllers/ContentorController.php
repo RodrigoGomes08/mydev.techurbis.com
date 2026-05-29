@@ -146,7 +146,8 @@ class ContentorController
         exit;
     }
 
-    public function numContentorEstado() {
+    public function numContentorEstado()
+    {
         $contentorDAO = new ContentorDAO();
         $contentores = $contentorDAO->numContentorEstado();
 
@@ -170,6 +171,54 @@ class ContentorController
         ]);
     }
 
-    
-    
+    public function contentorDetailApi($id)
+    {
+        try {
+            $contentores = (new ContentorDAO())->findByID($id);
+
+            if (!$contentores) {
+                throw new Exception("Contentor não encontrado");
+            }
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do contentor obtido com sucesso.',
+                'data' => $contentores
+            ]);
+
+        } catch (Exception $e) {
+
+        }
+    }
+
+    public function insertObsEmContentorApi($id)
+{
+    // $id já vem da URL, não precisas de o ler do POST
+    $texto = trim($_POST["texto"] ?? '');
+
+    if (empty($id) || empty($texto)) {
+        Utils::jsonResponse([
+            'success' => false,
+            'message' => 'ID e texto são obrigatórios.',
+            'data' => null
+        ], 400);
+        return;
+    }
+
+    try {
+        $contentoresObs = (new ContentorDAO())->insertObs($id, $texto);
+
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Observação inserida com sucesso.',
+            'data' => $contentoresObs
+        ]);
+    } catch (Exception $e) {
+        Utils::jsonResponse([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'data' => null
+        ], 500);
+    }
+}
 }

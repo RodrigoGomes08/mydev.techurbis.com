@@ -56,10 +56,12 @@ elseif ($uri === '/contentores' && $method === 'GET') {
     $id = (int) $m[1];
     (new ContentorController())->contentorDetailApi($id);
 
-} elseif ($uri === '/contentoresdetailsobs' && $method === 'GET') {
+} elseif (preg_match('#^/contentoresobs/(\d+)$#', $uri, $m) && $method === "POST") {
     AuthMiddlewareApi::check();
-    (new PosteController())->contentorDetailObsApi();
-}
+    $id = (int) $m[1];
+    (new ContentorController())->insertObsEmContentorApi($id);
+} 
+
 
 //==================================================
 // POSTES
@@ -73,11 +75,10 @@ elseif ($uri === '/postes' && $method === 'GET') {
     $id = (int) $m[1];
     (new PosteController())->posteDetailApi($id);
 
-} elseif ($uri === '/postesdetailobs' && $method === 'GET') {
-} elseif (preg_match('#^/postes/(\d+)$#', $uri, $m) && $method === "POST") {
+} elseif (preg_match('#^/postesobs/(\d+)$#', $uri, $m) && $method === "POST") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
-    (new PosteController())->posteDetailObsApi($id);
+    (new PosteController())->insertObsEmPostesApi($id);
 } 
 
 //==================================================
@@ -91,10 +92,6 @@ elseif ($uri === '/parques' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new ParqueController())->parqueDetailApi($id);
-
-} elseif ($uri === '/parquesdetailobs' && $method === 'GET') {
-    AuthMiddlewareApi::check();
-    (new ParqueController())->parqueDetailObsApi();
 } 
 
 //==================================================
@@ -109,9 +106,10 @@ elseif ($uri === '/sensores' && $method === 'GET') {
     $id = (int) $m[1];
     (new SensorController())->sensorDetailApi($id);
 
-} elseif ($uri === '/sensoresdetailobs' && $method === 'GET') {
+} elseif (preg_match('#^/sensoresobs/(\d+)$#', $uri, $m) && $method === "POST") {
     AuthMiddlewareApi::check();
-    (new SensorController())->sensorDetailObsApi();
+    $id = (int) $m[1];
+    (new SensorController())->insertObsEmSensoresApi($id);
 } 
 
 //==================================================
