@@ -27,7 +27,9 @@ class ContentorController
                 'numContentorPorEstado' => $numContentorPorEstado,
             ]);
         } catch (Exception $e) {
-
+            $_SESSION['toast'] = ['type' => 'error', 'message' => $e->getMessage()];
+            header("Location: /admin/PortalADMContentores");
+            exit;
         }
 
     }
@@ -188,33 +190,33 @@ class ContentorController
     }
 
     public function insertObsEmContentorApi($id)
-{
-    // $id já vem da URL, não precisas de o ler do POST
-    $texto = trim($_POST["texto"] ?? '');
+    {
+        // $id já vem da URL, não precisas de o ler do POST
+        $texto = trim($_POST["texto"] ?? '');
 
-    if (empty($id) || empty($texto)) {
-        Utils::jsonResponse([
-            'success' => false,
-            'message' => 'ID e texto são obrigatórios.',
-            'data' => null
-        ], 400);
-        return;
+        if (empty($id) || empty($texto)) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'ID e texto são obrigatórios.',
+                'data' => null
+            ], 400);
+            return;
+        }
+
+        try {
+            $contentoresObs = (new ContentorDAO())->insertObs($id, $texto);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Observação inserida com sucesso.',
+                'data' => $contentoresObs
+            ]);
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 500);
+        }
     }
-
-    try {
-        $contentoresObs = (new ContentorDAO())->insertObs($id, $texto);
-
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Observação inserida com sucesso.',
-            'data' => $contentoresObs
-        ]);
-    } catch (Exception $e) {
-        Utils::jsonResponse([
-            'success' => false,
-            'message' => $e->getMessage(),
-            'data' => null
-        ], 500);
-    }
-}
 }

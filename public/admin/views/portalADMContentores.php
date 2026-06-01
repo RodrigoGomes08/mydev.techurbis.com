@@ -76,7 +76,8 @@ $lastSync = date('d/m/Y H:i:s');
                     <div class="pkpi-icon" style="background:#fff4e0;color:#f39c12;"><i
                             class="bi bi-dash-circle-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-warning"><?= $numContentorPorEstado['contentores_em_atencao'] ?></div>
+                        <div class="pkpi-value text-warning"><?= $numContentorPorEstado['contentores_em_atencao'] ?>
+                        </div>
                         <div class="pkpi-label">Em Atenção</div>
                     </div>
                 </div>
@@ -172,172 +173,183 @@ $lastSync = date('d/m/Y H:i:s');
                                         </div>
                                     </div>
                                     <div class="parque-ocupacao-wrap">
-                                        <div class="parque-pct-num <?=  $c->estado['nome'] ?>"><?=  $c->estado['nome'] ?></div>
+                                        <div class="parque-pct-num <?= $c->estado['nome'] ?>"><?= $c->estado['nome'] ?></div>
                                         <div class="parque-prog">
-                                            <div class="parque-prog-bar <?=  $c->estado['nome'] ?>" style="width:<?= $c->peso['peso'] ?>%;"></div>
-                                        </div>
-                                        <div class="parque-lugares-label">
-                                            Cap. máx.: <?= $c->getCapacidadeMax() ?>L &nbsp;·&nbsp;
-                                            <?= htmlspecialchars($c->getTipo()) ?>
-                                        </div>
-                                    </div>
-                                    <div class="parque-actions">
-                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
-                                            data-bs-target="#<?= $mMapaId ?>">
-                                            <i class="bi bi-geo-alt me-1"></i>Mapa
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                                            data-bs-target="#<?= $mEditId ?>">
-                                            <i class="bi bi-pencil me-1"></i>Editar
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                            data-bs-target="#<?= $mDeleteId ?>">
-                                            <i class="bi bi-trash me-1"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- MODAL MAPA -->
-                            <div class="modal fade" id="<?= $mMapaId ?>" tabindex="-1">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="background:var(--primary-gradient);color:white;">
-                                            <h5 class="modal-title"><i class="bi bi-geo-alt me-2"></i>Localização —
-                                                <?= htmlspecialchars($c->getIdentificacao()) ?>
-                                            </h5>
-                                            <button type="button" class="btn-close btn-close-white"
-                                                data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body p-0">
-                                            <div style="width:100%;height:420px;">
-                                                <iframe
-                                                    src="https://www.google.com/maps?q=<?= $c->getLatitude() ?>,<?= $c->getLongitude() ?>&z=15&output=embed"
-                                                    width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                                            <div class="parque-prog-bar <?= $c->estado['nome'] ?>" style="width:style="
+                                                width:<?= $c->peso['peso'] ?? 0 ?>%;"</div>
+                                            </div>
+                                            <div class="parque-lugares-label">
+                                                Cap. máx.: <?= $c->getCapacidadeMax() ?>L &nbsp;·&nbsp;
+                                                <?= htmlspecialchars($c->getTipo()) ?>
                                             </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <small class="text-muted me-auto">Lat: <?= $c->getLatitude() ?> | Lng:
-                                                <?= $c->getLongitude() ?></small>
-                                            <button type="button" class="btn btn-secondary btn-sm"
-                                                data-bs-dismiss="modal">Fechar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- MODAL EDITAR -->
-                            <div class="modal fade" id="<?= $mEditId ?>" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="background:var(--primary-gradient);color:white;">
-                                            <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Editar Contentor</h5>
-                                            <button type="button" class="btn-close btn-close-white"
-                                                data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <form method="POST" action="/admin/update-contentor">
-                                            <div class="modal-body">
-                                                <input type="hidden" name="id" value="<?= $c->getId() ?>">
-                                                <div class="row g-3">
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Identificação</label>
-                                                        <input type="text" name="identificacao" class="form-control"
-                                                            value="<?= htmlspecialchars($c->getIdentificacao()) ?>" required>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Tipo</label>
-                                                        <input type="text" name="tipo" class="form-control"
-                                                            value="<?= htmlspecialchars($c->getTipo()) ?>" required>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">ID Cidade</label>
-                                                        <input type="number" name="id_cidade" class="form-control"
-                                                            value="<?= $c->getIdCidade() ?>" required>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Estado</label>
-                                                        <select name="id_estado" class="form-select" required>
-                                                            <option value="4" <?= $c->getIdEstado() === 4 ? 'selected' : '' ?>>
-                                                                Normal</option>
-                                                            <option value="5" <?= $c->getIdEstado() === 5 ? 'selected' : '' ?>>
-                                                                Atenção</option>
-                                                            <option value="6" <?= $c->getIdEstado() === 6 ? 'selected' : '' ?>>
-                                                                Crítico</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <label class="form-label fw-semibold">Capacidade Máxima (L)</label>
-                                                        <input type="number" name="capacidade_max" class="form-control"
-                                                            value="<?= $c->getCapacidadeMax() ?>" required>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Latitude</label>
-                                                        <input type="text" name="latitude" class="form-control"
-                                                            value="<?= $c->getLatitude() ?>" required>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Longitude</label>
-                                                        <input type="text" name="longitude" class="form-control"
-                                                            value="<?= $c->getLongitude() ?>" required>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Cheio</label>
-                                                        <select name="is_full" class="form-select">
-                                                            <option value="0" <?= !$c->getIsFull() ? 'selected' : '' ?>>Não
-                                                            </option>
-                                                            <option value="1" <?= $c->getIsFull() ? 'selected' : '' ?>>Sim
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label fw-semibold">Observação</label>
-                                                        <textarea name="observacao" class="form-control"
-                                                            rows="2"><?= htmlspecialchars($c->getObservacao()) ?></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-sm"
-                                                    data-bs-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary btn-sm"><i
-                                                        class="bi bi-floppy me-1"></i>Guardar</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- MODAL ELIMINAR -->
-                            <div class="modal fade" id="<?= $mDeleteId ?>" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered modal-sm">
-                                    <div class="modal-content">
-                                        <div class="modal-header border-0 pb-0">
-                                            <h5 class="modal-title text-danger"><i
-                                                    class="bi bi-exclamation-triangle-fill me-2"></i>Eliminar</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body text-center pt-1">
-                                            <p class="mb-1">Tem a certeza que deseja eliminar</p>
-                                            <strong><?= htmlspecialchars($c->getIdentificacao()) ?></strong>?
-                                            <p class="text-muted mt-2" style="font-size:0.82rem;">Esta ação é irreversível.</p>
-                                        </div>
-                                        <div class="modal-footer border-0 justify-content-center gap-2">
-                                            <button type="button" class="btn btn-secondary btn-sm"
-                                                data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="button" class="btn btn-danger btn-sm btn-confirmar-delete"
-                                                data-id="<?= $c->getId() ?>" data-modal-id="<?= $mDeleteId ?>">
-                                                <i class="bi bi-trash me-1"></i>Eliminar
+                                        <div class="parque-actions">
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                                                data-bs-target="#<?= $mMapaId ?>">
+                                                <i class="bi bi-geo-alt me-1"></i>Mapa
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                                data-bs-target="#<?= $mEditId ?>">
+                                                <i class="bi bi-pencil me-1"></i>Editar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                                data-bs-target="#<?= $mDeleteId ?>">
+                                                <i class="bi bi-trash me-1"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        <?php endforeach; ?>
+                                <!-- MODAL MAPA -->
+                                <div class="modal fade" id="<?= $mMapaId ?>" tabindex="-1">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                                                <h5 class="modal-title"><i class="bi bi-geo-alt me-2"></i>Localização —
+                                                    <?= htmlspecialchars($c->getIdentificacao()) ?>
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-0">
+                                                <div style="width:100%;height:420px;">
+                                                    <iframe
+                                                        src="https://www.google.com/maps?q=<?= $c->getLatitude() ?>,<?= $c->getLongitude() ?>&z=15&output=embed"
+                                                        width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <small class="text-muted me-auto">Lat: <?= $c->getLatitude() ?> | Lng:
+                                                    <?= $c->getLongitude() ?></small>
+                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                    data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL EDITAR -->
+                                <div class="modal fade" id="<?= $mEditId ?>" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                                                <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Editar Contentor</h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="POST" action="/admin/update-contentor">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="<?= $c->getId() ?>">
+                                                    <div class="row g-3">
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Identificação</label>
+                                                            <input type="text" name="identificacao" class="form-control"
+                                                                value="<?= htmlspecialchars($c->getIdentificacao()) ?>"
+                                                                required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Tipo</label>
+                                                            <input type="text" name="tipo" class="form-control"
+                                                                value="<?= htmlspecialchars($c->getTipo()) ?>" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">ID Cidade</label>
+                                                            <input type="number" name="id_cidade" class="form-control"
+                                                                value="<?= $c->getIdCidade() ?>" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Estado</label>
+                                                            <select name="id_estado" class="form-select" required>
+                                                                <option value="4" <?= $c->getIdEstado() === 4 ? 'selected' : '' ?>>
+                                                                    Normal</option>
+                                                                <option value="5" <?= $c->getIdEstado() === 5 ? 'selected' : '' ?>>
+                                                                    Atenção</option>
+                                                                <option value="6" <?= $c->getIdEstado() === 6 ? 'selected' : '' ?>>
+                                                                    Crítico</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <label class="form-label fw-semibold">Capacidade Máxima (L)</label>
+                                                            <input type="number" name="capacidade_max" class="form-control"
+                                                                value="<?= $c->getCapacidadeMax() ?>" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Latitude</label>
+                                                            <input type="text" name="latitude" class="form-control"
+                                                                value="<?= $c->getLatitude() ?>" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Longitude</label>
+                                                            <input type="text" name="longitude" class="form-control"
+                                                                value="<?= $c->getLongitude() ?>" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Cheio</label>
+                                                            <select name="is_full" class="form-select">
+                                                                <option value="0" <?= !$c->getIsFull() ? 'selected' : '' ?>>Não
+                                                                </option>
+                                                                <option value="1" <?= $c->getIsFull() ? 'selected' : '' ?>>Sim
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Observação</label>
+                                                            <textarea name="observacao" class="form-control" rows="2"><?php if (!empty($c->getObservacoes())): ?>
+                                                                            <?php foreach ($c->getObservacoes() as $obs): ?>
+                                                                                    <p class="mb-1 text-muted" style="font-size:0.82rem;">
+                                                                                        <?= htmlspecialchars($obs['texto']) ?>
+                                                                                            <small class="text-muted"><?= $obs['created_at'] ?></small>
+                                                                                    </p>
+                                                                            <?php endforeach; ?>
+                                                                    <?php else: ?>
+                                                                            <span class="text-muted" style="font-size:0.82rem;">Sem observações.</span>
+                                                                    <?php endif; ?></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary btn-sm"><i
+                                                            class="bi bi-floppy me-1"></i>Guardar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL ELIMINAR -->
+                                <div class="modal fade" id="<?= $mDeleteId ?>" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title text-danger"><i
+                                                        class="bi bi-exclamation-triangle-fill me-2"></i>Eliminar</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body text-center pt-1">
+                                                <p class="mb-1">Tem a certeza que deseja eliminar</p>
+                                                <strong><?= htmlspecialchars($c->getIdentificacao()) ?></strong>?
+                                                <p class="text-muted mt-2" style="font-size:0.82rem;">Esta ação é irreversível.
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer border-0 justify-content-center gap-2">
+                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger btn-sm btn-confirmar-delete"
+                                                    data-id="<?= $c->getId() ?>" data-modal-id="<?= $mDeleteId ?>">
+                                                    <i class="bi bi-trash me-1"></i>Eliminar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
 
     </section>
 
