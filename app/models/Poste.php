@@ -7,15 +7,16 @@ class Poste implements JsonSerializable
     private int $id_estado;
     private string $longitude;
     private string $latitude;
+    private string $observacao;
 
-
-    public function __construct(int $id, int $id_cidade, int $id_estado, string $longitude, string $latitude)
+    public function __construct(int $id, int $id_cidade, int $id_estado, string $longitude, string $latitude, string $observacao = '')
     {
         $this->id = $id;
         $this->id_cidade = $id_cidade;
         $this->id_estado = $id_estado;
         $this->longitude = $longitude;
         $this->latitude = $latitude;
+        $this->observacao = $observacao;
     }
 
     public function jsonSerialize(): mixed
@@ -26,6 +27,7 @@ class Poste implements JsonSerializable
             'id_estado' => $this->id_estado,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
+            'observacao' => $this->observacao,
         ];
     }
 
@@ -42,11 +44,11 @@ class Poste implements JsonSerializable
     {
         return $this->id_cidade;
     }
-
     public function setIdCidade(int $id_cidade): void
     {
         $this->id_cidade = $id_cidade;
     }
+
     public function getIdEstado(): int
     {
         return $this->id_estado;
@@ -55,6 +57,7 @@ class Poste implements JsonSerializable
     {
         $this->id_estado = $id_estado;
     }
+
     public function getLongitude(): string
     {
         return $this->longitude;
@@ -63,6 +66,7 @@ class Poste implements JsonSerializable
     {
         $this->longitude = $longitude;
     }
+
     public function getLatitude(): string
     {
         return $this->latitude;
@@ -70,5 +74,14 @@ class Poste implements JsonSerializable
     public function setLatitude(string $latitude): void
     {
         $this->latitude = $latitude;
+    }
+
+    public function getObservacao(): string
+    {
+        return $this->observacao;
+    }
+    public function setObservacao(string $observacao): void
+    {
+        $this->observacao = $observacao;
     }
 }

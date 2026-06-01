@@ -15,19 +15,25 @@ class PosteDAO
 
     public function getAllPostes()
     {
-        $sql = "SELECT id, id_cidade, id_estado, longitude, latitude FROM candeeiro_urbanos ORDER BY id ASC";
+        $sql = "SELECT cu.id, cu.id_cidade, cu.id_estado, cu.longitude, cu.latitude,
+                       (SELECT texto FROM candeeiro_observacoes
+                        WHERE id_candeeiro_urbano = cu.id
+                        ORDER BY id DESC LIMIT 1) AS observacao
+                FROM candeeiro_urbanos cu
+                ORDER BY cu.id ASC";
+
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $postes = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
             $postes[] = new Poste(
                 $row['id'],
                 $row['id_cidade'],
                 $row['id_estado'],
                 $row['longitude'],
                 $row['latitude'],
+                $row['observacao'] ?? ''
             );
         }
 
@@ -42,9 +48,7 @@ class PosteDAO
         $postes = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
             $estado = (new EstadoDAO())->findByID($row['id_estado']);
-
             $row['estado'] = $estado;
             $postes[] = $row;
         }
@@ -116,9 +120,12 @@ class PosteDAO
     public function numPosteEstado()
     {
         $sql = "
-        SELECT SUM(CASE WHEN e.nome = 'avariado' THEN 1 ELSE 0 END) AS candeeiros_avariados, SUM(CASE WHEN e.nome = 'operacional' THEN 1 ELSE 0 END) AS candeeiros_operacionais, SUM(CASE WHEN e.nome = 'manutencao' THEN 1 ELSE 0 END) AS candeeiros_em_manutencao
+            SELECT
+                SUM(CASE WHEN e.nome = 'avariado'     THEN 1 ELSE 0 END) AS candeeiros_avariados,
+                SUM(CASE WHEN e.nome = 'operacional'  THEN 1 ELSE 0 END) AS candeeiros_operacionais,
+                SUM(CASE WHEN e.nome = 'manutencao'   THEN 1 ELSE 0 END) AS candeeiros_em_manutencao
             FROM candeeiro_urbanos cu
-            INNER JOIN estados e ON cu.id_estado = e.id;
+            INNER JOIN estados e ON cu.id_estado = e.id
         ";
 
         $stmt = $this->conn->prepare($sql);
@@ -130,11 +137,25 @@ class PosteDAO
     public function insertObs($id_candeeiro_urbano, $texto)
     {
         $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
-            VALUES (?, ?)";
+                VALUES (?, ?)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id_candeeiro_urbano, $texto]);
 
         return $stmt->rowCount();
+    }
+
+    public function getObservacaoByPoste($id)
+    {
+        $sql = "SELECT texto
+                FROM candeeiro_observacoes
+                WHERE id_candeeiro_urbano = ?
+                ORDER BY id DESC
+                LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
+
+        return $stmt->fetchColumn();
     }
 }
