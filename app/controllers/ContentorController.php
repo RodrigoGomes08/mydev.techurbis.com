@@ -165,7 +165,9 @@ class ContentorController
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Lista de contentores obtida com sucesso.',
-            'data' => $contentores
+            'data' => [
+                "contentores" => $contentores
+            ]
         ]);
     }
 
@@ -181,7 +183,9 @@ class ContentorController
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Detalhe do contentor obtido com sucesso.',
-                'data' => $contentores
+                'data' => [
+                    "detalhes_contentor" => $contentores
+                ]
             ]);
 
         } catch (Exception $e) {
@@ -189,12 +193,13 @@ class ContentorController
         }
     }
 
-    public function insertObsEmContentorApi($id)
+    public function insertObsEmContentorApi($id_contentor)
     {
         // $id já vem da URL, não precisas de o ler do POST
+        $id_contentor = trim($_POST["id_contentor"] ?? '');
         $texto = trim($_POST["texto"] ?? '');
 
-        if (empty($id) || empty($texto)) {
+        if (empty($id_contentor) || empty($texto)) {
             Utils::jsonResponse([
                 'success' => false,
                 'message' => 'ID e texto são obrigatórios.',
@@ -204,12 +209,14 @@ class ContentorController
         }
 
         try {
-            $contentoresObs = (new ContentorDAO())->insertObs($id, $texto);
+            $contentorId = (new ContentorDAO())->insertObs($id_contentor, $texto);
 
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Observação inserida com sucesso.',
-                'data' => $contentoresObs
+                'data' => [
+                    "obs_contentor" => $contentorId
+                ]
             ]);
         } catch (Exception $e) {
             Utils::jsonResponse([

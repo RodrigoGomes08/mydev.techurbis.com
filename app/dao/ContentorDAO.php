@@ -160,8 +160,8 @@ class ContentorDAO
 
     public function insertObs($id_contentor, $texto)
     {
-        $sql = "INSERT INTO contentor_observacoes (id_contentor, texto)
-            VALUES (?, ?)";
+        $sql = "INSERT INTO contentor_observacoes (id_contentor, texto, created_at)
+            VALUES (?, ?, NOW())";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id_contentor, $texto]);
