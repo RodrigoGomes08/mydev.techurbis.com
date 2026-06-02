@@ -125,6 +125,7 @@ class ContentorDAO
 
     public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao)
     {
+        try {
         $sql = "UPDATE contentores
                 SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?
                 WHERE id = ?";
@@ -133,16 +134,23 @@ class ContentorDAO
         $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $id]);
 
         return $stmt->rowCount();
+        } catch (Exception $e) {
+            throw new Exception("Erro ao atualizar contentor: " . $e->getMessage());
+        }
     }
 
     public function contentorDeleteDAO($id)
     {
+        try {
         $sql = "DELETE FROM contentores WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
 
         return $stmt->rowCount();
+        } catch (Exception $e) {
+            throw new Exception("Erro ao apagar contentor: " . $e->getMessage());
+        }
     }
 
     public function numContentorEstado()
@@ -160,6 +168,7 @@ class ContentorDAO
 
     public function insertObs($id_contentor, $texto)
     {
+        try {
         $sql = "INSERT INTO contentor_observacoes (id_contentor, texto, created_at)
             VALUES (?, ?, NOW())";
 
@@ -167,6 +176,9 @@ class ContentorDAO
         $stmt->execute([$id_contentor, $texto]);
 
         return $stmt->rowCount();
+        } catch (Exception $e) {
+            throw new Exception("Erro ao inserir observação: " . $e->getMessage());
+        }
     }
 
     public function getObsByContentorId($id_contentor)

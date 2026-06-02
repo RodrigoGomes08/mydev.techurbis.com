@@ -36,31 +36,32 @@ class ContentorController
 
     public function createContentor()
     {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
-        }
-
-        $id = trim($_POST['id'] ?? '');
-        $id_cidade = trim($_POST['id_cidade'] ?? '');
-        $id_estado = trim($_POST['id_estado'] ?? '');
-        $capacidade_max = trim($_POST['capacidade_max'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
-        $tipo = trim($_POST['tipo'] ?? '');
-        $identificacao = trim($_POST['identificacao'] ?? '');
-        $observacao = trim($_POST['observacao'] ?? '');
-
-        if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos são obrigatórios.'
-            ];
-            header("Location: /admin/PortalADMContentores");
-            exit;
-        }
-
         try {
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
+
+            $id = trim($_POST['id'] ?? '');
+            $id_cidade = trim($_POST['id_cidade'] ?? '');
+            $id_estado = trim($_POST['id_estado'] ?? '');
+            $capacidade_max = trim($_POST['capacidade_max'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
+            $latitude = trim($_POST['latitude'] ?? '');
+            $tipo = trim($_POST['tipo'] ?? '');
+            $identificacao = trim($_POST['identificacao'] ?? '');
+            $observacao = trim($_POST['observacao'] ?? '');
+
+            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos são obrigatórios.'
+                ];
+                header("Location: /admin/PortalADMContentores");
+                exit;
+            }
+
+
             $contentorDAO = new ContentorDAO();
             $contentorDAO->createContentor($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
 
@@ -81,27 +82,27 @@ class ContentorController
 
     public function ContentorUpdate($id)
     {
-
-        $id = trim($_POST["id"] ?? '');
-        $id_cidade = trim($_POST["id_cidade"] ?? '');
-        $id_estado = trim($_POST["id_estado"] ?? '');
-        $capacidade_max = trim($_POST["capacidade_max"] ?? '');
-        $longitude = trim($_POST["longitude"] ?? '');
-        $latitude = trim($_POST["latitude"] ?? '');
-        $tipo = trim($_POST["tipo"] ?? '');
-        $identificacao = trim($_POST["identificacao"] ?? '');
-        $observacao = trim($_POST["observacao"] ?? '');
-
-        if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos são obrigatórios.'
-            ];
-            header("Location: /admin/PortalADMContentores");
-            exit;
-        }
-
         try {
+            $id = trim($_POST["id"] ?? '');
+            $id_cidade = trim($_POST["id_cidade"] ?? '');
+            $id_estado = trim($_POST["id_estado"] ?? '');
+            $capacidade_max = trim($_POST["capacidade_max"] ?? '');
+            $longitude = trim($_POST["longitude"] ?? '');
+            $latitude = trim($_POST["latitude"] ?? '');
+            $tipo = trim($_POST["tipo"] ?? '');
+            $identificacao = trim($_POST["identificacao"] ?? '');
+            $observacao = trim($_POST["observacao"] ?? '');
+
+            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos são obrigatórios.'
+                ];
+                header("Location: /admin/PortalADMContentores");
+                exit;
+            }
+
+
             $linhasAlteradas = (new ContentorDAO())->contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
 
             if (!$linhasAlteradas) {
@@ -146,33 +147,57 @@ class ContentorController
 
     public function numContentorEstado()
     {
+        try {
         $contentorDAO = new ContentorDAO();
         $contentores = $contentorDAO->numContentorEstado();
 
         return $contentores;
+        } catch (Exception $e) {
+            throw new Exception("Erro ao obter número de contentores por estado: " . $e->getMessage());
+        }
     }
+
+    //==================================================
+    // API
+    //==================================================
 
     public function contentorListApi(): void
     {
-        // if (empty($_SESSION['token'])) {
-        //     header("Location: /login");
-        //     exit;
-        // }
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
 
-        $contentorDAO = new ContentorDAO();
-        $contentores = $contentorDAO->getAllContentores();
+        try {
+            // if (empty($_SESSION['token'])) {
+            //     header("Location: /login");
+            //     exit;
+            // }
 
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Lista de contentores obtida com sucesso.',
-            'data' => [
-                "contentores" => $contentores
-            ]
-        ]);
+            $contentorDAO = new ContentorDAO();
+            $contentores = $contentorDAO->getAllContentores();
+
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lista de contentores obtida com sucesso.',
+                'data' => [
+                    "contentores" => $contentores
+                ]
+            ]);
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 500);
+        }
     }
 
     public function contentorDetailApi($id)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
         try {
             $contentores = (new ContentorDAO())->findByID($id);
 
@@ -180,6 +205,7 @@ class ContentorController
                 throw new Exception("Contentor não encontrado");
             }
 
+            $pdo->commit();
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Detalhe do contentor obtido com sucesso.',
@@ -189,12 +215,21 @@ class ContentorController
             ]);
 
         } catch (Exception $e) {
-
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 404);
         }
     }
 
     public function insertObsEmContentorApi($id_contentor)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
         // $id já vem da URL, não precisas de o ler do POST
         $id_contentor = trim($_POST["id_contentor"] ?? '');
         $texto = trim($_POST["texto"] ?? '');
@@ -203,26 +238,25 @@ class ContentorController
             Utils::jsonResponse([
                 'success' => false,
                 'message' => 'ID e texto são obrigatórios.',
-                'data' => null
+                'data' => []
             ], 400);
             return;
         }
 
-        try {
             $contentorId = (new ContentorDAO())->insertObs($id_contentor, $texto);
 
+            $pdo->commit();
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Observação inserida com sucesso.',
-                'data' => [
-                    "obs_contentor" => $contentorId
-                ]
+                'data' => []
             ]);
         } catch (Exception $e) {
+            $pdo->rollback();
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'data' => null
+                'data' => []
             ], 500);
         }
     }

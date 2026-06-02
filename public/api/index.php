@@ -19,10 +19,8 @@ use Firebase\JWT\Key;
 header("Content-Type: application/json; charset=UTF-8");
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-//var_dump($uri);
 
 $uri = str_replace("/api", "", $uri);
-//var_dump($uri);
 $method = $_SERVER['REQUEST_METHOD'];
 
 if (($uri === "/" || $uri === "/index") && $method === 'GET') {

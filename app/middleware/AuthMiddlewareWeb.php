@@ -32,5 +32,20 @@ Class AuthMiddlewareWeb {
         exit;
       }
   }
+
+  public static function isLoged()
+    {
+      try {
+        if (!isset($_SESSION['token'])) {
+          throw new Exception("Acesso negado");
+        }
+
+        return true;
+      } catch (Exception $e) {
+        // fazer toast
+        header("Location: /index");
+        exit;
+      }
+}
 }
   

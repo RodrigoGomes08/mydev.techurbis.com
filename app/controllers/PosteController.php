@@ -3,6 +3,7 @@
 use Composer\DependencyResolver\Transaction;
 
 require_once __DIR__ . '/../dao/PosteDAO.php';
+require_once __DIR__ . '/../config/DatabaseSingle.php';
 
 class PosteController
 {
@@ -34,12 +35,17 @@ class PosteController
             ]);
 
         } catch (Exception $e) {
-
+            $_SESSION['toast'] = ['type' => 'error', 'message' => $e->getMessage()];
         }
     }
 
     public function createPoste()
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+
         if (empty($_SESSION['token'])) {
             header("Location: /login");
             exit;
@@ -59,8 +65,6 @@ class PosteController
             header("Location: /admin/PortalADMPostes");
             exit;
         }
-
-        try {
             $posteDAO = new PosteDAO();
             $posteDAO->createPoste($id, $id_cidade, $id_estado, $longitude, $latitude);
 
@@ -68,7 +72,9 @@ class PosteController
                 'type' => 'success',
                 'message' => "Poste \"{$id}\" criado com sucesso!"
             ];
+            $pdo->commit();
         } catch (Exception $e) {
+            $pdo->rollback();
             $_SESSION['toast'] = [
                 'type' => 'error',
                 'message' => $e->getMessage()
@@ -81,6 +87,8 @@ class PosteController
 
     public function posteUpdate($id)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
         try {
             $id = trim($_POST["id"] ?? '');
             $id_cidade = trim($_POST["id_cidade"] ?? '');
@@ -110,7 +118,9 @@ class PosteController
                     'message' => "Poste \"{$id}\" atualizado com sucesso!"
                 ];
             }
+            $pdo->commit();
         } catch (Exception $e) {
+            $pdo->rollback();
             $_SESSION['toast'] = [
                 'type' => 'error',
                 'message' => $e->getMessage()
@@ -123,14 +133,26 @@ class PosteController
 
     public function numPosteEstado()
     {
+        try {
         $posteDAO = new PosteDAO();
         $postes = $posteDAO->numPosteEstado();
 
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => "Número de postes por estado obtido com sucesso!"
+        ];
         return $postes;
+        
+        } catch (Exception $e) {
+            throw new Exception("Erro ao obter o número de postes por estado: " . $e->getMessage());
+        }
     }
 
     public function PosteDelete($postId)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
         header('Content-Type: application/json');
 
         try {
@@ -141,18 +163,28 @@ class PosteController
             } else {
                 echo json_encode(['success' => true, 'message' => 'Poste eliminado com sucesso!']);
             }
+            $pdo->commit();
         } catch (Exception $e) {
+            $pdo->rollback();
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
     }
 
+    //==========================================================
     // API
+    //==========================================================
+
     public function posteListApi()
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
         $posteDAO = new PosteDAO();
         $postes = $posteDAO->getAllPostesAPI();
 
+        $pdo->commit();
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Lista de postes obtida com sucesso.',
@@ -160,10 +192,21 @@ class PosteController
                 "postes" => $postes
             ]
         ]);
+        } catch (Exception $e) {
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'Erro ao obter a lista de postes: ' . $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
     }
 
     public function posteDetailApi($id)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
         try {
             $postes = (new PosteDAO())->findByID($id);
 
@@ -171,15 +214,16 @@ class PosteController
                 throw new Exception("Poste não encontrado");
             }
 
+            $pdo->commit();
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Detalhe do poste obtido com sucesso.',
                 'data' => [
-                    "postes" => $postes
+                    "detalhes_postes" => $postes
                 ]
             ]);
-
         } catch (Exception $e) {
+            $pdo->rollback();
             Utils::jsonResponse([
                 'success' => false,
                 'message' => 'Poste não encontrado.',
@@ -195,11 +239,20 @@ class PosteController
 
         try {
             $posteDAO = new PosteDAO();
-            $postes = (new PosteDAO())->findByID($id);
+            $postes = $posteDAO->findByID($id);
 
             $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do poste obtido com sucesso.',
+                'data' => [
+                    "detalhes_postes" => $postes
+                ]
+            ]);
+
 
         } catch (Exception $e) {
+            $pdo->rollback();
             Utils::jsonResponse([
                 'success' => false,
                 'message' => 'Poste não encontrado.',
@@ -210,32 +263,41 @@ class PosteController
 
     public function insertObsEmPostesApi($id)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+        $id = trim($_POST["id"] ?? '');
         $texto = trim($_POST["texto"] ?? '');
 
         if (empty($id) || empty($texto)) {
             Utils::jsonResponse([
                 'success' => false,
                 'message' => 'ID e texto são obrigatórios.',
-                'data' => null
+                'data' => []
             ], 400);
             return;
         }
+            $posteDAO = new PosteDAO();
+            $posteObs = $posteDAO->insertObs($id, $texto);
+            $poste = $posteDAO->findByID($id);
 
-        try {
-            $postesObs = (new PosteDAO())->insertObs($id, $texto);
+            if(!$poste) {
+                throw new Exception("Poste não encontrado.");
+            }
 
+            $pdo->commit();
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Observação inserida com sucesso.',
-                'data' => [
-                    "postes" => $postesObs
-                ]
+                'data' => []
             ]);
         } catch (Exception $e) {
+            $pdo->rollback();
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'data' => null
+                'data' => []
             ], 500);
         }
     }

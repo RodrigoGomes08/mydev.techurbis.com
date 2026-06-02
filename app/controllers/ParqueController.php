@@ -27,6 +27,7 @@ class ParqueController
 
     public function createParque()
     {
+        try {
         if (empty($_SESSION['token'])) {
             header("Location: /login");
             exit;
@@ -50,7 +51,6 @@ class ParqueController
             exit;
         }
 
-        try {
             $parqueDAO = new ParqueDAO();
             $parqueDAO->createParque($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
 
@@ -71,6 +71,7 @@ class ParqueController
 
     public function parqueUpdate($id)
     {
+        try {
         if (empty($_SESSION['token'])) {
             header("Location: /login");
             exit;
@@ -94,7 +95,6 @@ class ParqueController
             exit;
         }
 
-        try {
             $linhasAlteradas = (new ParqueDAO())->parqueUpdateDAO($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
 
             if (!$linhasAlteradas) {
@@ -139,6 +139,10 @@ class ParqueController
     // API
     public function parqueListApi()
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
         // if (empty($_SESSION['token'])) {
         //     header("Location: /login");
         //     exit;
@@ -148,15 +152,27 @@ class ParqueController
         $parques = $parqueDAO->getAllParques();
         var_dump($parques);
 
+        $pdo->commit();
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Lista de parques obtida com sucesso.',
             'data' => $parques
         ]);
+        } catch (Exception $e) {
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'Erro ao obter a lista de parques: ' . $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
     }
 
     public function parqueDetailApi($id)
     {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
         try {
             $parques = (new ParqueDAO())->findByID($id);
 
@@ -171,7 +187,12 @@ class ParqueController
             ]);
 
         } catch (Exception $e) {
-
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'Erro ao obter o detalhe do parque: ' . $e->getMessage(),
+                'data' => []
+            ], 500);
         }
     }
 }

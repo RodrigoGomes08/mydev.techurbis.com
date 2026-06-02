@@ -10,7 +10,7 @@ class DatabaseSingle
       self::$connection = new PDO(
         "mysql:host=localhost;dbname=cidade_system",
         "root",
-        "",
+        "1234",
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
       );
     }

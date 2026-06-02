@@ -50,6 +50,7 @@ class PosteDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $estado = (new EstadoDAO())->findByID($row['id_estado']);
             $row['estado'] = $estado;
+            $row['postes'] = [];
             $postes[] = $row;
         }
 
@@ -99,22 +100,41 @@ class PosteDAO
 
     public function posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude)
     {
+        try {
         $sql = "UPDATE candeeiro_urbanos SET id_cidade = ?, id_estado = ?, longitude = ?, latitude = ? WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id_cidade, $id_estado, $longitude, $latitude, $id]);
 
         return $stmt->rowCount();
+        } catch (Exception $e) {
+            throw new Exception("Erro ao atualizar o poste: " . $e->getMessage());
+        }
     }
 
     public function posteDeleteDAO($id)
     {
+        try {
         $sql = "DELETE FROM candeeiro_urbanos WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
 
         return $stmt->rowCount();
+        } catch (Exception $e) {
+            throw new Exception("Erro ao apagar o poste: " . $e->getMessage());
+        }
+    }
+
+    public function findByIdPoste(){
+        
+        $sql = "SELECT * FROM candeeiro_urbanos WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
     }
 
     public function numPosteEstado()
@@ -136,6 +156,7 @@ class PosteDAO
 
     public function insertObs($id_candeeiro_urbano, $texto)
     {
+        try {
         $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
                 VALUES (?, ?)";
 
@@ -143,6 +164,9 @@ class PosteDAO
         $stmt->execute([$id_candeeiro_urbano, $texto]);
 
         return $stmt->rowCount();
+        } catch (Exception $e) {
+            throw new Exception("Erro ao inserir observação: " . $e->getMessage());
+        }
     }
 
     public function getObservacaoByPoste($id)

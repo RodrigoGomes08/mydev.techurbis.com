@@ -17,6 +17,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 // ─── PORTAL ADMIN VIEWS ───────────────────────────────────────────────────────
 
 if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/') {
+    AuthMiddlewareWeb::isLoged();
     AuthMiddlewareWeb::isAdmin();
     (new WebController())->adminGeral();
 
