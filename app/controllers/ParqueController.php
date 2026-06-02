@@ -150,13 +150,14 @@ class ParqueController
 
         $parqueDAO = new ParqueDAO();
         $parques = $parqueDAO->getAllParques();
-        var_dump($parques);
 
         $pdo->commit();
         Utils::jsonResponse([
             'success' => true,
             'message' => 'Lista de parques obtida com sucesso.',
-            'data' => $parques
+            'data' => [
+                'parques' => $parques
+            ]
         ]);
         } catch (Exception $e) {
             $pdo->rollback();
@@ -180,19 +181,22 @@ class ParqueController
                 throw new Exception("Parque não encontrado");
             }
 
+            $pdo->commit();
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Detalhe do parque obtido com sucesso.',
-                'data' => $parques
+                'data' => [
+                    "detalhes_parque" => $parques
+                ]
             ]);
 
         } catch (Exception $e) {
             $pdo->rollback();
             Utils::jsonResponse([
                 'success' => false,
-                'message' => 'Erro ao obter o detalhe do parque: ' . $e->getMessage(),
+                'message' => $e->getMessage(),
                 'data' => []
-            ], 500);
+            ], 404);
         }
     }
 }

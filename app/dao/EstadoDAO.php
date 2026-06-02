@@ -29,11 +29,11 @@ class EstadoDAO
             );
         }
         return $estados;
-        }
+    }
 
     public function findByID($id)
     {
-        $sql = "SELECT * FROM estados WHERE id = :id";
+        $sql = "SELECT id, nome, cor FROM estados WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();

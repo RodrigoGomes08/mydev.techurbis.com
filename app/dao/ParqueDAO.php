@@ -38,7 +38,7 @@ class ParqueDAO
 
     public function findByID($id)
     {
-        $sql = "SELECT * FROM contentores WHERE id = :id";
+        $sql = "SELECT id, id_cidade, nome, num_max_lugares, tipo, tarifa, longitude, latitude FROM p_estacionamentos WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -47,7 +47,7 @@ class ParqueDAO
         return $row ?: null;
     }
 
-    public function createParque($id, $id_cidade, $nome, $num_max_lugares, $tipo , $tarifa, $longitude, $latitude)
+    public function createParque($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
     {
         $sqlCheck = "SELECT id FROM p_estacionamentos WHERE id = :id";
         $stmtCheck = $this->conn->prepare($sqlCheck);
@@ -80,7 +80,7 @@ class ParqueDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function parqueUpdateDAO($id, $id_cidade, $nome, $num_max_lugares, $tipo , $tarifa, $longitude, $latitude)
+    public function parqueUpdateDAO($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
     {
         $sql = "UPDATE p_estacionamentos
                 SET id_cidade = ?, nome = ?, num_max_lugares = ?, tipo = ?, tarifa = ?, longitude = ?, latitude = ?
@@ -100,11 +100,5 @@ class ParqueDAO
         $stmt->execute([$id]);
 
         return $stmt->rowCount();
-    }
-
-    public function getStats() {
-        $sql = "
-            SELECT tl.id, tl.tipo, count(tl.id) FROM p_estacionamentos p INNER JOIN lugares l ON l.id_p_estacionamento = p.id INNER JOIN tipo_lugares tl ON l.id_tipo_lugares = tl.id GROUP BY tl.id;
-        ";
     }
 }

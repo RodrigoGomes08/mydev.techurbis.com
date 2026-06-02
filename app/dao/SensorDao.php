@@ -91,4 +91,21 @@ class SensorDAO
 
         return $sensor;
     }
+
+    public function getLast15ValoresSensor($id)
+    {
+        $sql = "SELECT id, id_sensor, data_leitura, leitura_string, leitura_num FROM sensor_leituras 
+            WHERE id_sensor = :id 
+            ORDER BY id DESC 
+            LIMIT 15";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        $valores = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $valores[] = $row;
+        }
+        return $valores;
+    }
 }

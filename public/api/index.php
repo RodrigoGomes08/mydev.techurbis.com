@@ -38,8 +38,7 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
 } elseif ($uri === '/home' && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
-    $valorTemp = (new SensorController())->valorSensorTemp();
-    $valorHum = (new SensorController())->valorSensorHum();
+    (new SensorController())->valorSensorTempHum();
 }
 
 //==================================================
@@ -58,8 +57,11 @@ elseif ($uri === '/contentores' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new ContentorController())->insertObsEmContentorApi($id);
-} 
-
+} elseif (preg_match('#^/contentores/(\d+)/obs$#', $uri, $m) && $method === "GET") {
+    AuthMiddlewareApi::check();
+    $id = (int) $m[1];
+    (new ContentorController())->getObsContentorApi($id);
+}
 
 //==================================================
 // POSTES
@@ -77,7 +79,11 @@ elseif ($uri === '/postes' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new PosteController())->insertObsEmPostesApi($id);
-} 
+} elseif (preg_match('#^/postes/(\d+)/obs$#', $uri, $m) && $method === "GET") {
+    AuthMiddlewareApi::check();
+    $id = (int) $m[1];
+    (new PosteController())->getObsPosteApi($id);
+}
 
 //==================================================
 // PARQUES
@@ -103,12 +109,11 @@ elseif ($uri === '/sensores' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new SensorController())->sensorDetailApi($id);
-
-} elseif (preg_match('#^/sensoresobs/(\d+)$#', $uri, $m) && $method === "POST") {
+} elseif (preg_match('#^/sensores/(\d+)/ultimos15valores$#', $uri, $m) && $method === "GET") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
-    (new SensorController())->insertObsEmSensoresApi($id);
-} 
+    (new SensorController())->getLast15ValoresSensorApi($id);
+}
 
 //==================================================
 // SENSORES_VALOR

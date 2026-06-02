@@ -148,10 +148,10 @@ class ContentorController
     public function numContentorEstado()
     {
         try {
-        $contentorDAO = new ContentorDAO();
-        $contentores = $contentorDAO->numContentorEstado();
+            $contentorDAO = new ContentorDAO();
+            $contentores = $contentorDAO->numContentorEstado();
 
-        return $contentores;
+            return $contentores;
         } catch (Exception $e) {
             throw new Exception("Erro ao obter número de contentores por estado: " . $e->getMessage());
         }
@@ -224,26 +224,32 @@ class ContentorController
         }
     }
 
-    public function insertObsEmContentorApi($id_contentor)
+    public function insertObsEmContentorApi($id)
     {
         $pdo = DatabaseSingle::connect();
         $pdo->beginTransaction();
-
         try {
-        // $id já vem da URL, não precisas de o ler do POST
-        $id_contentor = trim($_POST["id_contentor"] ?? '');
-        $texto = trim($_POST["texto"] ?? '');
+            $id = trim($id ?? '');
+            $texto = trim($_POST["texto"] ?? '');
 
-        if (empty($id_contentor) || empty($texto)) {
-            Utils::jsonResponse([
-                'success' => false,
-                'message' => 'ID e texto são obrigatórios.',
-                'data' => []
-            ], 400);
-            return;
-        }
+            if (empty($id) || empty($texto)) {
+                Utils::jsonResponse([
+                    'success' => false,
+                    'message' => 'ID e texto são obrigatórios.',
+                    'data' => []
+                ], 400);
+                return;
+            }
 
-            $contentorId = (new ContentorDAO())->insertObs($id_contentor, $texto);
+            $contentorDAO = new ContentorDAO();
+
+            // Verificar se o poste existe ANTES de inserir
+            $contentor = $contentorDAO->findByIdContentor($id);
+            if (!$contentor) {
+                throw new Exception("Contentor com id '$id' não encontrado.");
+            }
+
+            $contentorDAO->insertObs($id, $texto);
 
             $pdo->commit();
             Utils::jsonResponse([
@@ -253,6 +259,46 @@ class ContentorController
             ]);
         } catch (Exception $e) {
             $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
+
+    public function getObsContentorApi($id)
+    {
+        try {
+            $id = trim($id ?? '');
+
+            if (empty($id)) {
+                Utils::jsonResponse([
+                    'success' => false,
+                    'message' => 'ID é obrigatório.',
+                    'data' => []
+                ], 400);
+                return;
+            }
+
+            $contentorDAO = new ContentorDAO();
+
+            // Verificar se o contentor existe
+            $contentor = $contentorDAO->findByIdContentor($id);
+            if (!$contentor) {
+                throw new Exception("Contentor com id '$id' não encontrado.");
+            }
+
+            $observacoesContentores = $contentorDAO->getAllObservacoesByContentor($id);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Observações obtidas com sucesso.',
+                'data' => [
+                    "observacoesContentores" => $observacoesContentores
+                ]
+            ]);
+        } catch (Exception $e) {
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),

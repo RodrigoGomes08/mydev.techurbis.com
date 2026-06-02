@@ -1,6 +1,6 @@
 <?php
 
-class Contentor_observacoes
+class ContentorObservacoes implements JsonSerializable
 {
     private $id;
     private $id_contentor;
@@ -14,6 +14,19 @@ class Contentor_observacoes
         $this->texto = $texto;
         $this->created_at = $created_at;
     }
+
+
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'           => $this->id,
+            'id_contentor' => $this->id_contentor,
+            'texto'        => $this->texto,
+            'created_at'   => $this->created_at
+        ];
+    }
+
 
     public function getId() { return $this->id; }
     public function setId($id) { $this->id = $id; }

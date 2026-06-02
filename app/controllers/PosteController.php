@@ -46,25 +46,25 @@ class PosteController
 
         try {
 
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
-        }
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
 
-        $id = trim($_POST['id'] ?? '');
-        $id_cidade = trim($_POST['id_cidade'] ?? '');
-        $id_estado = trim($_POST['id_estado'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
+            $id = trim($_POST['id'] ?? '');
+            $id_cidade = trim($_POST['id_cidade'] ?? '');
+            $id_estado = trim($_POST['id_estado'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
+            $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos são obrigatórios.'
-            ];
-            header("Location: /admin/PortalADMPostes");
-            exit;
-        }
+            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos são obrigatórios.'
+                ];
+                header("Location: /admin/PortalADMPostes");
+                exit;
+            }
             $posteDAO = new PosteDAO();
             $posteDAO->createPoste($id, $id_cidade, $id_estado, $longitude, $latitude);
 
@@ -134,15 +134,15 @@ class PosteController
     public function numPosteEstado()
     {
         try {
-        $posteDAO = new PosteDAO();
-        $postes = $posteDAO->numPosteEstado();
+            $posteDAO = new PosteDAO();
+            $postes = $posteDAO->numPosteEstado();
 
-        $_SESSION['toast'] = [
-            'type' => 'success',
-            'message' => "Número de postes por estado obtido com sucesso!"
-        ];
-        return $postes;
-        
+            $_SESSION['toast'] = [
+                'type' => 'success',
+                'message' => "Número de postes por estado obtido com sucesso!"
+            ];
+            return $postes;
+
         } catch (Exception $e) {
             throw new Exception("Erro ao obter o número de postes por estado: " . $e->getMessage());
         }
@@ -181,17 +181,17 @@ class PosteController
         $pdo->beginTransaction();
 
         try {
-        $posteDAO = new PosteDAO();
-        $postes = $posteDAO->getAllPostesAPI();
+            $posteDAO = new PosteDAO();
+            $postes = $posteDAO->getAllPostesAPI();
 
-        $pdo->commit();
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Lista de postes obtida com sucesso.',
-            'data' => [
-                "postes" => $postes
-            ]
-        ]);
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lista de postes obtida com sucesso.',
+                'data' => [
+                    "postes" => $postes
+                ]
+            ]);
         } catch (Exception $e) {
             $pdo->rollback();
             Utils::jsonResponse([
@@ -265,26 +265,28 @@ class PosteController
     {
         $pdo = DatabaseSingle::connect();
         $pdo->beginTransaction();
-
         try {
-        $id = trim($_POST["id"] ?? '');
-        $texto = trim($_POST["texto"] ?? '');
+            $id = trim($id ?? '');
+            $texto = trim($_POST["texto"] ?? '');
 
-        if (empty($id) || empty($texto)) {
-            Utils::jsonResponse([
-                'success' => false,
-                'message' => 'ID e texto são obrigatórios.',
-                'data' => []
-            ], 400);
-            return;
-        }
-            $posteDAO = new PosteDAO();
-            $posteObs = $posteDAO->insertObs($id, $texto);
-            $poste = $posteDAO->findByID($id);
-
-            if(!$poste) {
-                throw new Exception("Poste não encontrado.");
+            if (empty($id) || empty($texto)) {
+                Utils::jsonResponse([
+                    'success' => false,
+                    'message' => 'ID e texto são obrigatórios.',
+                    'data' => []
+                ], 400);
+                return;
             }
+
+            $posteDAO = new PosteDAO();
+
+            // Verificar se o poste existe ANTES de inserir
+            $poste = $posteDAO->findByIdPoste($id);
+            if (!$poste) {
+                throw new Exception("Poste com id '$id' não encontrado.");
+            }
+
+            $posteDAO->insertObs($id, $texto);
 
             $pdo->commit();
             Utils::jsonResponse([
@@ -294,6 +296,46 @@ class PosteController
             ]);
         } catch (Exception $e) {
             $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
+
+    public function getObsPosteApi($id)
+    {
+        try {
+            $id = trim($id ?? '');
+
+            if (empty($id)) {
+                Utils::jsonResponse([
+                    'success' => false,
+                    'message' => 'ID é obrigatório.',
+                    'data' => []
+                ], 400);
+                return;
+            }
+
+            $posteDAO = new PosteDAO();
+
+            // Verificar se o poste existe
+            $poste = $posteDAO->findByIdPoste($id);
+            if (!$poste) {
+                throw new Exception("Poste com id '$id' não encontrado.");
+            }
+
+            $observacoesContentores = $posteDAO->getAllObservacoesByPoste($id);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Observações obtidas com sucesso.',
+                'data' => [
+                    "observacoesContentores" => $observacoesContentores
+                ]
+            ]);
+        } catch (Exception $e) {
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),

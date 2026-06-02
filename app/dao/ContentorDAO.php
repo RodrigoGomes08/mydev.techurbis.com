@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/Contentor.php';
+require_once __DIR__ . '/../models/ContentorObservacoes.php';
+require_once __DIR__ . '/../models/CandeeiroObservacoes.php';
 
 class ContentorDAO
 {
@@ -23,8 +25,7 @@ class ContentorDAO
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $estado = $this->getEstadoContentorById($row['id']);
-            $peso = $this->getPesoContentorById($row['id']);
-            $obs = $this->getObsByContentorId($row['id']);
+            $valor = $this->getValorContentorById($row['id']);
 
             $contentores[] = new Contentor(
                 (int) $row['id'],
@@ -37,30 +38,29 @@ class ContentorDAO
                 $row['identificacao'],
                 (bool) $row['is_full'],
                 $estado,
-                $peso,
-                $obs
+                $valor
             );
         }
 
         return $contentores;
     }
 
-    public function getPesoContentorById($id)
+    public function getValorContentorById($id)
     {
-        $sql = 'SELECT c.identificacao, c.tipo, MAX(cl.data_leitura) AS ultima_leitura, cl.peso
+        $sql = 'SELECT c.identificacao, c.tipo, MAX(cl.data_leitura) AS ultima_leitura, cl.valor
             FROM contentores c
             INNER JOIN contentor_leituras cl ON c.id = cl.id_contentor
             WHERE c.id = ?
-            GROUP BY c.id, c.identificacao, c.tipo, cl.peso
-            ORDER BY cl.peso DESC;
+            GROUP BY c.id, c.identificacao, c.tipo, cl.valor
+            ORDER BY cl.valor DESC;
         ';
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
 
-        $peso = $stmt->fetch(PDO::FETCH_ASSOC);
+        $valor = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $peso;
+        return $valor;
     }
 
     public function getEstadoContentorById($id)
@@ -81,7 +81,7 @@ class ContentorDAO
 
     public function findByID($id)
     {
-        $sql = "SELECT * FROM contentores WHERE id = :id";
+        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full FROM contentores WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -126,14 +126,14 @@ class ContentorDAO
     public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao)
     {
         try {
-        $sql = "UPDATE contentores
+            $sql = "UPDATE contentores
                 SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?
                 WHERE id = ?";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $id]);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $id]);
 
-        return $stmt->rowCount();
+            return $stmt->rowCount();
         } catch (Exception $e) {
             throw new Exception("Erro ao atualizar contentor: " . $e->getMessage());
         }
@@ -142,12 +142,12 @@ class ContentorDAO
     public function contentorDeleteDAO($id)
     {
         try {
-        $sql = "DELETE FROM contentores WHERE id = ?";
+            $sql = "DELETE FROM contentores WHERE id = ?";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id]);
 
-        return $stmt->rowCount();
+            return $stmt->rowCount();
         } catch (Exception $e) {
             throw new Exception("Erro ao apagar contentor: " . $e->getMessage());
         }
@@ -169,28 +169,49 @@ class ContentorDAO
     public function insertObs($id_contentor, $texto)
     {
         try {
-        $sql = "INSERT INTO contentor_observacoes (id_contentor, texto, created_at)
-            VALUES (?, ?, NOW())";
+            $sql = "INSERT INTO contentor_observacoes (id_contentor, texto)
+                VALUES (?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_contentor, $texto]);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_contentor, $texto]);
 
-        return $stmt->rowCount();
+            return $stmt->rowCount();
         } catch (Exception $e) {
             throw new Exception("Erro ao inserir observação: " . $e->getMessage());
         }
     }
 
-    public function getObsByContentorId($id_contentor)
+    public function findByIdContentor($id)
+    {
+
+        $sql = "SELECT c.id, c.id_cidade, c.id_estado, c.capacidade_max, c.longitude, c.latitude, c.tipo, c.identificacao, c.is_full FROM contentores c WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
+
+    public function getAllObservacoesByContentor($id)
     {
         $sql = "SELECT id, id_contentor, texto, created_at
-            FROM contentor_observacoes 
-            WHERE id_contentor = ? 
-            ORDER BY created_at DESC";
-
+            FROM contentor_observacoes
+            WHERE id_contentor = :id
+            ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_contentor]);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $observacoesContentores = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $observacoesContentores[] = new ContentorObservacoes(
+                (int) $row['id'],
+                (int) $row['id_contentor'],
+                $row['texto'],
+                $row['created_at']
+            );
+        }
+        return $observacoesContentores;
     }
 }

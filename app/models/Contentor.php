@@ -16,7 +16,7 @@ class Contentor implements JsonSerializable
     private string $identificacao;
     private bool $is_full;
     public $estado;
-    public $peso;
+    public $valor;
     public array $observacoes;
 
 
@@ -35,7 +35,7 @@ class Contentor implements JsonSerializable
         string $identificacao,
         ?bool $is_full = false,
         $estado = [],
-        $peso = [],
+        $valor = [],
         $observacoes = []
     ) {
         $this->id = $id;
@@ -48,7 +48,7 @@ class Contentor implements JsonSerializable
         $this->identificacao = $identificacao;
         $this->is_full = $is_full ?? false;
         $this->estado = $estado ?? [];
-        $this->peso = $peso ?? [];
+        $this->valor = $valor ?? [];
         $this->observacoes = $observacoes ?? [];
     }
 
@@ -69,7 +69,7 @@ class Contentor implements JsonSerializable
             'identificacao' => $this->identificacao,
             'is_full' => $this->is_full,
             'estado' => $this->estado,
-            'peso' => $this->peso,
+            'valor' => $this->valor,
             'observacoes' => $this->observacoes,
         ];
     }

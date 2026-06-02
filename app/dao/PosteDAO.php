@@ -59,7 +59,7 @@ class PosteDAO
 
     public function findByID($id)
     {
-        $sql = "SELECT * FROM candeeiro_urbanos WHERE id = :id";
+        $sql = "SELECT id, id_cidade, id_estado, longitude, latitude FROM candeeiro_urbanos WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -101,12 +101,12 @@ class PosteDAO
     public function posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude)
     {
         try {
-        $sql = "UPDATE candeeiro_urbanos SET id_cidade = ?, id_estado = ?, longitude = ?, latitude = ? WHERE id = ?";
+            $sql = "UPDATE candeeiro_urbanos SET id_cidade = ?, id_estado = ?, longitude = ?, latitude = ? WHERE id = ?";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_cidade, $id_estado, $longitude, $latitude, $id]);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_cidade, $id_estado, $longitude, $latitude, $id]);
 
-        return $stmt->rowCount();
+            return $stmt->rowCount();
         } catch (Exception $e) {
             throw new Exception("Erro ao atualizar o poste: " . $e->getMessage());
         }
@@ -115,20 +115,20 @@ class PosteDAO
     public function posteDeleteDAO($id)
     {
         try {
-        $sql = "DELETE FROM candeeiro_urbanos WHERE id = ?";
+            $sql = "DELETE FROM candeeiro_urbanos WHERE id = ?";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id]);
 
-        return $stmt->rowCount();
+            return $stmt->rowCount();
         } catch (Exception $e) {
             throw new Exception("Erro ao apagar o poste: " . $e->getMessage());
         }
     }
 
-    public function findByIdPoste(){
-        
-        $sql = "SELECT * FROM candeeiro_urbanos WHERE id = :id";
+    public function findByIdPoste($id)
+    {
+        $sql = "SELECT id, id_cidade, id_estado, longitude, latitude FROM candeeiro_urbanos WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -157,13 +157,13 @@ class PosteDAO
     public function insertObs($id_candeeiro_urbano, $texto)
     {
         try {
-        $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
+            $sql = "INSERT INTO candeeiro_observacoes (id_candeeiro_urbano, texto)
                 VALUES (?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_candeeiro_urbano, $texto]);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_candeeiro_urbano, $texto]);
 
-        return $stmt->rowCount();
+            return $stmt->rowCount();
         } catch (Exception $e) {
             throw new Exception("Erro ao inserir observação: " . $e->getMessage());
         }
@@ -181,5 +181,27 @@ class PosteDAO
         $stmt->execute([$id]);
 
         return $stmt->fetchColumn();
+    }
+
+    public function getAllObservacoesByPoste($id)
+    {
+        $sql = "SELECT id, id_candeeiro_urbano, texto, created_at
+            FROM candeeiro_observacoes
+            WHERE id_candeeiro_urbano = :id
+            ORDER BY id ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        $observacoesContentores = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $observacoesContentores[] = new ContentorObservacoes(
+                (int) $row['id'],
+                (int) $row['id_candeeiro_urbano'],
+                $row['texto'],
+                $row['created_at']
+            );
+        }
+        return $observacoesContentores;
     }
 }
