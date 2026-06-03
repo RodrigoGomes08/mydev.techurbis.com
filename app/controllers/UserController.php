@@ -127,23 +127,122 @@ class UserController
         exit;
     }
 
-    public function userDelete($userId) {
-    header('Content-Type: application/json');
-    try {
-        $linhasAlteradas = (new UserDAO())->userDeleteDAO($userId);
+    public function userDelete($userId)
+    {
+        header('Content-Type: application/json');
+        try {
+            $linhasAlteradas = (new UserDAO())->userDeleteDAO($userId);
 
-        if (!$linhasAlteradas) {
-            echo json_encode(['success' => false, 'message' => 'Utilizador não encontrado.']);
-        } else {
-            echo json_encode(['success' => true, 'message' => 'Utilizador eliminado com sucesso!']);
+            if (!$linhasAlteradas) {
+                echo json_encode(['success' => false, 'message' => 'Utilizador não encontrado.']);
+            } else {
+                echo json_encode(['success' => true, 'message' => 'Utilizador eliminado com sucesso!']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
     }
-    exit;
-}
 
-// public function getAllDataToHome($userId)
+    public function profileUserAPI($id)
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+            $user = (new UserDAO())->findByID($id);
+
+            if (!$user) {
+                throw new Exception("Utilizador não encontrado");
+            }
+
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhes do utilizador obtido com sucesso.',
+                'data' => [
+                    "utilizador" => $user
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 404);
+        }
+    }
+
+    public function editProfileUserAPI($userId)
+    {
+        try {
+
+            $raw = file_get_contents("php://input");
+            $data = json_decode($raw, true);
+
+            if (!is_array($data)) {
+                throw new Exception("JSON inválido");
+            }
+
+            $dados = [
+                'id' => (int) ($data['id'] ?? 0),
+                'id_role' => (int) ($data['id_role'] ?? 0),
+                'nome' => (String) ($data['nome'] ?? ''),
+                'data_nascimento' => $data['data_nascimento'] ?? null,
+                'telefone' => (int) ($data['telefone'] ?? 0),
+                'morada' => (string) ($data['morada'] ?? ''),
+                'email' => (string) ($data['email'] ?? ''),
+                'ativo' => (int) ($data['ativo'] ?? 0),
+                'tem_mobilidade_reduzida' => (int) ($data['tem_mobilidade_reduzida'] ?? 0)
+            ];
+
+            if ($userId !== $dados['id']) {
+                throw new Exception("Não tens permissão para atualizar este perfil");
+            }
+
+            // Faz o update dos dados do user
+            $userAtualizado = (new UserDAO())->userUpdateDAO($dados);
+
+            if (!$userAtualizado) {
+
+                throw new Exception("Erro ao atualizar perfil");
+
+            }
+
+            Utils::jsonResponse([
+                "success" => true,
+                "message" => "Perfil atualizado com sucesso",
+                "data" => []
+            ], 201);
+            exit;
+
+
+
+        } catch (Exception $e) {
+
+            $dataResponse = [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ];
+
+            Utils::jsonResponse($dataResponse, 500);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // public function getAllDataToHome($userId)
 //     {
 //         try {
 //             $users = (new UserDAO())->arrayUsersDAO();
@@ -151,7 +250,7 @@ class UserController
 //             // Contar os users
 //             $countUsers = (new UserDAO()->countUsersDAO());
 
-//             $dataResponse = [
+    //             $dataResponse = [
 //                 'success' => true,
 //                 'message' => "Operação realizada com sucesso.",
 //                 'data' => [
@@ -162,18 +261,18 @@ class UserController
 //                 ]
 //             ];
 
-//             Utils::jsonResponse($dataResponse, 200);
+    //             Utils::jsonResponse($dataResponse, 200);
 
-//         } catch (Exception $e) {
+    //         } catch (Exception $e) {
 //             $dataResponse = [
 //                 'success' => false,
 //                 'message' => $e->getMessage(),
 //                 'data' => []
 //             ];
 
-//             Utils::jsonResponse($dataResponse, 401);
+    //             Utils::jsonResponse($dataResponse, 401);
 
-//             exit;
+    //             exit;
 //         }
 //     }
 }

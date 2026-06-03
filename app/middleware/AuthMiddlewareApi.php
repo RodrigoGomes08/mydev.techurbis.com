@@ -17,11 +17,7 @@ class AuthMiddlewareAPI
         try {
             $headers = getallheaders();
 
-
-
             $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
-
-
 
             if (!$authHeader) {
                 throw new Exception("Token não enviado");
@@ -35,7 +31,7 @@ class AuthMiddlewareAPI
 
             $decoded = JWT::decode(
                 $token,
-                new Key(JwtConfig::$secret, 'HS256')
+                new Key(JwtConfig::getSignature(), 'HS256')
             );
 
             return $decoded->data;
@@ -47,7 +43,7 @@ class AuthMiddlewareAPI
 
                 'message' => "Token expirado" . $e->getMessage(),
 
-                'data' => []
+                'data'    => []
 
             ];
 
@@ -62,7 +58,7 @@ class AuthMiddlewareAPI
 
                 'message' => "Assinatura do token inválida" . $e->getMessage(),
 
-                'data' => []
+                'data'    => []
 
             ];
 
@@ -77,7 +73,7 @@ class AuthMiddlewareAPI
 
                 'message' => "Token ainda não é válido" . $e->getMessage(),
 
-                'data' => []
+                'data'    => []
 
             ];
 
@@ -92,7 +88,7 @@ class AuthMiddlewareAPI
 
                 'message' => "Assinatura do token inválida" . $e->getMessage(),
 
-                'data' => []
+                'data'    => []
 
             ];
 
