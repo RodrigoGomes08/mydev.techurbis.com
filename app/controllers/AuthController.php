@@ -4,7 +4,7 @@ require_once __DIR__ . "/../utils/Utils.php";
 require_once __DIR__ . '/../dao/UserDao.php';
 require_once __DIR__ . '/../dao/EmailVerificationDao.php';
 require_once __DIR__ . "/../config/jwtConfig.php";
-require_once __DIR__ . '/../services/MyMailerService.php';
+require_once __DIR__ . '/../services/Mailer.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -16,8 +16,9 @@ use Firebase\JWT\BeforeValidException;
 class AuthController
 {
 
-    private function view($name)
+    private function view($name, $data = [])
     {
+        extract($data, EXTR_SKIP);
         require __DIR__ . '/../../public/views/' . $name . '.php';
     }
 
@@ -38,20 +39,20 @@ class AuthController
             }
 
             $_SESSION['token'] = [
-                'id'                   => $user['id'],
-                'id_role'              => $user['id_role'],
-                'nome'                 => $user['nome'],
-                'data_nascimento'      => $user['data_nascimento'],
-                'telefone'             => $user['telefone'],
-                'morada'               => $user['morada'],
-                'email'                => $user['email'],
-                'password'             => $user['password'],
-                'ativo'                => $user['ativo'],
+                'id' => $user['id'],
+                'id_role' => $user['id_role'],
+                'nome' => $user['nome'],
+                'data_nascimento' => $user['data_nascimento'],
+                'telefone' => $user['telefone'],
+                'morada' => $user['morada'],
+                'email' => $user['email'],
+                'password' => $user['password'],
+                'ativo' => $user['ativo'],
                 'tem_mobilidade_reduzida' => $user['tem_mobilidade_reduzida'],
             ];
 
             $_SESSION['toast'] = [
-                'type'    => 'success',
+                'type' => 'success',
                 'message' => 'Login efetuado com sucesso'
             ];
 
@@ -60,7 +61,7 @@ class AuthController
 
         } catch (Exception $e) {
             $_SESSION['toast'] = [
-                'type'    => 'error',
+                'type' => 'error',
                 'message' => $e->getMessage()
             ];
             header("Location: /login");
@@ -71,7 +72,7 @@ class AuthController
     public function loginApi()
     {
         try {
-            $email    = $_POST["email"] ?? null;
+            $email = $_POST["email"] ?? null;
             $password = $_POST["password"] ?? null;
 
             if (empty($email) || empty($password)) {
@@ -87,10 +88,10 @@ class AuthController
             $role = (new RoleDAO())->findRoleById($user['id_role']);
 
             $payload = [
-                "iat"  => time(),
-                "exp"  => time() + 3600,
+                "iat" => time(),
+                "exp" => time() + 3600,
                 "data" => [
-                    "id"   => $user['id'],
+                    "id" => $user['id'],
                     "role" => $role['id'],
                 ]
             ];
@@ -100,10 +101,10 @@ class AuthController
             $responseData = [
                 'success' => true,
                 'message' => 'Login realizado com sucesso',
-                'data'    => [
+                'data' => [
                     'user' => $user,
                     'role' => $role,
-                    'jwt'  => $jwt
+                    'jwt' => $jwt
                 ],
             ];
 
@@ -113,7 +114,7 @@ class AuthController
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'data'    => [],
+                'data' => [],
             ], 401);
         }
     }
@@ -121,8 +122,8 @@ class AuthController
     public function signupWeb()
     {
         try {
-            $nome     = trim($_POST["nome"] ?? '');
-            $email    = trim($_POST["email"] ?? '');
+            $nome = trim($_POST["nome"] ?? '');
+            $email = trim($_POST["email"] ?? '');
             $password = trim($_POST["password"] ?? '');
 
             if ($nome === '' || $email === '' || $password === '') {
@@ -142,15 +143,15 @@ class AuthController
             $userId = $userDAO->createPending($nome, $email);
 
             $verDAO = new EmailVerificationDAO();
-            $token  = $verDAO->createForUser($userId, 300);
+            $token = $verDAO->createForUser($userId, 300);
 
-            $scheme  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host    = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             $baseUrl = $scheme . '://' . $host;
-            $link    = $baseUrl . "/verify-email?token=" . urlencode($token);
+            $link = $baseUrl . "/verify-email?token=" . urlencode($token);
 
             $subject = "Verifica o teu email (expira em 5 min)";
-            $html    = "
+            $html = "
                 <div style='font-family: Arial, sans-serif;'>
                 <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
                 <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
@@ -178,12 +179,12 @@ class AuthController
         $pdo->beginTransaction();
 
         try {
-            $nome                   = trim($_POST['nome'] ?? '');
-            $dataNascimento         = trim($_POST['data_nascimento'] ?? '');
-            $telefone               = trim($_POST['telefone'] ?? '');
-            $email                  = trim($_POST['email'] ?? '');
-            $password               = trim($_POST['password'] ?? '');
-            $morada                 = trim($_POST['morada'] ?? '');
+            $nome = trim($_POST['nome'] ?? '');
+            $dataNascimento = trim($_POST['data_nascimento'] ?? '');
+            $telefone = trim($_POST['telefone'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+            $morada = trim($_POST['morada'] ?? '');
             $tem_mobilidade_reduzida = trim($_POST['tem_mobilidade_reduzida'] ?? 1);
 
             if ($nome === '' || $dataNascimento === '' || $telefone === '' || $email === '' || $password === '' || $morada === '') {
@@ -203,15 +204,15 @@ class AuthController
             $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, 0, $tem_mobilidade_reduzida);
 
             $verDao = new EmailVerificationDAO();
-            $token  = $verDao->createForUser($userId, 300);
+            $token = $verDao->createForUser($userId, 300);
 
-            $scheme  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host    = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             $baseUrl = $scheme . '://' . $host;
-            $link    = $baseUrl . "/verify-email?token=" . urlencode($token);
+            $link = $baseUrl . "/verify-email?token=" . urlencode($token);
 
             $subject = "Verifica o teu email (expira em 5 min)";
-            $html    = "
+            $html = "
                 <div style='font-family: Arial, sans-serif;'>
                 <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
                 <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
@@ -227,7 +228,7 @@ class AuthController
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Signup realizado com sucesso',
-                'data'    => [],
+                'data' => [],
             ], 200);
 
         } catch (Exception $e) {
@@ -236,13 +237,20 @@ class AuthController
             Utils::jsonResponse([
                 'success' => false,
                 'message' => 'Erro ao efetuar a operação: ' . $e->getMessage(),
-                'data'    => [],
+                'data' => [],
             ], 400);
         }
     }
 
     public function verifyEmailForm()
     {
+        // DEBUG
+        file_put_contents(
+            'C:/laragon/www/mydev.techurbis.com/debug.log',
+            date('H:i:s') . " GET token: " . ($_GET['token'] ?? 'VAZIO') . "\n",
+            FILE_APPEND
+        );
+
         try {
             $token = $_GET['token'] ?? '';
 
@@ -251,11 +259,16 @@ class AuthController
             }
 
             $this->view('verify-email', [
-                'token'  => $token,
+                'token' => $token,
                 'userId' => 1
             ]);
 
         } catch (Exception $e) {
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " ERRO verifyEmailForm: " . $e->getMessage() . "\n",
+                FILE_APPEND
+            );
             header("Location: /bad-request");
             exit;
         }
@@ -263,9 +276,22 @@ class AuthController
 
     public function verifyEmailSubmit()
     {
+        // DEBUG TEMPORÁRIO
+        file_put_contents(
+            'C:/laragon/www/mydev.techurbis.com/debug.log',
+            date('H:i:s') . " POST: " . print_r($_POST, true) . "\n",
+            FILE_APPEND
+        );
+
         try {
-            $token    = $_POST['token'] ?? '';
+            $token = $_POST['token'] ?? '';
             $password = $_POST['password'] ?? '';
+
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " token=$token | pass=$password\n",
+                FILE_APPEND
+            );
 
             if (empty($token) || empty($password)) {
                 throw new Exception("Token e password são obrigatórios");
@@ -274,21 +300,32 @@ class AuthController
             $verDao = new EmailVerificationDAO();
             $userId = $verDao->validateToken($token);
 
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " userId=" . var_export($userId, true) . "\n",
+                FILE_APPEND
+            );
+
             if (!$userId) {
                 throw new Exception("Token inválido ou expirado");
             }
 
-            $hash    = password_hash($password, PASSWORD_DEFAULT);
+            $hash = password_hash($password, PASSWORD_DEFAULT);
             $userDAO = new UserDAO();
-
             $userDAO->setPasswordAndVerify($userId, $hash);
             $verDao->markUsed($token);
 
-            $_SESSION['flash_success'] = "Email verificado e password definida. Já podes fazer login.";
+            $_SESSION['flash_success'] = "Password definida com sucesso. Já podes fazer login.";
             header("Location: /login");
             exit;
 
         } catch (Exception $e) {
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " ERRO: " . $e->getMessage() . "\n",
+                FILE_APPEND
+            );
+
             $_SESSION['flash_error'] = $e->getMessage();
             header("Location: /bad-request");
             exit;

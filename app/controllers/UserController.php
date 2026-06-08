@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../dao/UserDao.php';
 require_once __DIR__ . '/../dao/RoleDAO.php';
+require_once __DIR__ . '/../dao/EmailVerificationDao.php';
+require_once __DIR__ . '/../services/Mailer.php';
 
 class UserController
 {
@@ -44,36 +46,51 @@ class UserController
         $password = trim($_POST['password'] ?? '');
 
         if (empty($nome) || empty($email) || empty($id_role)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Nome, email e cargo são obrigatórios.'
-            ];
+            $_SESSION['toast'] = ['type' => 'error', 'message' => 'Nome, email e cargo são obrigatórios.'];
             header("Location: /admin/PortalADMUtilizadores");
             exit;
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Email inválido.'
-            ];
+            $_SESSION['toast'] = ['type' => 'error', 'message' => 'Email inválido.'];
             header("Location: /admin/PortalADMUtilizadores");
             exit;
         }
 
         try {
             $userDAO = new UserDAO();
-            $userDAO->createUser($nome, $email, $id_role, $morada, $password);
+            $userId = $userDAO->createUser($nome, $email, $id_role, $morada, $password);
 
-            $_SESSION['toast'] = [
-                'type' => 'success',
-                'message' => "Utilizador \"{$nome}\" criado com sucesso!"
-            ];
+            // DEBUG — apaga depois
+            error_log(">>> userId obtido: " . var_export($userId, true));
+            error_log(">>> password está vazia? " . var_export(empty($password), true));
+
+            if (empty($password)) {
+
+                $verDAO = new EmailVerificationDAO();
+                $token = $verDAO->createForUser($userId, 86400);
+                error_log(">>> token criado: " . $token);
+
+                $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                $link = $scheme . '://' . $host . '/verify-email?token=' . urlencode($token);
+                error_log(">>> link gerado: " . $link);
+
+                $subject = "Bem-vindo(a)! Define a tua password";
+                $html = "<p>Olá " . htmlspecialchars($nome) . "! <a href='{$link}'>Define a tua password</a></p>";
+
+                error_log(">>> A tentar enviar email para: " . $email);
+                (new MyMailerService())->send($email, $subject, $html);
+                error_log(">>> Email enviado com sucesso!");
+
+                $_SESSION['toast'] = ['type' => 'success', 'message' => "Email enviado para \"{$email}\" definir a password."];
+            } else {
+                $_SESSION['toast'] = ['type' => 'success', 'message' => "Utilizador \"{$nome}\" criado com sucesso!"];
+            }
+
         } catch (Exception $e) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => $e->getMessage()
-            ];
+            error_log(">>> ERRO: " . $e->getMessage());
+            $_SESSION['toast'] = ['type' => 'error', 'message' => 'ERRO: ' . $e->getMessage()];
         }
 
         header("Location: /admin/PortalADMUtilizadores");
@@ -82,7 +99,6 @@ class UserController
 
     public function userUpdate($userId)
     {
-
         $id = trim($_POST["id"] ?? '');
         $id_role = trim($_POST["id_role"] ?? '');
         $nome = trim($_POST["nome"] ?? '');
@@ -178,7 +194,6 @@ class UserController
     public function editProfileUserAPI($userId)
     {
         try {
-
             $raw = file_get_contents("php://input");
             $data = json_decode($raw, true);
 
@@ -189,7 +204,7 @@ class UserController
             $dados = [
                 'id' => (int) ($data['id'] ?? 0),
                 'id_role' => (int) ($data['id_role'] ?? 0),
-                'nome' => (String) ($data['nome'] ?? ''),
+                'nome' => (string) ($data['nome'] ?? ''),
                 'data_nascimento' => $data['data_nascimento'] ?? null,
                 'telefone' => (int) ($data['telefone'] ?? 0),
                 'morada' => (string) ($data['morada'] ?? ''),
@@ -202,13 +217,10 @@ class UserController
                 throw new Exception("Não tens permissão para atualizar este perfil");
             }
 
-            // Faz o update dos dados do user
             $userAtualizado = (new UserDAO())->userUpdateDAO($dados);
 
             if (!$userAtualizado) {
-
                 throw new Exception("Erro ao atualizar perfil");
-
             }
 
             Utils::jsonResponse([
@@ -218,61 +230,12 @@ class UserController
             ], 201);
             exit;
 
-
-
         } catch (Exception $e) {
-
-            $dataResponse = [
+            Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),
                 'data' => []
-            ];
-
-            Utils::jsonResponse($dataResponse, 500);
+            ], 500);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-    // public function getAllDataToHome($userId)
-//     {
-//         try {
-//             $users = (new UserDAO())->arrayUsersDAO();
-//             $emailVerifications = (new EmailVerificationDAO())->getEmailVerificationsByUserId($userId);
-//             // Contar os users
-//             $countUsers = (new UserDAO()->countUsersDAO());
-
-    //             $dataResponse = [
-//                 'success' => true,
-//                 'message' => "Operação realizada com sucesso.",
-//                 'data' => [
-//                     'users' => $users,
-//                     'emails_verifification' => $emailVerifications,
-//                     'num_utilizadore' => 10,
-//                     'num_emails' => 10
-//                 ]
-//             ];
-
-    //             Utils::jsonResponse($dataResponse, 200);
-
-    //         } catch (Exception $e) {
-//             $dataResponse = [
-//                 'success' => false,
-//                 'message' => $e->getMessage(),
-//                 'data' => []
-//             ];
-
-    //             Utils::jsonResponse($dataResponse, 401);
-
-    //             exit;
-//         }
-//     }
 }

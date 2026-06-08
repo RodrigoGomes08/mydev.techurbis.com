@@ -41,12 +41,29 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 } // POST /admin/delete-utilizador/{id}
 else if ($method === 'POST' && preg_match('#^/admin/delete-utilizador/(\d+)$#', $uri, $m)) {
     (new UserController())->userDelete((int)$m[1]);
-} 
 
+}  elseif ($uri === '/verify-email' && $method === 'GET') {
+    (new AuthController())->verifyEmailForm();
 
+} elseif ($uri === '/verify-email' && $method === 'POST') {
+    try {
+        (new AuthController())->verifyEmailSubmit();
+
+    }catch (Exception $e) {
+        var_dump($e->getMessage());
+        $_SESSION['error'] = $e->getMessage();
+        header("Location: /verify-email?token=" . urlencode($_POST['token'] ?? ''));
+        exit();
+
+    }
+
+}
 elseif ($uri === '/teste') {
     echo password_hash("1234", PASSWORD_DEFAULT);
 
+} elseif ($uri === '/bad-request') {
+    http_response_code(400);
+    echo "Pedido inválido";
 } else {
     echo "404";
 }

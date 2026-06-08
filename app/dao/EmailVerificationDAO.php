@@ -29,18 +29,18 @@ class EmailVerificationDAO
   }
 
   /** Se token válido, devolve user_id; se inválido/expirado/usado devolve null */
-  public function validate(string $token): ?int
-  {
+ public function validateToken(string $token): ?int
+{
     $tokenHash = hash('sha256', $token);
 
     $sql = "
-      SELECT user_id
-      FROM email_verifications
-      WHERE token_hash = ?
-        AND used_at IS NULL
-        AND expires_at > NOW()
-      ORDER BY id DESC
-      LIMIT 1
+        SELECT id_user
+        FROM email_verifications
+        WHERE token_hash = ?
+          AND used_at IS NULL
+          AND expires_at > NOW()
+        ORDER BY id DESC
+        LIMIT 1
     ";
 
     $stmt = $this->conn->prepare($sql);
@@ -48,7 +48,7 @@ class EmailVerificationDAO
 
     $userId = $stmt->fetchColumn();
     return $userId ? (int)$userId : null;
-  }
+}
 
   public function markUsed(string $token): void
   {
