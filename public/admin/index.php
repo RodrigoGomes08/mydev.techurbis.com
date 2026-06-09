@@ -93,6 +93,10 @@ if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/')
     AuthMiddlewareWeb::isAdmin();
     (new UserController())->userDelete((int) $m[1]);
 
+} elseif ($uri === '/admin/create-utilizador' && $method === 'POST') {
+    AuthMiddlewareWeb::isAdmin();
+    (new UserController())->createUtilizador();
+
 } else {
     http_response_code(404);
     echo "Página não encontrada";

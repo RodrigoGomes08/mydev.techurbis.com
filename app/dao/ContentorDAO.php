@@ -46,22 +46,18 @@ class ContentorDAO
     }
 
     public function getValorContentorById($id)
-    {
-        $sql = 'SELECT c.identificacao, c.tipo, MAX(cl.data_leitura) AS ultima_leitura, cl.valor
-            FROM contentores c
-            INNER JOIN contentor_leituras cl ON c.id = cl.id_contentor
-            WHERE c.id = ?
-            GROUP BY c.id, c.identificacao, c.tipo, cl.valor
-            ORDER BY cl.valor DESC;
-        ';
+{
+    $sql = 'SELECT cl.valor, cl.data_leitura
+            FROM contentor_leituras cl
+            WHERE cl.id_contentor = ?
+            ORDER BY cl.data_leitura DESC
+            LIMIT 1';
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id]);
 
-        $valor = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $valor;
-    }
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
     public function getEstadoContentorById($id)
     {

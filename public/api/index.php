@@ -42,6 +42,23 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 }
 
 //==================================================
+// Users
+//==================================================
+elseif (preg_match('#^/profileuser/(\d+)$#', $uri, $m) && $method === 'GET') {
+    AuthMiddlewareApi::check();
+    $id = (int) $m[1];
+    (new UserController())->profileUserAPI($id);
+} elseif ($uri === '/editprofileuser' && $method === 'POST') {
+    $dataToken = AuthMiddlewareAPI::check();
+    $userId = $dataToken->id;
+    (new UserController())->editProfileUserAPI($userId);
+} elseif ($uri === '/deleteprofileuser' && $method === 'POST') {
+    $dataToken = AuthMiddlewareAPI::check();
+    $userId = $dataToken->id;
+    (new UserController())->deleteProfileUserAPI($userId);
+}
+
+//==================================================
 // CONTENTORES
 //==================================================
 elseif ($uri === '/contentores' && $method === 'GET') {

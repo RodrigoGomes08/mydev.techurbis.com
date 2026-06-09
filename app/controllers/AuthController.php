@@ -4,7 +4,7 @@ require_once __DIR__ . "/../utils/Utils.php";
 require_once __DIR__ . '/../dao/UserDao.php';
 require_once __DIR__ . '/../dao/EmailVerificationDao.php';
 require_once __DIR__ . "/../config/jwtConfig.php";
-require_once __DIR__ . '/../services/MyMailerService.php';
+require_once __DIR__ . '/../services/Mailer.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -16,162 +16,166 @@ use Firebase\JWT\BeforeValidException;
 class AuthController
 {
 
-    private function view($name)
+    private function view($name, $data = [])
     {
+        extract($data, EXTR_SKIP);
         require __DIR__ . '/../../public/views/' . $name . '.php';
     }
 
     public function loginWeb()
     {
-        $email = trim($_POST['email'] ?? '');
-        $password = trim($_POST['password'] ?? '');
-        $passwordEncript = password_hash($password, PASSWORD_DEFAULT);
+        try {
+            $email = trim($_POST['email'] ?? '');
+            $password = trim($_POST['password'] ?? '');
 
-        if (empty($email) || empty($password)) {
-            die('Email e pass são obrigatórios');
+            if (empty($email) || empty($password)) {
+                throw new Exception('Email e password são obrigatórios');
+            }
+
+            $user = (new UserDAO())->findByEmail($email);
+
+            if (!$user || !password_verify($password, $user['password'])) {
+                throw new Exception("Email ou password inválidos");
+            }
+
+            $_SESSION['token'] = [
+                'id' => $user['id'],
+                'id_role' => $user['id_role'],
+                'nome' => $user['nome'],
+                'data_nascimento' => $user['data_nascimento'],
+                'telefone' => $user['telefone'],
+                'morada' => $user['morada'],
+                'email' => $user['email'],
+                'password' => $user['password'],
+                'ativo' => $user['ativo'],
+                'tem_mobilidade_reduzida' => $user['tem_mobilidade_reduzida'],
+            ];
+
+            $_SESSION['toast'] = [
+                'type' => 'success',
+                'message' => 'Login efetuado com sucesso'
+            ];
+
+            header("Location: /admin/");
+            exit;
+
+        } catch (Exception $e) {
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'message' => $e->getMessage()
+            ];
+            header("Location: /login");
+            exit;
         }
-
-        $user = (new UserDAO())->findByEmail($email);
-        if (!$user) {
-            die("Email ou password inválidos");
-        }
-
-        //Verificar password corretamente
-        //password_verify() compara a password fornecida com o hash armazenado na base de dados
-        // password_verify() esta função já vem incluída no PHP
-        if (!password_verify($password, $user['password'])) {
-            die("Email ou password inválidos");
-        }
-
-        // Serve para criar a session token
-        // que valida se o user está ou não logado
-        $_SESSION['token'] = [
-            'id' => $user['id'],
-            'id_role' => $user['id_role'],
-            'nome' => $user['nome'],
-            'data_nascimento' => $user['data_nascimento'],
-            'telefone' => $user['telefone'],
-            'morada' => $user['morada'],
-            'email' => $user['email'],
-            'password' => $user['password'],
-            'ativo' => $user['ativo'],
-            'tem_mobilidade_reduzida' => $user['tem_mobilidade_reduzida'],
-            // 'created_at' => $user->getCreatedAt(),
-            // 'updated_at' => $user->getUpdatedAt(),
-            // 'deleted_at' => $user->getDeletedAt()
-        ];
-
-        $_SESSION['toast'] = [
-            'type' => 'success',
-            'message' => 'Login Efetuado com sucesso'
-        ];
-
-        header("Location: /admin/");
-
     }
 
     public function loginApi()
     {
-        $email = $_POST["email"] ?? null;
-        $password = $_POST["password"] ?? null;
+        try {
+            $email = $_POST["email"] ?? null;
+            $password = $_POST["password"] ?? null;
 
-        $user = (new UserDAO())->findByEmail($email);
-        $role = (new RoleDAO())->findRoleById($user['id_role']);
-        
-        if (!$user || !password_verify($password, $user['password'])) {
-            echo json_encode(["error" => "login inválido"]);
-            return;
+            if (empty($email) || empty($password)) {
+                throw new Exception("Email e password são obrigatórios");
+            }
+
+            $user = (new UserDAO())->findByEmail($email);
+
+            if (!$user || !password_verify($password, $user['password'])) {
+                throw new Exception("Login inválido");
+            }
+
+            $role = (new RoleDAO())->findRoleById($user['id_role']);
+
+            $payload = [
+                "iat" => time(),
+                "exp" => time() + 3600,
+                "data" => [
+                    "id" => $user['id'],
+                    "role" => $role['id'],
+                ]
+            ];
+
+            $jwt = JWT::encode($payload, JwtConfig::$secret, 'HS256');
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Login realizado com sucesso',
+                'data' => [
+                    'user' => $user,
+                    'role' => $role,
+                    'jwt' => $jwt
+                ],
+            ];
+
+            Utils::jsonResponse($responseData, 200);
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => [],
+            ], 401);
         }
-
-        $payload = [
-            "iat" => time(),
-            "exp" => time() + 3600,
-            "data" => [
-                "id" => $user['id'],
-                "role" => $role['id'],
-            ]
-        ];
-
-        $jwt = JWT::encode($payload, JwtConfig::$secret, 'HS256');
-
-        $responseData = [
-            'success' => true,
-            'message' => 'Login realizado com sucesso',
-            'data' => [
-                'user' => $user,
-                'role' => $role,
-                'jwt' => $jwt
-            ],
-        ];
-
-        Utils::jsonResponse($responseData, 200);
     }
 
     public function signupWeb()
     {
+        try {
+            $nome = trim($_POST["nome"] ?? '');
+            $email = trim($_POST["email"] ?? '');
+            $password = trim($_POST["password"] ?? '');
 
-        /*
-         * @TODO validar se existe utilizador logado
-         */
+            if ($nome === '' || $email === '' || $password === '') {
+                throw new Exception("Todos os campos são obrigatórios");
+            }
 
-        $nome = trim($_POST["nome"] ?? '');
-        $email = trim($_POST["email"] ?? '');
-        $password = trim($_POST["password"] ?? '');
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Email inválido");
+            }
 
-        if ($nome === '' || $email === '') {
-            die("Todos os campos são obrigatórios");
+            $userDAO = new UserDAO();
+
+            if ($userDAO->findByEmail($email)) {
+                throw new Exception("Email já existe");
+            }
+
+            $userId = $userDAO->createPending($nome, $email);
+
+            $verDAO = new EmailVerificationDAO();
+            $token = $verDAO->createForUser($userId, 300);
+
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $baseUrl = $scheme . '://' . $host;
+            $link = $baseUrl . "/verify-email?token=" . urlencode($token);
+
+            $subject = "Verifica o teu email (expira em 5 min)";
+            $html = "
+                <div style='font-family: Arial, sans-serif;'>
+                <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
+                <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
+                <p><a href='{$link}'>{$link}</a></p>
+                <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
+                </div>
+            ";
+
+            (new Mailer())->send($email, $subject, $html);
+
+            $_SESSION['flash_success'] = "Conta criada. Enviámos um email para verificares (link expira em 5 min).";
+            header("Location: /login");
+            exit;
+
+        } catch (Exception $e) {
+            $_SESSION['flash_error'] = $e->getMessage();
+            header("Location: /signup");
+            exit;
         }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Email inválido");
-        }
-
-        $user = (new UserDAO())->findByEmail($email);
-
-        if ($user) {
-            throw new Exception("Email já existe");
-        }
-
-        //Criar um utilizador no estad o pendente
-        $userDAO = new UserDAO();
-
-        $userId = $userDAO->createPending($nome, $email);
-
-        $verDAO = new emailVerificationDAO();
-
-        $token = $verDAO->createForUser($userId, 300);
-
-        // 3) baseUrl dinâmico (vhosts)
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $baseUrl = $scheme . '://' . $host;
-
-        // 4) link para clicar no email
-        $link = $baseUrl . "/verify-email?token=" . urlencode($token);
-
-        // 5) envia email via Mailer (PHPMailer/Mailtrap)
-        $subject = "Verifica o teu email (expira em 5 min)";
-        $html = "
-            <div style='font-family: Arial, sans-serif;'>
-            <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
-            <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
-            <p><a href='{$link}'>{$link}</a></p>
-            <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
-            </div>
-        ";
-
-        (new Mailer())->send($email, $subject, $html);
-
-        // 6) redirect com toast
-        $_SESSION['flash_success'] = "Conta criada. Enviámos um email para verificares (link expira em 5 min).";
-        header("Location: /login");
-        exit;
     }
 
     public function singupApi()
     {
         $pdo = DatabaseSingle::connect();
-
         $pdo->beginTransaction();
 
         try {
@@ -197,110 +201,134 @@ class AuthController
                 throw new Exception("Já existe conta com este email.");
             }
 
-            //-------------:)
-
             $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, 0, $tem_mobilidade_reduzida);
 
             $verDao = new EmailVerificationDAO();
             $token = $verDao->createForUser($userId, 300);
 
-            // 3) baseUrl dinâmico (vhosts)
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             $baseUrl = $scheme . '://' . $host;
-
-            // 4) link para clicar no email
             $link = $baseUrl . "/verify-email?token=" . urlencode($token);
 
-            // 5) envia email via Mailer (PHPMailer/Mailtrap)
             $subject = "Verifica o teu email (expira em 5 min)";
             $html = "
-            <div style='font-family: Arial, sans-serif;'>
-            <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
-            <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
-            <p><a href='{$link}'>{$link}</a></p>
-            <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
-            </div>
-        ";
+                <div style='font-family: Arial, sans-serif;'>
+                <h2>Olá, " . htmlspecialchars($nome) . "!</h2>
+                <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
+                <p><a href='{$link}'>{$link}</a></p>
+                <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
+                </div>
+            ";
 
             (new MyMailerService())->send($email, $subject, $html);
 
-            $responseData = [
+            $pdo->commit();
+
+            Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Signup realizado com sucesso',
                 'data' => [],
-            ];
-
-            $pdo->commit();
-
-            Utils::jsonResponse($responseData, 200);
+            ], 200);
 
         } catch (Exception $e) {
             $pdo->rollback();
 
-            $responseData = [
+            Utils::jsonResponse([
                 'success' => false,
-                'message' => 'Erro ao efetuar a operação.' . $e->getMessage(),
+                'message' => 'Erro ao efetuar a operação: ' . $e->getMessage(),
                 'data' => [],
-            ];
-
-            Utils::jsonResponse($responseData, 400);
+            ], 400);
         }
-    }
-
-    // ------------------------------
-    // API dos Postes
-    // ------------------------------
-    public function listaPosteWeb()
-    {
-
     }
 
     public function verifyEmailForm()
     {
-        $token = $_GET['token'] ?? '';
+        // DEBUG
+        file_put_contents(
+            'C:/laragon/www/mydev.techurbis.com/debug.log',
+            date('H:i:s') . " GET token: " . ($_GET['token'] ?? 'VAZIO') . "\n",
+            FILE_APPEND
+        );
 
-        if (empty($token)) {
+        try {
+            $token = $_GET['token'] ?? '';
+
+            if (empty($token)) {
+                throw new Exception("Token em falta");
+            }
+
+            $this->view('verify-email', [
+                'token' => $token,
+                'userId' => 1
+            ]);
+
+        } catch (Exception $e) {
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " ERRO verifyEmailForm: " . $e->getMessage() . "\n",
+                FILE_APPEND
+            );
             header("Location: /bad-request");
-            exit();
+            exit;
         }
-
-        // Token válido
-        $this->view('verify-email', [
-            'token' => $token,
-            'userId' => 1
-        ]);
     }
 
     public function verifyEmailSubmit()
     {
-        $token = $_POST['token'] ?? '';
-        $password = $_POST['password'] ?? '';
+        // DEBUG TEMPORÁRIO
+        file_put_contents(
+            'C:/laragon/www/mydev.techurbis.com/debug.log',
+            date('H:i:s') . " POST: " . print_r($_POST, true) . "\n",
+            FILE_APPEND
+        );
 
-        if (empty($token) || empty($password)) {
-            throw new Exception("Token e password são obrigatórios");
+        try {
+            $token = $_POST['token'] ?? '';
+            $password = $_POST['password'] ?? '';
+
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " token=$token | pass=$password\n",
+                FILE_APPEND
+            );
+
+            if (empty($token) || empty($password)) {
+                throw new Exception("Token e password são obrigatórios");
+            }
+
+            $verDao = new EmailVerificationDAO();
+            $userId = $verDao->validateToken($token);
+
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " userId=" . var_export($userId, true) . "\n",
+                FILE_APPEND
+            );
+
+            if (!$userId) {
+                throw new Exception("Token inválido ou expirado");
+            }
+
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $userDAO = new UserDAO();
+            $userDAO->setPasswordAndVerify($userId, $hash);
+            $verDao->markUsed($token);
+
+            $_SESSION['flash_success'] = "Password definida com sucesso. Já podes fazer login.";
+            header("Location: /login");
+            exit;
+
+        } catch (Exception $e) {
+            file_put_contents(
+                'C:/laragon/www/mydev.techurbis.com/debug.log',
+                date('H:i:s') . " ERRO: " . $e->getMessage() . "\n",
+                FILE_APPEND
+            );
+
+            $_SESSION['flash_error'] = $e->getMessage();
+            header("Location: /bad-request");
+            exit;
         }
-
-        $verDao = new EmailVerificationDAO();
-
-        $userId = $verDao->validateToken($token);
-
-        if (!$userId) {
-            throw new Exception("Token inválido ou expirado");
-        }
-
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-
-        $userDAO = new UserDAO();
-        // Atualizar a password do utilizador e marcar como verificado
-        $userDAO->setPasswordAndVerify($userId, $hash);
-        // Desativar o token para não ser usado novamente
-
-        $verDao->markUsed($token);
-
-
-        $_SESSION['flash_success'] = "Email verificado e password definida. Já podes fazer login.";
-        header("Location: /login");
-        exit;
     }
 }
