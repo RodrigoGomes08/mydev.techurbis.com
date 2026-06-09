@@ -164,9 +164,7 @@ class UserDAO
         $sql = "
             UPDATE users
             SET password   = ?,
-                is_verified = 1,
-                verified_at = NOW(),
-                updated_at  = NOW()
+                ativo      = 1
             WHERE id = ?
         ";
 
