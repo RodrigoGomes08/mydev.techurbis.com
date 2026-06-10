@@ -61,7 +61,6 @@ class UserController
             $userDAO = new UserDAO();
             $userId = $userDAO->createUser($nome, $email, $id_role, $morada, $password);
 
-            // DEBUG — apaga depois
             error_log(">>> userId obtido: " . var_export($userId, true));
             error_log(">>> password está vazia? " . var_export(empty($password), true));
 
@@ -119,7 +118,19 @@ class UserController
         }
 
         try {
-            $linhasAlteradas = (new UserDAO())->userUpdateDAO($id, $id_role, $nome, $data_nascimento, $telefone, $morada, $email, $ativo, $tem_mobilidade_reduzida);
+            $dados = [
+                'id' => $id,
+                'id_role' => $id_role,
+                'nome' => $nome,
+                'data_nascimento' => $data_nascimento,
+                'telefone' => $telefone,
+                'morada' => $morada,
+                'email' => $email,
+                'ativo' => $ativo,
+                'tem_mobilidade_reduzida' => $tem_mobilidade_reduzida,
+            ];
+
+            $linhasAlteradas = (new UserDAO())->userUpdateDAO($dados);
 
             if (!$linhasAlteradas) {
                 $_SESSION['toast'] = [
@@ -197,25 +208,35 @@ class UserController
             $raw = file_get_contents("php://input");
             $data = json_decode($raw, true);
 
+            // ✅ CORRIGIDO: valida que o body é JSON válido
             if (!is_array($data)) {
                 throw new Exception("JSON inválido");
             }
 
-            $dados = [
-                'id' => (int) ($data['id'] ?? 0),
-                'id_role' => (int) ($data['id_role'] ?? 0),
-                'nome' => (string) ($data['nome'] ?? ''),
-                'data_nascimento' => $data['data_nascimento'] ?? null,
-                'telefone' => (int) ($data['telefone'] ?? 0),
-                'morada' => (string) ($data['morada'] ?? ''),
-                'email' => (string) ($data['email'] ?? ''),
-                'ativo' => (int) ($data['ativo'] ?? 0),
-                'tem_mobilidade_reduzida' => (int) ($data['tem_mobilidade_reduzida'] ?? 0)
-            ];
+            // ✅ CORRIGIDO: busca os dados atuais do utilizador para preservar
+            //    campos que o Android não envia (id_role, ativo, etc.)
+            $userAtual = (new UserDAO())->findByID($userId);
+            if (!$userAtual) {
+                throw new Exception("Utilizador não encontrado");
+            }
 
-            if ($userId !== $dados['id']) {
+            // ✅ CORRIGIDO: verifica que o id do token coincide com o body
+            $idNoBody = (int) ($data['id'] ?? 0);
+            if ($idNoBody !== 0 && $idNoBody !== $userId) {
                 throw new Exception("Não tens permissão para atualizar este perfil");
             }
+
+            $dados = [
+                'id' => $userId,
+                'id_role' => $userAtual['id_role'],   // preserva role
+                'nome' => (string) ($data['nome'] ?? ''),
+                'data_nascimento' => $data['data_nascimento'] ?? null,
+                'telefone' => (string) ($data['telefone'] ?? ''),
+                'morada' => (string) ($data['morada'] ?? ''),
+                'email' => (string) ($data['email'] ?? ''),
+                'ativo' => $userAtual['ativo'],               // preserva ativo
+                'tem_mobilidade_reduzida' => (int) ($data['tem_mobilidade_reduzida'] ?? $userAtual['tem_mobilidade_reduzida']),
+            ];
 
             $userAtualizado = (new UserDAO())->userUpdateDAO($dados);
 
