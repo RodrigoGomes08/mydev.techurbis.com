@@ -133,6 +133,31 @@ elseif ($uri === '/sensores' && $method === 'GET') {
 }
 
 //==================================================
+// PARQUE_DE_ESTACIONAMENTO
+//==================================================
+elseif (preg_match('#^/lugar/ocupar/(\d+)$#', $uri, $m) && $method === 'GET') {
+    $controller = new SensorController();
+    $controller->ocupar((int) $m[1]);
+    exit;
+
+} elseif (preg_match('#^/lugar/desocupar/(\d+)$#', $uri, $m) && $method === 'GET') {
+    $controller = new SensorController();
+    $controller->desocupar((int) $m[1]);
+    exit;
+
+} elseif (preg_match('#^/lugar/historico/(\d+)$#', $uri, $m) && $method === 'GET') {
+    $controller = new SensorController();
+    $controller->historico((int) $m[1]);
+    exit;
+
+} elseif (preg_match('#^/contentores/pressao/(\d+)$#', $uri, $m) && $method === 'POST') {
+    $controller = new SensorController();
+    $controller->pressaoContentor((int) $m[1]);
+    exit;
+
+}
+
+//==================================================
 // SENSORES_VALOR
 //==================================================
 elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
