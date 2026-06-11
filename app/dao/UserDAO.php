@@ -164,9 +164,7 @@ class UserDAO
         $sql = "
             UPDATE users
             SET password   = ?,
-                is_verified = 1,
-                verified_at = NOW(),
-                updated_at  = NOW()
+                ativo      = 1
             WHERE id = ?
         ";
 
@@ -174,12 +172,34 @@ class UserDAO
         $stmt->execute([$passwordHash, $userId]);
     }
 
-    public function userUpdateDAO($dados){
-        try{
+    public function userUpdateDAO($dados)
+    {
+        try {
+            // ✅ Verifica se o email já está a ser usado por outro utilizador
+            $sqlCheck = "SELECT id FROM users WHERE email = :email AND id != :id";
+            $stmtCheck = $this->conn->prepare($sqlCheck);
+            $stmtCheck->bindParam(':email', $dados['email']);
+            $stmtCheck->bindParam(':id', $dados['id']);
+            $stmtCheck->execute();
+
+            if ($stmtCheck->fetch()) {
+                throw new Exception("Este email já está a ser usado por outro utilizador.");
+            }
+
             $sql = "UPDATE users SET nome = ?, email = ?, id_role = ?, data_nascimento = ?, telefone = ?, morada = ?, ativo = ?, tem_mobilidade_reduzida = ? WHERE id = ?";
 
             $stmt = $this->conn->prepare($sql);
-            $verificar = $stmt->execute([$dados['nome'], $dados['email'], $dados['id_role'], $dados['data_nascimento'], $dados['telefone'], $dados['morada'], $dados['ativo'], $dados['tem_mobilidade_reduzida'], $dados['id']]);
+            $verificar = $stmt->execute([
+                $dados['nome'],
+                $dados['email'],
+                $dados['id_role'],
+                $dados['data_nascimento'],
+                $dados['telefone'],
+                $dados['morada'],
+                $dados['ativo'],
+                $dados['tem_mobilidade_reduzida'],
+                $dados['id']
+            ]);
 
             if (!$verificar) {
                 throw new Exception("Erro ao atualizar User");
@@ -187,7 +207,7 @@ class UserDAO
 
             return true;
 
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -204,7 +224,7 @@ class UserDAO
         return $resul;
     }
 
-    
+
 
 
 

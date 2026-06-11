@@ -7,3 +7,5 @@ Repositório para colocar tudo do nosso projeto e da api
 Cada vez que deres pull no projeto, apaga a pasta vendor e mete este comando:
 
 php composer.phar install
+
+php -S 0.0.0.0:8081 -t public

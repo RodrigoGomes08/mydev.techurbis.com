@@ -8,7 +8,7 @@ class DatabaseSingle
   {
     if (!self::$connection) {
       self::$connection = new PDO(
-        "mysql:host=localhost;dbname=cidade_system",
+        "mysql:host=127.0.0.1;dbname=cidade_system",
         "root",
         "",
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]

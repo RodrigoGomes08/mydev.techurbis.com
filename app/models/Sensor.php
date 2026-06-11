@@ -4,14 +4,14 @@ class Sensor implements JsonSerializable
 {
     private int $id;
     private int $id_cidade;
-    private string $name;
+    private string $nome;
     private array $leituras = [];
 
-    public function __construct(int $id, int $id_cidade, string $name)
+    public function __construct(int $id, int $id_cidade, string $nome)
     {
         $this->id = $id;
         $this->id_cidade = $id_cidade;
-        $this->name = $name;
+        $this->nome = $nome;
     }
 
     // --- Leituras ---
@@ -44,13 +44,13 @@ class Sensor implements JsonSerializable
         $this->id_cidade = $id_cidade;
     }
 
-    public function getName(): string
+    public function getNome(): string
     {
-        return $this->name;
+        return $this->nome;
     }
-    public function setName(string $name): void
+    public function setNome(string $nome): void
     {
-        $this->name = $name;
+        $this->nome = $nome;
     }
 
     // --- Serialização JSON ---
@@ -59,7 +59,7 @@ class Sensor implements JsonSerializable
         return [
             'id' => $this->id,
             'id_cidade' => $this->id_cidade,
-            'name' => $this->name,
+            'nome' => $this->nome,
             'leituras' => $this->leituras,   // SensorLeituras também implementa JsonSerializable
         ];
     }
