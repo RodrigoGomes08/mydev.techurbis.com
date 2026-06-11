@@ -262,14 +262,18 @@ class PosteController
     }
 
     public function insertObsEmPostesApi($id)
-    {
-        $pdo = DatabaseSingle::connect();
-        $pdo->beginTransaction();
-        try {
-            $id = trim($id ?? '');
-            $texto = trim($_POST["texto"] ?? '');
+{
+    $pdo = DatabaseSingle::connect();
+    $pdo->beginTransaction();
+    try {
+        $id = trim($id ?? '');
 
-            if (empty($id) || empty($texto)) {
+        // ✅ CORRETO — lê o body JSON
+        $input = json_decode(file_get_contents('php://input'), true);
+        $texto = trim($input['texto'] ?? '');
+
+        if (empty($id) || empty($texto)) {
+            // ... resto igual
                 Utils::jsonResponse([
                     'success' => false,
                     'message' => 'ID e texto são obrigatórios.',
