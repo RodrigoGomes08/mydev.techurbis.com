@@ -268,7 +268,7 @@ class PosteController
     try {
         $id = trim($id ?? '');
 
-        // ✅ CORRETO — lê o body JSON
+        
         $input = json_decode(file_get_contents('php://input'), true);
         $texto = trim($input['texto'] ?? '');
 
