@@ -230,7 +230,8 @@ class ContentorController
         $pdo->beginTransaction();
         try {
             $id = trim($id ?? '');
-            $texto = trim($_POST["texto"] ?? '');
+            $input = json_decode(file_get_contents('php://input'), true);
+            $texto = trim($input["texto"] ?? '');
 
             if (empty($id) || empty($texto)) {
                 Utils::jsonResponse([
