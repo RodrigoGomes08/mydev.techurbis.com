@@ -330,13 +330,13 @@ class PosteController
                 throw new Exception("Poste com id '$id' não encontrado.");
             }
 
-            $observacoesContentores = $posteDAO->getAllObservacoesByPoste($id);
+            $observacoesPostes = $posteDAO->getAllObservacoesByPoste($id);
 
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Observações obtidas com sucesso.',
                 'data' => [
-                    "observacoesContentores" => $observacoesContentores
+                    "observacoesPostes" => $observacoesPostes
                 ]
             ]);
         } catch (Exception $e) {
