@@ -31,7 +31,7 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
     ], 200);
     exit;
 } elseif ($uri === '/signup' && $method === 'POST') {
-    (new AuthController())->singupApi();
+    (new AuthController())->signupApi();
 
 } elseif ($uri === '/login' && $method === 'POST') {
     (new AuthController())->loginApi();

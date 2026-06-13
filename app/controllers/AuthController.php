@@ -173,7 +173,7 @@ class AuthController
         }
     }
 
-    public function singupApi()
+    public function signupApi()
     {
         $pdo = DatabaseSingle::connect();
         $pdo->beginTransaction();
@@ -200,6 +200,10 @@ class AuthController
             if ($userDao->findByEmail($email)) {
                 throw new Exception("Já existe conta com este email.");
             }
+
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $hash, $morada, 0, $tem_mobilidade_reduzida);
 
             $userId = $userDao->createPending($nome, $dataNascimento, $telefone, $email, $password, $morada, 0, $tem_mobilidade_reduzida);
 
