@@ -141,7 +141,7 @@ $lastSync = date('d/m/Y H:i:s');
                     <?php if ($numCriticos > 0): ?>
                         <div class="parque-alerta">
                             <i class="bi bi-exclamation-triangle-fill"></i>
-                            <?= $numCriticos ?> contentor<?= $numCriticos > 1 ? 'es críticos' : ' crítico' ?> nesta área
+                            <?= $numCriticos ?> contentor<?= $numCriticos > 1 ? 'es cheios' : ' cheio' ?> nesta área
                         </div>
                     <?php endif; ?>
 
@@ -215,7 +215,7 @@ $lastSync = date('d/m/Y H:i:s');
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
                                                 data-bs-target="#<?= $mDeleteId ?>">
-                                                <i class="bi bi-trash me-1"></i>Eliminar
+                                                <i class="bi bi-trash me-1"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -281,12 +281,11 @@ $lastSync = date('d/m/Y H:i:s');
                                                         <div class="col-6">
                                                             <label class="form-label fw-semibold">Estado</label>
                                                             <select name="id_estado" class="form-select" required>
-                                                                <option value="4" <?= $c->getIdEstado() === 4 ? 'selected' : '' ?>>
-                                                                    Normal</option>
-                                                                <option value="5" <?= $c->getIdEstado() === 5 ? 'selected' : '' ?>>
-                                                                    Atenção</option>
-                                                                <option value="6" <?= $c->getIdEstado() === 6 ? 'selected' : '' ?>>
-                                                                    Crítico</option>
+                                                                <?php foreach ($estados as $estado): ?>
+                                                                    <option value="<?= $estado->getId() ?>" <?= $c->getIdEstado() === $estado->getId() ? 'selected' : '' ?>>
+                                                                        <?= htmlspecialchars(ucfirst($estado->getNome())) ?>
+                                                                    </option>
+                                                                <?php endforeach; ?>
                                                             </select>
                                                         </div>
                                                         <div class="col-12">

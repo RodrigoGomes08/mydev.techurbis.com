@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../dao/ContentorDAO.php';
+require_once __DIR__ . '/../dao/EstadoDAO.php';
 
 class ContentorController
 {
@@ -22,9 +23,13 @@ class ContentorController
             $contentores = $contentorDAO->getAllContentores();
             $numContentorPorEstado = $contentorDAO->numContentorEstado();
 
+            $estadoDAO = new EstadoDAO();
+            $estados = $estadoDAO->getAllEstados();
+
             $this->view('portalADMContentores', [
                 'contentores' => $contentores,
                 'numContentorPorEstado' => $numContentorPorEstado,
+                'estados' => $estados,
             ]);
         } catch (Exception $e) {
             $_SESSION['toast'] = ['type' => 'error', 'message' => $e->getMessage()];
@@ -92,8 +97,9 @@ class ContentorController
             $tipo = trim($_POST["tipo"] ?? '');
             $identificacao = trim($_POST["identificacao"] ?? '');
             $observacao = trim($_POST["observacao"] ?? '');
+            $is_full = isset($_POST["is_full"]) ? (int)$_POST["is_full"] : 0;
 
-            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
+            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -102,11 +108,9 @@ class ContentorController
                 exit;
             }
 
-
             $contentorDAO = new ContentorDAO();
-            $linhasAlteradas = $contentorDAO->contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao);
+            $linhasAlteradas = $contentorDAO->contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full);
 
-            // Inserir observação separadamente se foi preenchida
             if (!empty($observacao)) {
                 $contentorDAO->insertObs($id, $observacao);
             }

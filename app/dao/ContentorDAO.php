@@ -121,15 +121,15 @@ class ContentorDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao)
+    public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full = 0)
     {
         try {
             $sql = "UPDATE contentores
-                SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?
+                SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?, is_full = ?
                 WHERE id = ?";
 
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $id]);
+            $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full, $id]);
 
             return $stmt->rowCount();
         } catch (Exception $e) {
