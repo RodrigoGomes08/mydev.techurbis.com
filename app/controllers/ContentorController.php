@@ -103,9 +103,15 @@ class ContentorController
             }
 
 
-            $linhasAlteradas = (new ContentorDAO())->contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
+            $contentorDAO = new ContentorDAO();
+            $linhasAlteradas = $contentorDAO->contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao);
 
-            if (!$linhasAlteradas) {
+            // Inserir observação separadamente se foi preenchida
+            if (!empty($observacao)) {
+                $contentorDAO->insertObs($id, $observacao);
+            }
+
+            if (!$linhasAlteradas && empty($observacao)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Nenhuma alteração foi feita (dados iguais aos existentes).'

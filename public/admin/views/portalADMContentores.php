@@ -141,7 +141,7 @@ $lastSync = date('d/m/Y H:i:s');
                     <?php if ($numCriticos > 0): ?>
                         <div class="parque-alerta">
                             <i class="bi bi-exclamation-triangle-fill"></i>
-                            <?= $numCriticos ?> contentor<?= $numCriticos > 1 ? 'es cheios' : ' cheio' ?> nesta área
+                            <?= $numCriticos ?> contentor<?= $numCriticos > 1 ? 'es críticos' : ' crítico' ?> nesta área
                         </div>
                     <?php endif; ?>
 
@@ -149,17 +149,32 @@ $lastSync = date('d/m/Y H:i:s');
                         <?php foreach ($cidade['contentores'] as $item):
                             $c = $item['obj'];
                             $estado = $item['estado'];
-                            $corPonto = match ($c->estado['nome']) { 'critico' => '#e74c3c', 'atencao' => '#f39c12', default => '#2ecc71'};
-                            $labelEstado = match ($c->estado['nome']) { 'critico' => 'Cheio', 'atencao' => 'Atenção', default => 'Normal'};
-                            $tagClass = match ($c->estado['nome']) { 'critico' => '', 'atencao' => 'mr', default => 'ev'};
-                            $barPct = match ($c->estado['nome']) { 'critico' => 100, 'atencao' => 65, default => 30};
-                            $mMapaId = 'modalMapa_' . $c->getId();
-                            $mEditId = 'modalEdit_' . $c->getId();
+                            $pct = min((float)($c->valor['percentagem'] ?? 0), 100);
+
+                            if ($pct >= 80) {
+                                $estadoVisual  = 'critico';
+                                $labelEstado   = 'Crítico';
+                                $corPonto      = '#e74c3c';
+                                $tagClass      = 'ct';
+                            } elseif ($pct >= 50) {
+                                $estadoVisual  = 'atencao';
+                                $labelEstado   = 'Atenção';
+                                $corPonto      = '#f39c12';
+                                $tagClass      = 'mr';
+                            } else {
+                                $estadoVisual  = 'normal';
+                                $labelEstado   = 'Normal';
+                                $corPonto      = '#2ecc71';
+                                $tagClass      = 'ev';
+                            }
+
+                            $mMapaId   = 'modalMapa_'   . $c->getId();
+                            $mEditId   = 'modalEdit_'   . $c->getId();
                             $mDeleteId = 'modalDelete_' . $c->getId();
                             ?>
-                            <div class="col-12 col-md-6 col-lg-3 card-contentor" data-estado="<?= $estado ?>"
+                            <div class="col-12 col-md-6 col-lg-3 card-contentor" data-estado="<?= $estadoVisual ?>"
                                 data-label="<?= strtolower(htmlspecialchars($c->getIdentificacao())) ?>">
-                                <div class="parque-card <?= $estado ?>">
+                                <div class="parque-card <?= $estadoVisual ?>">
                                     <div class="parque-card-header">
                                         <div class="parque-titulo">
                                             <span><i
@@ -169,20 +184,26 @@ $lastSync = date('d/m/Y H:i:s');
                                         </div>
                                         <div class="parque-subtitulo">
                                             <i class="bi bi-circle-fill" style="color:<?= $corPonto ?>;font-size:0.5rem;"></i>
-                                            <?= $c->estado['nome'] ?>
+                                            <?= $labelEstado ?>
                                         </div>
                                     </div>
                                     <div class="parque-ocupacao-wrap">
-                                        <div class="parque-pct-num <?= $c->estado['nome'] ?>"><?= $c->estado['nome'] ?></div>
+                                        <?php $pct = min((float)($c->valor['percentagem'] ?? 0), 100); ?>
+                                        <div class="parque-pct-num <?= $estadoVisual ?>"><?= $pct ?>%</div>
                                         <div class="parque-prog">
-                                            <div class="parque-prog-bar <?= $c->estado['nome'] ?>" style="width:style="
-                                                width:<?= $c->peso['peso'] ?? 0 ?>%;"</div>
-                                            </div>
-                                            <div class="parque-lugares-label">
-                                                Cap. máx.: <?= $c->getCapacidadeMax() ?>L &nbsp;·&nbsp;
-                                                <?= htmlspecialchars($c->getTipo()) ?>
-                                            </div>
+                                            <div class="parque-prog-bar <?= $estadoVisual ?>" style="width:<?= $pct ?>%"></div>
                                         </div>
+                                        <div class="parque-lugares-label">
+                                            <?php if ($c->valor): ?>
+                                                <?= number_format($c->valor['valor'], 1) ?>L / <?= $c->getCapacidadeMax() ?>L
+                                                &nbsp;·&nbsp;
+                                                <span class="text-muted" style="font-size:0.75rem;"><?= date('d/m H:i', strtotime($c->valor['data_leitura'])) ?></span>
+                                            <?php else: ?>
+                                                Sem leituras &nbsp;·&nbsp; Cap. máx.: <?= $c->getCapacidadeMax() ?>L
+                                            <?php endif; ?>
+                                            &nbsp;·&nbsp; <?= htmlspecialchars($c->getTipo()) ?>
+                                        </div>
+                                    </div>
                                         <div class="parque-actions">
                                             <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
                                                 data-bs-target="#<?= $mMapaId ?>">
@@ -292,18 +313,19 @@ $lastSync = date('d/m/Y H:i:s');
                                                                 </option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-6">
-                                                            <label class="form-label fw-semibold">Observação</label>
-                                                            <textarea name="observacao" class="form-control" rows="2"><?php if (!empty($c->getObservacoes())): ?>
-                                                                            <?php foreach ($c->getObservacoes() as $obs): ?>
-                                                                                    <p class="mb-1 text-muted" style="font-size:0.82rem;">
-                                                                                        <?= htmlspecialchars($obs['texto']) ?>
-                                                                                            <small class="text-muted"><?= $obs['created_at'] ?></small>
-                                                                                    </p>
-                                                                            <?php endforeach; ?>
-                                                                    <?php else: ?>
-                                                                            <span class="text-muted" style="font-size:0.82rem;">Sem observações.</span>
-                                                                    <?php endif; ?></textarea>
+                                                        <div class="col-12">
+                                                            <label class="form-label fw-semibold">Nova Observação</label>
+                                                            <textarea name="observacao" class="form-control" rows="2" placeholder="Adicionar nova observação..."></textarea>
+                                                            <?php if (!empty($c->getObservacoes())): ?>
+                                                                <div class="mt-2" style="max-height:100px;overflow-y:auto;">
+                                                                    <?php foreach (array_reverse($c->getObservacoes()) as $obs): ?>
+                                                                        <p class="mb-1 text-muted" style="font-size:0.78rem;">
+                                                                            <?= htmlspecialchars($obs->getTexto()) ?>
+                                                                            <small class="text-muted d-block"><?= $obs->getCreatedAt() ?></small>
+                                                                        </p>
+                                                                    <?php endforeach; ?>
+                                                                </div>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                 </div>

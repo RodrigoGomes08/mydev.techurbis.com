@@ -692,6 +692,11 @@ body {
     color: #f39c12;
 }
 
+.parque-tag.ct {
+    background: #fde8e8;
+    color: #e74c3c;
+}
+
 .parque-tag.tipo {
     background: #f0f3ff;
     color: #435ebe;
