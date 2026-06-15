@@ -215,7 +215,7 @@ $lastSync = date('d/m/Y H:i:s');
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
                                                 data-bs-target="#<?= $mDeleteId ?>">
-                                                <i class="bi bi-trash me-1"></i>
+                                                <i class="bi bi-trash me-1"></i>Eliminar
                                             </button>
                                         </div>
                                     </div>
