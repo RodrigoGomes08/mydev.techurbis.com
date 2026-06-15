@@ -11,6 +11,7 @@ class Parque implements JsonSerializable
     private float $tarifa;
     private string $longitude;
     private string $latitude;
+    private array $lugares = [];
 
     public function __construct(
         int $id,
@@ -43,6 +44,7 @@ class Parque implements JsonSerializable
             'tarifa' => $this->tarifa,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
+            'lugares' => $this->lugares,
         ];
     }
 
@@ -133,5 +135,16 @@ class Parque implements JsonSerializable
     public function setLatitude(string $latitude): void
     {
         $this->latitude = $latitude;
+    }
+
+    // Lugares
+    public function getLugares(): array
+    {
+        return $this->lugares;
+    }
+
+    public function setLugares(array $lugares): void
+    {
+        $this->lugares = $lugares;
     }
 }

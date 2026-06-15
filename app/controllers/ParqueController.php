@@ -149,7 +149,7 @@ class ParqueController
         // }
 
         $parqueDAO = new ParqueDAO();
-        $parques = $parqueDAO->getAllParques();
+        $parques = $parqueDAO->getAllParquesComLugaresApi();
 
         $pdo->commit();
         Utils::jsonResponse([
