@@ -208,19 +208,16 @@ class UserController
             $raw = file_get_contents("php://input");
             $data = json_decode($raw, true);
 
-            // ✅ CORRIGIDO: valida que o body é JSON válido
             if (!is_array($data)) {
                 throw new Exception("JSON inválido");
             }
 
-            // ✅ CORRIGIDO: busca os dados atuais do utilizador para preservar
-            //    campos que o Android não envia (id_role, ativo, etc.)
             $userAtual = (new UserDAO())->findByID($userId);
             if (!$userAtual) {
                 throw new Exception("Utilizador não encontrado");
             }
 
-            // ✅ CORRIGIDO: verifica que o id do token coincide com o body
+
             $idNoBody = (int) ($data['id'] ?? 0);
             if ($idNoBody !== 0 && $idNoBody !== $userId) {
                 throw new Exception("Não tens permissão para atualizar este perfil");
@@ -249,6 +246,42 @@ class UserController
                 "message" => "Perfil atualizado com sucesso",
                 "data" => []
             ], 201);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
+
+    public function enviarEmailEditarPassword($userId)
+    {
+        try {
+            $user = (new UserDAO())->findByID($userId);
+            if (!$user) {
+                throw new Exception("Utilizador não encontrado");
+            }
+
+            $verDAO = new EmailVerificationDAO();
+            $token = $verDAO->createForUser($userId, 3600); // token válido por 1 hora
+
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $link = $scheme . '://' . $host . '/reset-password?token=' . urlencode($token);
+
+            $subject = "Redefinir a tua password";
+            $html = "<p>Olá " . htmlspecialchars($user['nome']) . "! <a href='{$link}'>Redefine a tua password</a></p>";
+
+            (new MyMailerService())->send($user['email'], $subject, $html);
+
+            Utils::jsonResponse([
+                "success" => true,
+                "message" => "Email enviado para \"{$user['email']}\" redefinir a password.",
+                "data" => []
+            ], 200);
             exit;
 
         } catch (Exception $e) {

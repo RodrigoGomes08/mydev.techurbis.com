@@ -52,10 +52,10 @@ elseif (preg_match('#^/profileuser/(\d+)$#', $uri, $m) && $method === 'GET') {
     $dataToken = AuthMiddlewareAPI::check();
     $userId = $dataToken->id;
     (new UserController())->editProfileUserAPI($userId);
-} elseif ($uri === '/deleteprofileuser' && $method === 'POST') {
+} elseif ($uri === '/editpassword' && $method === 'POST') {
     $dataToken = AuthMiddlewareAPI::check();
     $userId = $dataToken->id;
-    (new UserController())->deleteProfileUserAPI($userId);
+    (new UserController())->enviarEmailEditarPassword($userId);
 }
 
 //==================================================
