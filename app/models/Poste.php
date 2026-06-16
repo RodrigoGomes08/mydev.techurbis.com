@@ -3,16 +3,16 @@
 class Poste implements JsonSerializable
 {
     private int $id;
-    private int $id_cidade;
+    private int $id_freguesia;
     private int $id_estado;
     private string $longitude;
     private string $latitude;
     private string $observacao;
 
-    public function __construct(int $id, int $id_cidade, int $id_estado, string $longitude, string $latitude, string $observacao = '')
+    public function __construct(int $id, int $id_freguesia, int $id_estado, string $longitude, string $latitude, string $observacao = '')
     {
         $this->id = $id;
-        $this->id_cidade = $id_cidade;
+        $this->id_freguesia = $id_freguesia;
         $this->id_estado = $id_estado;
         $this->longitude = $longitude;
         $this->latitude = $latitude;
@@ -23,7 +23,7 @@ class Poste implements JsonSerializable
     {
         return [
             'id' => $this->id,
-            'id_cidade' => $this->id_cidade,
+            'id_freguesia' => $this->id_freguesia,
             'id_estado' => $this->id_estado,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
@@ -40,13 +40,13 @@ class Poste implements JsonSerializable
         $this->id = $id;
     }
 
-    public function getIdCidade(): int
+    public function getIdFreguesia(): int
     {
-        return $this->id_cidade;
+        return $this->id_freguesia;
     }
-    public function setIdCidade(int $id_cidade): void
+    public function setIdFreguesia(int $id_freguesia): void
     {
-        $this->id_cidade = $id_cidade;
+        $this->id_freguesia = $id_freguesia;
     }
 
     public function getIdEstado(): int

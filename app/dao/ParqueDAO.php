@@ -14,7 +14,7 @@ class ParqueDAO
 
     public function getAllParques()
     {
-        $sql = "SELECT id, id_cidade, nome, num_max_lugares, tipo, tarifa, longitude, latitude
+        $sql = "SELECT id, id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude
                 FROM p_estacionamentos
                 ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
@@ -24,7 +24,7 @@ class ParqueDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $parques[] = new Parque(
                 (int) $row['id'],
-                (int) $row['id_cidade'],
+                (int) $row['id_freguesia'],
                 (String) $row['nome'],
                 (int) $row['num_max_lugares'],
                 (String) $row['tipo'],
@@ -38,7 +38,7 @@ class ParqueDAO
 
     public function findByID($id)
     {
-        $sql = "SELECT id, id_cidade, nome, num_max_lugares, tipo, tarifa, longitude, latitude FROM p_estacionamentos WHERE id = :id";
+        $sql = "SELECT id, id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude FROM p_estacionamentos WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -47,7 +47,7 @@ class ParqueDAO
         return $row ?: null;
     }
 
-    public function createParque($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
+    public function createParque($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
     {
         $sqlCheck = "SELECT id FROM p_estacionamentos WHERE id = :id";
         $stmtCheck = $this->conn->prepare($sqlCheck);
@@ -60,15 +60,15 @@ class ParqueDAO
 
         $sql = "
             INSERT INTO p_estacionamentos
-                (id, id_cidade, nome, num_max_lugares, tipo, tarifa, longitude, latitude)
+                (id, id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude)
             VALUES
-                (:id, :id_cidade, :nome, :num_max_lugares, :tipo, :tarifa, :longitude, :latitude)
+                (:id, :id_freguesia, :nome, :num_max_lugares, :tipo, :tarifa, :longitude, :latitude)
         ";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             'id' => $id,
-            'id_cidade' => $id_cidade,
+            'id_freguesia' => $id_freguesia,
             'nome' => $nome,
             'num_max_lugares' => $num_max_lugares,
             'tipo' => $tipo,
@@ -80,14 +80,14 @@ class ParqueDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function parqueUpdateDAO($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
+    public function parqueUpdateDAO($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
     {
         $sql = "UPDATE p_estacionamentos
-                SET id_cidade = ?, nome = ?, num_max_lugares = ?, tipo = ?, tarifa = ?, longitude = ?, latitude = ?
+                SET id_freguesia = ?, nome = ?, num_max_lugares = ?, tipo = ?, tarifa = ?, longitude = ?, latitude = ?
                 WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_cidade, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude, $id]);
+        $stmt->execute([$id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude, $id]);
 
         return $stmt->rowCount();
     }
@@ -105,7 +105,7 @@ class ParqueDAO
 public function getAllParquesComLugaresApi()
 {
     $sql = "SELECT 
-                p.id, p.id_cidade, p.nome, p.num_max_lugares, p.tipo, p.tarifa, p.longitude, p.latitude,
+                p.id, p.id_freguesia, p.nome, p.num_max_lugares, p.tipo, p.tarifa, p.longitude, p.latitude,
                 l.id AS lugar_id, l.id_tipo_lugares, l.identificacao, l.ocupado
             FROM p_estacionamentos p
             LEFT JOIN lugares l ON l.id_p_estacionamento = p.id
@@ -121,7 +121,7 @@ public function getAllParquesComLugaresApi()
         if (!isset($parques[$p_id])) {
             $parques[$p_id] = [
                 'id'              => (int)    $row['id'],
-                'id_cidade'       => (int)    $row['id_cidade'],
+                'id_freguesia'       => (int)    $row['id_freguesia'],
                 'nome'            => (string) $row['nome'],
                 'num_max_lugares' => (int)    $row['num_max_lugares'],
                 'tipo'            => (string) $row['tipo'],

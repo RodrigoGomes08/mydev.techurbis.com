@@ -7,7 +7,7 @@ class Contentor implements JsonSerializable
     // =========================
 
     private int $id;
-    private int $id_cidade;
+    private int $id_freguesia;
     private int $id_estado;
     private int $capacidade_max;
     private float $longitude;
@@ -26,7 +26,7 @@ class Contentor implements JsonSerializable
 
     public function __construct(
         int $id,
-        int $id_cidade,
+        int $id_freguesia,
         int $id_estado,
         int $capacidade_max,
         float $longitude,
@@ -39,7 +39,7 @@ class Contentor implements JsonSerializable
         $observacoes = []
     ) {
         $this->id = $id;
-        $this->id_cidade = $id_cidade;
+        $this->id_freguesia = $id_freguesia;
         $this->id_estado = $id_estado;
         $this->capacidade_max = $capacidade_max;
         $this->longitude = $longitude;
@@ -60,7 +60,7 @@ class Contentor implements JsonSerializable
     {
         return [
             'id' => $this->id,
-            'id_cidade' => $this->id_cidade,
+            'id_freguesia' => $this->id_freguesia,
             'id_estado' => $this->id_estado,
             'capacidade_max' => $this->capacidade_max,
             'longitude' => $this->longitude,
@@ -85,15 +85,15 @@ class Contentor implements JsonSerializable
         $this->id = $id;
     }
 
-    // ID CIDADE
-    public function getIdCidade(): int
+    // ID FREGUESIA
+    public function getIdFreguesia(): int
     {
-        return $this->id_cidade;
+        return $this->id_freguesia;
     }
 
-    public function setIdCidade(int $id_cidade): void
+    public function setIdFreguesia(int $id_freguesia): void
     {
-        $this->id_cidade = $id_cidade;
+        $this->id_freguesia = $id_freguesia;
     }
 
     // ID ESTADO

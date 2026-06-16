@@ -16,7 +16,7 @@ class ContentorDAO
 
     public function getAllContentores()
     {
-        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full
+        $sql = "SELECT id, id_freguesia, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full
                 FROM contentores
                 ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
@@ -29,7 +29,7 @@ class ContentorDAO
 
             $contentores[] = new Contentor(
                 (int) $row['id'],
-                (int) $row['id_cidade'],
+                (int) $row['id_freguesia'],
                 (int) $row['id_estado'],
                 (int) $row['capacidade_max'],
                 (float) $row['longitude'],
@@ -79,7 +79,7 @@ class ContentorDAO
 
     public function findByID($id)
     {
-        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full FROM contentores WHERE id = :id";
+        $sql = "SELECT id, id_freguesia, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full FROM contentores WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -88,7 +88,7 @@ class ContentorDAO
         return $row ?: null;
     }
 
-    public function createContentor($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao)
+    public function createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao)
     {
         $sqlCheck = "SELECT id FROM contentores WHERE id = :id";
         $stmtCheck = $this->conn->prepare($sqlCheck);
@@ -101,15 +101,15 @@ class ContentorDAO
 
         $sql = "
             INSERT INTO contentores
-                (id, id_cidade, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full)
+                (id, id_freguesia, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full)
             VALUES
-                (:id, :id_cidade, :id_estado, :capacidade_max, :longitude, :latitude, :tipo, :identificacao, 0)
+                (:id, :id_freguesia, :id_estado, :capacidade_max, :longitude, :latitude, :tipo, :identificacao, 0)
         ";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             'id' => $id,
-            'id_cidade' => $id_cidade,
+            'id_freguesia' => $id_freguesia,
             'id_estado' => $id_estado,
             'capacidade_max' => $capacidade_max,
             'longitude' => $longitude,
@@ -121,15 +121,15 @@ class ContentorDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full = 0)
+    public function contentorUpdateDAO($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full = 0)
     {
         try {
             $sql = "UPDATE contentores
-                SET id_cidade = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?, is_full = ?
+                SET id_freguesia = ?, id_estado = ?, capacidade_max = ?, longitude = ?, latitude = ?, tipo = ?, identificacao = ?, is_full = ?
                 WHERE id = ?";
 
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full, $id]);
+            $stmt->execute([$id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full, $id]);
 
             return $stmt->rowCount();
         } catch (Exception $e) {
@@ -182,7 +182,7 @@ class ContentorDAO
     public function findByIdContentor($id)
     {
 
-        $sql = "SELECT c.id, c.id_cidade, c.id_estado, c.capacidade_max, c.longitude, c.latitude, c.tipo, c.identificacao, c.is_full FROM contentores c WHERE id = :id";
+        $sql = "SELECT c.id, c.id_freguesia, c.id_estado, c.capacidade_max, c.longitude, c.latitude, c.tipo, c.identificacao, c.is_full FROM contentores c WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();

@@ -48,7 +48,7 @@ class ContentorController
             }
 
             $id = trim($_POST['id'] ?? '');
-            $id_cidade = trim($_POST['id_cidade'] ?? '');
+            $id_freguesia = trim($_POST['id_freguesia'] ?? '');
             $id_estado = trim($_POST['id_estado'] ?? '');
             $capacidade_max = trim($_POST['capacidade_max'] ?? '');
             $longitude = trim($_POST['longitude'] ?? '');
@@ -57,7 +57,7 @@ class ContentorController
             $identificacao = trim($_POST['identificacao'] ?? '');
             $observacao = trim($_POST['observacao'] ?? '');
 
-            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
+            if (empty($id) || empty($id_freguesia) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -68,7 +68,7 @@ class ContentorController
 
 
             $contentorDAO = new ContentorDAO();
-            $contentorDAO->createContentor($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
+            $contentorDAO->createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
 
             $_SESSION['toast'] = [
                 'type' => 'success',
@@ -89,7 +89,7 @@ class ContentorController
     {
         try {
             $id = trim($_POST["id"] ?? '');
-            $id_cidade = trim($_POST["id_cidade"] ?? '');
+            $id_freguesia = trim($_POST["id_freguesia"] ?? '');
             $id_estado = trim($_POST["id_estado"] ?? '');
             $capacidade_max = trim($_POST["capacidade_max"] ?? '');
             $longitude = trim($_POST["longitude"] ?? '');
@@ -99,7 +99,7 @@ class ContentorController
             $observacao = trim($_POST["observacao"] ?? '');
             $is_full = isset($_POST["is_full"]) ? (int)$_POST["is_full"] : 0;
 
-            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao)) {
+            if (empty($id) || empty($id_freguesia) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -109,7 +109,7 @@ class ContentorController
             }
 
             $contentorDAO = new ContentorDAO();
-            $linhasAlteradas = $contentorDAO->contentorUpdateDAO($id, $id_cidade, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full);
+            $linhasAlteradas = $contentorDAO->contentorUpdateDAO($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $is_full);
 
             if (!empty($observacao)) {
                 $contentorDAO->insertObs($id, $observacao);

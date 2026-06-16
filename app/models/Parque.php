@@ -4,7 +4,7 @@ class Parque implements JsonSerializable
 {
 
     private int $id;
-    private int $id_cidade;
+    private int $id_freguesia;
     private string $nome;
     private int $num_max_lugares;
     private string $tipo;
@@ -15,7 +15,7 @@ class Parque implements JsonSerializable
 
     public function __construct(
         int $id,
-        int $id_cidade,
+        int $id_freguesia,
         string $nome,
         int $num_max_lugares,
         string $tipo,
@@ -24,7 +24,7 @@ class Parque implements JsonSerializable
         string $latitude
     ) {
         $this->id = $id;
-        $this->id_cidade = $id_cidade;
+        $this->id_freguesia = $id_freguesia;
         $this->nome = $nome;
         $this->num_max_lugares = $num_max_lugares;
         $this->tipo = $tipo;
@@ -37,7 +37,7 @@ class Parque implements JsonSerializable
     {
         return [
             'id' => $this->id,
-            'id_cidade' => $this->id_cidade,
+            'id_freguesia' => $this->id_freguesia,
             'nome' => $this->nome,
             'num_max_lugares' => $this->num_max_lugares,
             'tipo' => $this->tipo,
@@ -60,15 +60,15 @@ class Parque implements JsonSerializable
         $this->id = $id;
     }
 
-    // ID Cidade
-    public function getIdCidade(): int
+    // ID Freguesia
+    public function getIdFreguesia(): int
     {
-        return $this->id_cidade;
+        return $this->id_freguesia;
     }
 
-    public function setIdCidade(int $id_cidade): void
+    public function setIdFreguesia(int $id_freguesia): void
     {
-        $this->id_cidade = $id_cidade;
+        $this->id_freguesia = $id_freguesia;
     }
 
     // Nome

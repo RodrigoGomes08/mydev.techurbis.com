@@ -34,7 +34,7 @@ class ParqueController
         }
 
         $id = trim($_POST['id'] ?? '');
-        $id_cidade = trim($_POST['id_cidade'] ?? '');
+        $id_freguesia = trim($_POST['id_freguesia'] ?? '');
         $nome = trim($_POST['nome'] ?? '');
         $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
         $tipo = trim($_POST['tipo'] ?? '');
@@ -42,7 +42,7 @@ class ParqueController
         $longitude = trim($_POST['longitude'] ?? '');
         $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id) || empty($id_cidade) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
+        if (empty($id) || empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
             $_SESSION['toast'] = [
                 'type' => 'error',
                 'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
@@ -52,7 +52,7 @@ class ParqueController
         }
 
             $parqueDAO = new ParqueDAO();
-            $parqueDAO->createParque($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
+            $parqueDAO->createParque($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
 
             $_SESSION['toast'] = [
                 'type' => 'success',
@@ -78,7 +78,7 @@ class ParqueController
         }
 
         $id = trim($_POST['id'] ?? '');
-        $id_cidade = trim($_POST['id_cidade'] ?? '');
+        $id_freguesia = trim($_POST['id_freguesia'] ?? '');
         $nome = trim($_POST['nome'] ?? '');
         $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
         $tipo = trim($_POST['tipo'] ?? '');
@@ -86,7 +86,7 @@ class ParqueController
         $longitude = trim($_POST['longitude'] ?? '');
         $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id) || empty($id_cidade) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
+        if (empty($id) || empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
             $_SESSION['toast'] = [
                 'type' => 'error',
                 'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
@@ -95,7 +95,7 @@ class ParqueController
             exit;
         }
 
-            $linhasAlteradas = (new ParqueDAO())->parqueUpdateDAO($id, $id_cidade, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
+            $linhasAlteradas = (new ParqueDAO())->parqueUpdateDAO($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
 
             if (!$linhasAlteradas) {
                 $_SESSION['toast'] = [

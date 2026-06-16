@@ -52,12 +52,12 @@ class PosteController
             }
 
             $id = trim($_POST['id'] ?? '');
-            $id_cidade = trim($_POST['id_cidade'] ?? '');
+            $id_freguesia = trim($_POST['id_freguesia'] ?? '');
             $id_estado = trim($_POST['id_estado'] ?? '');
             $longitude = trim($_POST['longitude'] ?? '');
             $latitude = trim($_POST['latitude'] ?? '');
 
-            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude)) {
+            if (empty($id) || empty($id_freguesia) || empty($id_estado) || empty($longitude) || empty($latitude)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -66,7 +66,7 @@ class PosteController
                 exit;
             }
             $posteDAO = new PosteDAO();
-            $posteDAO->createPoste($id, $id_cidade, $id_estado, $longitude, $latitude);
+            $posteDAO->createPoste($id, $id_freguesia, $id_estado, $longitude, $latitude);
 
             $_SESSION['toast'] = [
                 'type' => 'success',
@@ -91,12 +91,12 @@ class PosteController
         $pdo->beginTransaction();
         try {
             $id = trim($_POST["id"] ?? '');
-            $id_cidade = trim($_POST["id_cidade"] ?? '');
+            $id_freguesia = trim($_POST["id_freguesia"] ?? '');
             $id_estado = trim($_POST["id_estado"] ?? '');
             $longitude = trim($_POST["longitude"] ?? '');
             $latitude = trim($_POST["latitude"] ?? '');
 
-            if (empty($id) || empty($id_cidade) || empty($id_estado) || empty($longitude) || empty($latitude)) {
+            if (empty($id) || empty($id_freguesia) || empty($id_estado) || empty($longitude) || empty($latitude)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -105,7 +105,7 @@ class PosteController
                 exit;
             }
 
-            $linhasAlteradas = (new PosteDAO())->posteUpdateDAO($id, $id_cidade, $id_estado, $longitude, $latitude);
+            $linhasAlteradas = (new PosteDAO())->posteUpdateDAO($id, $id_freguesia, $id_estado, $longitude, $latitude);
 
             if (!$linhasAlteradas) {
                 $_SESSION['toast'] = [
