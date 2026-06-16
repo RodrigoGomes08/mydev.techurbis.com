@@ -8,11 +8,11 @@ $subterraneos = 0;
 $descobertos = 0;
 $totalLugares = 0;
 
-// Agrupar parques por cidade (id_cidade)
+// Agrupar parques por freguesia
 $grupos = [];
 foreach ($parques as $p) {
-    $cidadeKey = $p->getIdCidade();
-    $grupos[$cidadeKey][] = $p;
+    $FreguesiaKey = $p->getIdFreguesia();
+    $grupos[$FreguesiaKey][] = $p;
 
     $totalLugares += $p->getNumMaxLugares();
 
@@ -120,13 +120,13 @@ function tipoIcon(string $tipo): string
             </select>
         </div>
 
-        <!-- SECÇÕES AGRUPADAS POR CIDADE -->
+        <!-- SECÇÕES AGRUPADAS POR FREGUESIA -->
         <?php if (empty($parques)): ?>
             <div class="alert alert-info">Nenhum parque registado.</div>
         <?php else: ?>
-            <?php foreach ($grupos as $cidadeId => $lista):
-                $collapseId = 'collapseParqueCidade' . $cidadeId;
-                $nomeCidade = isset($cidades[$cidadeId]) ? $cidades[$cidadeId] : "Cidade {$cidadeId}";
+            <?php foreach ($grupos as $freguesiaId => $lista):
+                $collapseId = 'collapseParqueFreguesia' . $freguesiaId;
+                $nomeFreguesia = isset($freguesias[$freguesiaId]) ? $freguesias[$freguesiaId] : "Freguesia {$freguesiaId}";
                 $lugaresGrupo = array_sum(array_map(fn($p) => $p->getNumMaxLugares(), $lista));
                 ?>
                 <div class="mb-3 grupo-cidade">
@@ -135,7 +135,7 @@ function tipoIcon(string $tipo): string
                         style="border-radius:10px;font-weight:600;background:white;border-color:#e6e9f0;"
                         data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
                         <span><i class="bi bi-geo-alt me-2"
-                                style="color:#435ebe;"></i><?= htmlspecialchars($nomeCidade) ?></span>
+                                style="color:#435ebe;"></i><?= htmlspecialchars($nomeFreguesia) ?></span>
                         <span class="d-flex align-items-center gap-2">
                             <span class="badge" style="background:#e6f9ef;color:#27ae60;font-size:0.75rem;"><?= $lugaresGrupo ?>
                                 lugares</span>
@@ -152,7 +152,7 @@ function tipoIcon(string $tipo): string
                                 $tarifaStr = $parque->getTarifa() == 0 ? 'Gratuito' : number_format($parque->getTarifa(), 2) . ' €/h';
                                 ?>
                                 <div class="col-12 col-md-6 col-lg-3" data-id="<?= $parque->getId() ?>"
-                                    data-id-cidade="<?= $parque->getIdCidade() ?>"
+                                    data-id-freguesia="<?= $parque->getIdFreguesia() ?>"
                                     data-nome="<?= htmlspecialchars($parque->getNome()) ?>"
                                     data-num-max-lugares="<?= $parque->getNumMaxLugares() ?>"
                                     data-tipo="<?= htmlspecialchars($parque->getTipo()) ?>"
@@ -239,7 +239,7 @@ function tipoIcon(string $tipo): string
 </main>
 
 <!-- ═══════════════════════════════════════════════════════════
-     MODAL — CRIAR PARQUE
+    MODAL — CRIAR PARQUE
 ═══════════════════════════════════════════════════════════ -->
 <div class="modal fade" id="modalCriarParque" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -298,7 +298,7 @@ function tipoIcon(string $tipo): string
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     MODAL — EDITAR PARQUE
+    MODAL — EDITAR PARQUE
 ═══════════════════════════════════════════════════════════ -->
 <div class="modal fade" id="modalEditarParque" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">

@@ -1,10 +1,27 @@
 <?php include __DIR__ . "/../../includes/header.php"; ?>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+    .leaflet-container { font-family: inherit; }
+    #mapaPickerSugestoes .list-group-item { cursor:pointer; font-size:0.85rem; padding:0.5rem 0.75rem; }
+    #mapaPickerSugestoes .list-group-item:hover { background:#e8edff; color:#435ebe; }
+    .mapa-pin-pulse {
+        width:16px;height:16px;border-radius:50%;background:#435ebe;
+        box-shadow:0 0 0 0 rgba(67,94,190,0.4);
+        animation:mapaPulse 1.5s infinite;
+    }
+    @keyframes mapaPulse {
+        0%{box-shadow:0 0 0 0 rgba(67,94,190,0.4);}
+        70%{box-shadow:0 0 0 12px rgba(67,94,190,0);}
+        100%{box-shadow:0 0 0 0 rgba(67,94,190,0);}
+    }
+</style>
 <?php
 $totalContentores = count($contentores);
 $totalCriticos = 0;
 $totalAtencao = 0;
 $totalNormal = 0;
-$porCidade = [];
+$porFreguesia = [];
 
 foreach ($contentores as $c) {
     if ($c->getIsFull() || $c->getIdEstado() === 3) {
@@ -17,13 +34,13 @@ foreach ($contentores as $c) {
         $estadoKey = 'normal';
         $totalNormal++;
     }
-    $cidadeId = $c->getIdCidade();
-    if (!isset($porCidade[$cidadeId])) {
-        $porCidade[$cidadeId] = ['contentores' => [], 'criticos' => 0];
+    $FreguesiaId = $c->getIdFreguesia();
+    if (!isset($porFreguesia[$FreguesiaId])) {
+        $porFreguesia[$FreguesiaId] = ['contentores' => [], 'criticos' => 0];
     }
-    $porCidade[$cidadeId]['contentores'][] = ['obj' => $c, 'estado' => $estadoKey];
+    $porFreguesia[$FreguesiaId]['contentores'][] = ['obj' => $c, 'estado' => $estadoKey];
     if ($estadoKey === 'critico')
-        $porCidade[$cidadeId]['criticos']++;
+        $porFreguesia[$FreguesiaId]['criticos']++;
 }
 $lastSync = date('d/m/Y H:i:s');
 ?>
@@ -114,18 +131,18 @@ $lastSync = date('d/m/Y H:i:s');
         <?php endif; ?>
 
         <!-- SECÇÕES POR CIDADE -->
-        <?php foreach ($porCidade as $cidadeId => $cidade):
-            $collapseId = 'collapseC' . $cidadeId;
-            $numCriticos = $cidade['criticos'];
-            $numTotal = count($cidade['contentores']);
+        <?php foreach ($porFreguesia as $FreguesiaId => $Freguesia):
+            $collapseId = 'collapseC' . $FreguesiaId;
+            $numCriticos = $Freguesia['criticos'];
+            $numTotal = count($Freguesia['contentores']);
             ?>
             <div class="mb-3 secao-cidade">
                 <button
                     class="btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center py-3 px-4"
                     style="border-radius:10px;font-weight:600;background:white;border-color:#e6e9f0;"
                     data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
-                    <span><i class="bi bi-geo-alt me-2" style="color:#435ebe;"></i>Cidade
-                        <?= htmlspecialchars($cidadeId) ?></span>
+                    <span><i class="bi bi-geo-alt me-2" style="color:#435ebe;"></i>Freguesia
+                        <?= htmlspecialchars($FreguesiaId) ?></span>
                     <span class="d-flex align-items-center gap-2">
                         <?php if ($numCriticos > 0): ?>
                             <span class="badge" style="background:#fde8e8;color:#e74c3c;font-size:0.75rem;"><?= $numCriticos ?>
@@ -146,7 +163,7 @@ $lastSync = date('d/m/Y H:i:s');
                     <?php endif; ?>
 
                     <div class="row g-3 mt-1">
-                        <?php foreach ($cidade['contentores'] as $item):
+                        <?php foreach ($Freguesia['contentores'] as $item):
                             $c = $item['obj'];
                             $estado = $item['estado'];
                             $pct = min((float)($c->valor['percentagem'] ?? 0), 100);
@@ -274,9 +291,9 @@ $lastSync = date('d/m/Y H:i:s');
                                                                 value="<?= htmlspecialchars($c->getTipo()) ?>" required>
                                                         </div>
                                                         <div class="col-6">
-                                                            <label class="form-label fw-semibold">ID Cidade</label>
-                                                            <input type="number" name="id_cidade" class="form-control"
-                                                                value="<?= $c->getIdCidade() ?>" required>
+                                                            <label class="form-label fw-semibold">ID Freguesia</label>
+                                                            <input type="number" name="id_freguesia" class="form-control"
+                                                                value="<?= $c->getIdFreguesia() ?>" required>
                                                         </div>
                                                         <div class="col-6">
                                                             <label class="form-label fw-semibold">Estado</label>
@@ -400,8 +417,8 @@ $lastSync = date('d/m/Y H:i:s');
                                     required>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-semibold">ID Cidade</label>
-                                <input type="number" name="id_cidade" class="form-control" required>
+                                <label class="form-label fw-semibold">ID Freguesia</label>
+                                <input type="number" name="id_freguesia" id="criar_id_freguesia" class="form-control" required readonly placeholder="Preenchido pelo mapa">
                             </div>
                             <div class="col-6">
                                 <label class="form-label fw-semibold">Estado</label>
@@ -415,13 +432,17 @@ $lastSync = date('d/m/Y H:i:s');
                                 <label class="form-label fw-semibold">Capacidade Máxima (L)</label>
                                 <input type="number" name="capacidade_max" class="form-control" required>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label fw-semibold">Latitude</label>
-                                <input type="text" name="latitude" class="form-control" placeholder="38.7523" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label fw-semibold">Longitude</label>
-                                <input type="text" name="longitude" class="form-control" placeholder="-9.1549" required>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Localização</label>
+                                <input type="hidden" name="latitude" id="criar_latitude" required>
+                                <input type="hidden" name="longitude" id="criar_longitude" required>
+                                <div id="criar_localizacao_preview" class="d-none mb-2 p-2 rounded" style="background:#f0f4ff;font-size:0.82rem;color:#435ebe;">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>
+                                    <span id="criar_localizacao_texto"></span>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary w-100" id="btnAbrirMapaCriar">
+                                    <i class="bi bi-map me-2"></i>Escolher Localização no Mapa
+                                </button>
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Observação</label>
@@ -436,6 +457,46 @@ $lastSync = date('d/m/Y H:i:s');
                             Contentor</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MAPA PICKER -->
+    <div class="modal fade" id="modalMapaPicker" tabindex="-1" style="z-index:1060;">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background:var(--primary-gradient);color:white;">
+                    <h5 class="modal-title"><i class="bi bi-map me-2"></i>Escolher Localização do Contentor</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Barra de pesquisa -->
+                    <div class="p-3 border-bottom" style="background:#f8f9fa;">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="mapaPickerSearch" class="form-control" placeholder="Pesquisar rua, localidade... (ex: Rua da Liberdade, Lisboa)">
+                            <button class="btn btn-primary" id="btnMapaPickerSearch" type="button">
+                                <i class="bi bi-search"></i> Pesquisar
+                            </button>
+                        </div>
+                        <div id="mapaPickerSugestoes" class="list-group mt-1 position-absolute" style="z-index:9999;max-width:600px;display:none;"></div>
+                    </div>
+                    <!-- Info do ponto selecionado -->
+                    <div id="mapaPickerInfo" class="px-3 py-2 border-bottom d-none" style="background:#e8edff;font-size:0.85rem;color:#435ebe;">
+                        <i class="bi bi-geo-alt-fill me-1"></i>
+                        <span id="mapaPickerInfoTexto"></span>
+                        <span class="ms-3 text-muted" id="mapaPickerCoords"></span>
+                    </div>
+                    <!-- Mapa -->
+                    <div id="mapaPickerContainer" style="width:100%;height:480px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <small class="text-muted me-auto"><i class="bi bi-info-circle me-1"></i>Clique no mapa para posicionar o contentor. A freguesia será detetada automaticamente.</small>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success btn-sm" id="btnMapaPickerConfirmar" disabled>
+                        <i class="bi bi-check-lg me-1"></i>Confirmar Localização
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -563,4 +624,202 @@ $lastSync = date('d/m/Y H:i:s');
         showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
         <?php unset($_SESSION['toast']); ?>
     <?php endif; ?>
+</script>
+
+<!-- Leaflet JS + Mapa Picker -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+    // ── Estado do picker ──────────────────────────────────────────────────────
+    let mapaPickerInstance = null;
+    let mapaPickerMarker  = null;
+    let mapaPickerSel     = { lat: null, lng: null, morada: '', id_freguesia: null };
+    let searchTimeout     = null;
+
+    // ── Abrir modal do mapa ───────────────────────────────────────────────────
+    document.getElementById('btnAbrirMapaCriar')?.addEventListener('click', function () {
+        // Fechar o modal de criar antes de abrir o mapa
+        bootstrap.Modal.getInstance(document.getElementById('modalCriarContentor'))?.hide();
+
+        setTimeout(() => {
+            const modalPicker = new bootstrap.Modal(document.getElementById('modalMapaPicker'));
+            modalPicker.show();
+
+            document.getElementById('modalMapaPicker').addEventListener('shown.bs.modal', function initMapa() {
+                this.removeEventListener('shown.bs.modal', initMapa);
+
+                if (!mapaPickerInstance) {
+                    // Centro padrão: Lisboa
+                    mapaPickerInstance = L.map('mapaPickerContainer').setView([38.7169, -9.1399], 12);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                        maxZoom: 19
+                    }).addTo(mapaPickerInstance);
+
+                    mapaPickerInstance.on('click', onMapaClick);
+                } else {
+                    mapaPickerInstance.invalidateSize();
+                }
+            });
+        }, 350);
+    });
+
+    // ── Clique no mapa ────────────────────────────────────────────────────────
+    async function onMapaClick(e) {
+        const { lat, lng } = e.latlng;
+
+        // Mover/criar marcador
+        if (mapaPickerMarker) {
+            mapaPickerMarker.setLatLng([lat, lng]);
+        } else {
+            const icon = L.divIcon({
+                className: '',
+                html: '<div class="mapa-pin-pulse"></div>',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+            mapaPickerMarker = L.marker([lat, lng], { icon, draggable: true }).addTo(mapaPickerInstance);
+            mapaPickerMarker.on('dragend', function(ev) {
+                const pos = ev.target.getLatLng();
+                onMapaClick({ latlng: pos });
+            });
+        }
+
+        // Reverse geocoding via Nominatim
+        try {
+            const r = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=pt`,
+                { headers: { 'Accept-Language': 'pt' } }
+            );
+            const geo = await r.json();
+
+            // Tentar extrair ID de freguesia (county/suburb) — usamos um hash numérico do osm_id
+            // Na tua BD a id_freguesia é um int, então mapeamos via osm_id % 1000 ou expomos o campo
+            const addr = geo.address || {};
+            const morada = [addr.road, addr.suburb, addr.city_district, addr.town || addr.city || addr.municipality]
+                            .filter(Boolean).join(', ');
+
+            // id_freguesia: usamos os últimos 4 dígitos do osm_id de Nominatim como sugestão editável
+            const fregId = geo.osm_id ? Math.abs(parseInt(String(geo.osm_id).slice(-4))) || 1 : 1;
+
+            mapaPickerSel = { lat: lat.toFixed(6), lng: lng.toFixed(6), morada, id_freguesia: fregId };
+
+            // Atualizar UI
+            document.getElementById('mapaPickerInfoTexto').textContent = morada || 'Localização selecionada';
+            document.getElementById('mapaPickerCoords').textContent = `Lat: ${mapaPickerSel.lat} | Lng: ${mapaPickerSel.lng}`;
+            document.getElementById('mapaPickerInfo').classList.remove('d-none');
+            document.getElementById('btnMapaPickerConfirmar').disabled = false;
+
+            // Popup no marcador
+            mapaPickerMarker.bindPopup(`<strong>${morada || 'Local selecionado'}</strong><br><small>Lat: ${mapaPickerSel.lat} | Lng: ${mapaPickerSel.lng}</small>`).openPopup();
+
+        } catch(err) {
+            mapaPickerSel = { lat: lat.toFixed(6), lng: lng.toFixed(6), morada: 'Local selecionado', id_freguesia: 1 };
+            document.getElementById('mapaPickerInfoTexto').textContent = 'Local selecionado';
+            document.getElementById('mapaPickerCoords').textContent = `Lat: ${mapaPickerSel.lat} | Lng: ${mapaPickerSel.lng}`;
+            document.getElementById('mapaPickerInfo').classList.remove('d-none');
+            document.getElementById('btnMapaPickerConfirmar').disabled = false;
+        }
+    }
+
+    // ── Pesquisa de rua ───────────────────────────────────────────────────────
+    const searchInput = document.getElementById('mapaPickerSearch');
+    const sugestoesBox = document.getElementById('mapaPickerSugestoes');
+
+    searchInput?.addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+        const q = this.value.trim();
+        if (q.length < 3) { sugestoesBox.style.display = 'none'; return; }
+        searchTimeout = setTimeout(() => pesquisarRua(q), 400);
+    });
+
+    document.getElementById('btnMapaPickerSearch')?.addEventListener('click', function () {
+        const q = searchInput.value.trim();
+        if (q.length >= 3) pesquisarRua(q);
+    });
+
+    searchInput?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); pesquisarRua(this.value.trim()); }
+    });
+
+    async function pesquisarRua(q) {
+        try {
+            const r = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1&accept-language=pt`,
+                { headers: { 'Accept-Language': 'pt' } }
+            );
+            const resultados = await r.json();
+            sugestoesBox.innerHTML = '';
+
+            if (!resultados.length) {
+                sugestoesBox.innerHTML = '<div class="list-group-item text-muted">Nenhum resultado encontrado.</div>';
+                sugestoesBox.style.display = 'block';
+                return;
+            }
+
+            resultados.forEach(res => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = res.display_name;
+                item.addEventListener('click', function () {
+                    sugestoesBox.style.display = 'none';
+                    searchInput.value = res.display_name;
+                    const lat = parseFloat(res.lat);
+                    const lng = parseFloat(res.lon);
+                    mapaPickerInstance.setView([lat, lng], 17);
+                    onMapaClick({ latlng: { lat, lng } });
+                });
+                sugestoesBox.appendChild(item);
+            });
+
+            sugestoesBox.style.display = 'block';
+        } catch(e) {
+            sugestoesBox.style.display = 'none';
+        }
+    }
+
+    // Fechar sugestões ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!sugestoesBox?.contains(e.target) && e.target !== searchInput) {
+            if (sugestoesBox) sugestoesBox.style.display = 'none';
+        }
+    });
+
+    // ── Confirmar localização ─────────────────────────────────────────────────
+    document.getElementById('btnMapaPickerConfirmar')?.addEventListener('click', function () {
+        if (!mapaPickerSel.lat) return;
+
+        // Preencher os hidden inputs do form de criar
+        document.getElementById('criar_latitude').value  = mapaPickerSel.lat;
+        document.getElementById('criar_longitude').value = mapaPickerSel.lng;
+        document.getElementById('criar_id_freguesia').value = mapaPickerSel.id_freguesia;
+
+        // Mostrar preview no modal de criar
+        document.getElementById('criar_localizacao_texto').textContent =
+            `${mapaPickerSel.morada} (Lat: ${mapaPickerSel.lat}, Lng: ${mapaPickerSel.lng})`;
+        document.getElementById('criar_localizacao_preview').classList.remove('d-none');
+
+        // Atualizar botão
+        document.getElementById('btnAbrirMapaCriar').innerHTML =
+            '<i class="bi bi-geo-alt-fill me-2 text-success"></i>Localização definida — clique para alterar';
+        document.getElementById('btnAbrirMapaCriar').classList.replace('btn-outline-primary','btn-outline-success');
+
+        // Fechar picker e reabrir criar
+        bootstrap.Modal.getInstance(document.getElementById('modalMapaPicker'))?.hide();
+        setTimeout(() => {
+            new bootstrap.Modal(document.getElementById('modalCriarContentor')).show();
+        }, 300);
+    });
+
+    // Ao fechar o mapa sem confirmar, reabrir o modal de criar
+    document.getElementById('modalMapaPicker')?.addEventListener('hidden.bs.modal', function () {
+        // Só reabre se não foi via confirmar (se já tem lat preenchido)
+        if (!document.getElementById('criar_latitude').value &&
+            !document.getElementById('btnMapaPickerConfirmar').disabled) {
+            // Utilizador cancelou sem confirmar
+        }
+    });
+
+})();
 </script>

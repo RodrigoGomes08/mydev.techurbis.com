@@ -123,7 +123,7 @@
                                 <td class="d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-primary btn-editar-poste"
                                         data-id="<?= $poste->getId() ?>"
-                                        data-id-cidade="<?= $poste->getIdCidade() ?>"
+                                        data-id-Freguesia="<?= $poste->getIdFreguesia() ?>"
                                         data-id-estado="<?= $estadoId ?>"
                                         data-longitude="<?= htmlspecialchars($poste->getLongitude(), ENT_QUOTES) ?>"
                                         data-latitude="<?= htmlspecialchars($poste->getLatitude(), ENT_QUOTES) ?>"
