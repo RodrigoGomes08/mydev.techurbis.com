@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../dao/ContentorDAO.php';
 require_once __DIR__ . '/../dao/EstadoDAO.php';
+require_once __DIR__ . '/../dao/FreguesiaDAO.php';
 
 class ContentorController
 {
@@ -26,10 +27,14 @@ class ContentorController
             $estadoDAO = new EstadoDAO();
             $estados = $estadoDAO->getAllEstados();
 
+            $freguesiaDAO = new FreguesiaDAO();
+            $freguesias = $freguesiaDAO->getAllFreguesias();
+
             $this->view('portalADMContentores', [
                 'contentores' => $contentores,
                 'numContentorPorEstado' => $numContentorPorEstado,
                 'estados' => $estados,
+                'freguesias' => $freguesias,
             ]);
         } catch (Exception $e) {
             $_SESSION['toast'] = ['type' => 'error', 'message' => $e->getMessage()];
@@ -47,17 +52,20 @@ class ContentorController
                 exit;
             }
 
-            $id = trim($_POST['id'] ?? '');
             $id_freguesia = trim($_POST['id_freguesia'] ?? '');
-            $id_estado = trim($_POST['id_estado'] ?? '');
             $capacidade_max = trim($_POST['capacidade_max'] ?? '');
             $longitude = trim($_POST['longitude'] ?? '');
             $latitude = trim($_POST['latitude'] ?? '');
             $tipo = trim($_POST['tipo'] ?? '');
             $identificacao = trim($_POST['identificacao'] ?? '');
             $observacao = trim($_POST['observacao'] ?? '');
+            $id_estado = 1; // Estado inicial sempre Normal
 
-            if (empty($id) || empty($id_freguesia) || empty($id_estado) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
+            // Gerar ID automático
+            $contentorDAO = new ContentorDAO();
+            $id = $contentorDAO->getNextId();
+
+            if (empty($id_freguesia) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -67,7 +75,6 @@ class ContentorController
             }
 
 
-            $contentorDAO = new ContentorDAO();
             $contentorDAO->createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
 
             $_SESSION['toast'] = [

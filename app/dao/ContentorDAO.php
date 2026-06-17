@@ -14,6 +14,14 @@ class ContentorDAO
         $this->conn = (new DataBase())->connect();
     }
 
+    public function getNextId(): int
+    {
+        $sql = "SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM contentores";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
+    }
+
     public function getAllContentores()
     {
         $sql = "SELECT id, id_freguesia, id_estado, capacidade_max, longitude, latitude, tipo, identificacao, is_full

@@ -3,6 +3,18 @@
     const root = document.body;
 
     // =========================
+    // MENU LATERAL — ACTIVE
+    // =========================
+    const path = window.location.pathname;
+    document.querySelectorAll('.sidebar-admin .nav-link').forEach(link => {
+      link.classList.remove('active');
+      const href = link.getAttribute('href') || '';
+      if (href && href !== '/' && path.toLowerCase().includes(href.toLowerCase())) {
+        link.classList.add('active');
+      }
+    });
+
+    // =========================
     // NOTIFICAÇÕES (SIMULADAS)
     // =========================
     let notificacoes = 0;
