@@ -169,13 +169,14 @@ class ParqueController
         }
     }
 
-    public function parqueDetailApi($id)
+    public function parqueDetailApi()
     {
+        try {
         $pdo = DatabaseSingle::connect();
         $pdo->beginTransaction();
 
-        try {
-            $parques = (new ParqueDAO())->findByID($id);
+            $parqueDAO = new ParqueDAO();
+            $parques = $parqueDAO->getAllParquesComLugaresApi();
 
             if (!$parques) {
                 throw new Exception("Parque não encontrado");
