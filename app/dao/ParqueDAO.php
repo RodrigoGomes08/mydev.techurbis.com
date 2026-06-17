@@ -147,4 +147,50 @@ public function getAllParquesComLugaresApi()
     // Re-indexa para array simples (sem chaves de id)
     return array_values($parques);
 }
+
+public function findOneComLugares(int $id): ?array
+{
+    $sql = "SELECT 
+                p.id, p.id_freguesia, p.nome, p.num_max_lugares, p.tipo, p.tarifa, p.longitude, p.latitude,
+                l.id AS lugar_id, l.id_p_estacionamento, l.id_tipo_lugares, l.identificacao, l.ocupado
+            FROM p_estacionamentos p
+            LEFT JOIN lugares l ON l.id_p_estacionamento = p.id
+            WHERE p.id = ?
+            ORDER BY l.id ASC";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id]);
+
+    $parque = null;
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        // Cria o parque apenas uma vez
+        if ($parque === null) {
+            $parque = [
+                'id'              => (int)    $row['id'],
+                'id_freguesia'    => (int)    $row['id_freguesia'],
+                'nome'            => (string) $row['nome'],
+                'num_max_lugares' => (int)    $row['num_max_lugares'],
+                'tipo'            => (string) $row['tipo'],
+                'tarifa'          => (float)  $row['tarifa'],
+                'longitude'       => (float)  $row['longitude'],
+                'latitude'        => (float)  $row['latitude'],
+                'lugares'         => [],
+            ];
+        }
+
+        // Adiciona o lugar (se existir)
+        if ($row['lugar_id'] !== null) {
+            $parque['lugares'][] = [
+                'id'                  => (int)    $row['lugar_id'],
+                'id_p_estacionamento' => (int)    $row['id_p_estacionamento'],
+                'id_tipo_lugares'     => (int)    $row['id_tipo_lugares'],
+                'identificacao'       => (string) $row['identificacao'],
+                'ocupado'             => (bool)   $row['ocupado'],
+            ];
+        }
+    }
+
+    return $parque; // null se não encontrado
+}
 }

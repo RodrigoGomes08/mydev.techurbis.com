@@ -169,35 +169,31 @@ class ParqueController
         }
     }
 
-    public function parqueDetailApi()
-    {
-        try {
-        $pdo = DatabaseSingle::connect();
-        $pdo->beginTransaction();
+public function parqueDetailApi(int $id): void
+{
+    try {
+        $parque = (new ParqueDAO())->findOneComLugares($id);
 
-            $parqueDAO = new ParqueDAO();
-            $parques = $parqueDAO->getAllParquesComLugaresApi();
-
-            if (!$parques) {
-                throw new Exception("Parque não encontrado");
-            }
-
-            $pdo->commit();
-            Utils::jsonResponse([
-                'success' => true,
-                'message' => 'Detalhe do parque obtido com sucesso.',
-                'data' => [
-                    "detalhes_parque" => $parques
-                ]
-            ]);
-
-        } catch (Exception $e) {
-            $pdo->rollback();
-            Utils::jsonResponse([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'data' => []
-            ], 404);
+        if (!$parque) {
+            throw new Exception("Parque não encontrado");
         }
+
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Detalhe do parque obtido com sucesso.',
+            'data' => [
+                'parque' => $parque
+            ]
+        ]);
+        exit;
+
+    } catch (Exception $e) {
+        Utils::jsonResponse([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'data' => []
+        ], 404);
+        exit;
     }
+}
 }
