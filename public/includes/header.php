@@ -44,14 +44,21 @@
 <div class="admin-container">
     <aside class="sidebar-admin">
         <nav class="nav flex-column h-100">
+            <a class="nav-link <?= $activeGeral ?>" href="PortalADMGeral"><i class="bi bi-graph-up"></i> Geral</a>
+            <a class="nav-link <?= $activeUtilizadores ?>" href="PortalADMUtilizadores"><i class="bi bi-people"></i> Utilizadores</a>
+            <a class="nav-link <?= $activeContentores ?>" href="PortalADMContentores"><i class="bi bi-trash"></i> Contentores de Lixo</a>
+            <a class="nav-link <?= $activePostes ?>" href="PortalADMPostes"><i class="bi bi-lightbulb"></i> Postes de Iluminação</a>
+            <a class="nav-link <?= $activeParques ?>" href="PortalADMParques"><i class="bi bi-p-circle"></i> Parques de Estacionamento</a>
+            <a class="nav-link <?= $activeCidade ?>" href="PortalADMCidade"><i class="bi bi-info-circle"></i> Informações da Cidade</a>
+            <a class="nav-link text-danger mt-auto" href="/"><i class="bi bi-box-arrow-right"></i> Sair</a>
+        </nav>
+    </aside>
+
+<!-- Estava a assim
             <a class="nav-link active" href="PortalADMGeral"><i class="bi bi-graph-up"></i> Geral</a>
             <a class="nav-link" href="PortalADMUtilizadores"><i class="bi bi-people"></i> Utilizadores</a>
             <a class="nav-link" href="PortalADMContentores"><i class="bi bi-trash"></i> Contentores de Lixo</a>
             <a class="nav-link" href="PortalADMPostes"><i class="bi bi-lightbulb"></i> Postes de Iluminação</a>
             <a class="nav-link" href="PortalADMParques"><i class="bi bi-p-circle"></i> Parques de Estacionamento</a>
             <a class="nav-link" href="PortalADMCidade"><i class="bi bi-info-circle"></i> Informações da Cidade</a>
-            <a class="nav-link text-danger mt-auto" href="/"><i class="bi bi-box-arrow-right"></i> Sair</a>
-        </nav>
-    </aside>
-
-    
+            <a class="nav-link text-danger mt-auto" href="/"><i class="bi bi-box-arrow-right"></i> Sair</a> -->
