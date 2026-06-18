@@ -28,28 +28,28 @@ class ParqueController
     public function createParque()
     {
         try {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
-        }
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
 
-        $id = trim($_POST['id'] ?? '');
-        $id_freguesia = trim($_POST['id_freguesia'] ?? '');
-        $nome = trim($_POST['nome'] ?? '');
-        $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
-        $tipo = trim($_POST['tipo'] ?? '');
-        $tarifa = trim($_POST['tarifa'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
+            $id = trim($_POST['id'] ?? '');
+            $id_freguesia = trim($_POST['id_freguesia'] ?? '');
+            $nome = trim($_POST['nome'] ?? '');
+            $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
+            $tipo = trim($_POST['tipo'] ?? '');
+            $tarifa = trim($_POST['tarifa'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
+            $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id) || empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
-            ];
-            header("Location: /admin/PortalADMParques");
-            exit;
-        }
+            if (empty($id) || empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
+                ];
+                header("Location: /admin/PortalADMParques");
+                exit;
+            }
 
             $parqueDAO = new ParqueDAO();
             $parqueDAO->createParque($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
@@ -72,28 +72,28 @@ class ParqueController
     public function parqueUpdate($id)
     {
         try {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
-        }
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
 
-        $id = trim($_POST['id'] ?? '');
-        $id_freguesia = trim($_POST['id_freguesia'] ?? '');
-        $nome = trim($_POST['nome'] ?? '');
-        $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
-        $tipo = trim($_POST['tipo'] ?? '');
-        $tarifa = trim($_POST['tarifa'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
+            $id = trim($_POST['id'] ?? '');
+            $id_freguesia = trim($_POST['id_freguesia'] ?? '');
+            $nome = trim($_POST['nome'] ?? '');
+            $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
+            $tipo = trim($_POST['tipo'] ?? '');
+            $tarifa = trim($_POST['tarifa'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
+            $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id) || empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
-            ];
-            header("Location: /admin/PortalADMParques");
-            exit;
-        }
+            if (empty($id) || empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
+                ];
+                header("Location: /admin/PortalADMParques");
+                exit;
+            }
 
             $linhasAlteradas = (new ParqueDAO())->parqueUpdateDAO($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
 
@@ -143,22 +143,22 @@ class ParqueController
         $pdo->beginTransaction();
 
         try {
-        // if (empty($_SESSION['token'])) {
-        //     header("Location: /login");
-        //     exit;
-        // }
+            // if (empty($_SESSION['token'])) {
+            //     header("Location: /login");
+            //     exit;
+            // }
 
-        $parqueDAO = new ParqueDAO();
-        $parques = $parqueDAO->getAllParquesComLugaresApi();
+            $parqueDAO = new ParqueDAO();
+            $parques = $parqueDAO->getAllParquesComLugaresApi();
 
-        $pdo->commit();
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Lista de parques obtida com sucesso.',
-            'data' => [
-                'parques' => $parques
-            ]
-        ]);
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lista de parques obtida com sucesso.',
+                'data' => [
+                    'parques' => $parques
+                ]
+            ]);
         } catch (Exception $e) {
             $pdo->rollback();
             Utils::jsonResponse([
@@ -169,20 +169,44 @@ class ParqueController
         }
     }
 
-public function parqueDetailApi(int $id): void
+    public function parqueDetailApi(int $id): void
+    {
+        try {
+            $parque = (new ParqueDAO())->findOneComLugares($id);
+
+            if (!$parque) {
+                throw new Exception("Parque não encontrado");
+            }
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do parque obtido com sucesso.',
+                'data' => [
+                    'parque' => $parque
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 404);
+            exit;
+        }
+    }
+
+public function getLugaresByParque(int $parqueId): void
 {
     try {
-        $parque = (new ParqueDAO())->findOneComLugares($id);
-
-        if (!$parque) {
-            throw new Exception("Parque não encontrado");
-        }
+        $lugares = (new ParqueDAO())->findLugaresLivresByParque($parqueId);
 
         Utils::jsonResponse([
             'success' => true,
-            'message' => 'Detalhe do parque obtido com sucesso.',
+            'message' => 'Lugares livres do parque obtidos com sucesso.',
             'data' => [
-                'parque' => $parque
+                'lugares' => $lugares
             ]
         ]);
         exit;
@@ -192,7 +216,7 @@ public function parqueDetailApi(int $id): void
             'success' => false,
             'message' => $e->getMessage(),
             'data' => []
-        ], 404);
+        ], 500);
         exit;
     }
 }

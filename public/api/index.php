@@ -113,7 +113,11 @@ elseif ($uri === '/parques' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new ParqueController())->parqueDetailApi($id);
-} 
+} elseif (preg_match('#^/parque/(\d+)/lugares$#', $uri, $m) && $method === "GET") {
+    AuthMiddlewareApi::check();
+    $id = (int) $m[1];
+    (new ParqueController())->getLugaresByParque($id);
+}
 
 //==================================================
 // SENSORES
