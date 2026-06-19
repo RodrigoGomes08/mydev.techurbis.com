@@ -204,4 +204,23 @@ class ParqueDAO
         $stmt->execute([$parqueId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function findReservasByLugar(int $lugarId): array
+    {
+        $sql = "SELECT 
+            rl.id AS id_reserva,
+            rl.reserved_from,
+            rl.reserved_until,
+            l.identificacao AS identificacao_lugar,
+            pe.id AS id_parque,
+            pe.nome AS nome_parque
+        FROM reservas_lugares rl
+        JOIN lugares l ON rl.id_lugar = l.id
+        JOIN p_estacionamentos pe ON l.id_p_estacionamento = pe.id
+        WHERE rl.id_lugar = ?
+            AND NOW() BETWEEN rl.reserved_from AND rl.reserved_until";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$lugarId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

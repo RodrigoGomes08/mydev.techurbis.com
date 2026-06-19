@@ -197,27 +197,52 @@ class ParqueController
         }
     }
 
-public function getLugaresByParque(int $parqueId): void
-{
-    try {
-        $lugares = (new ParqueDAO())->findLugaresLivresByParque($parqueId);
+    public function getLugaresByParque(int $parqueId): void
+    {
+        try {
+            $lugares = (new ParqueDAO())->findLugaresLivresByParque($parqueId);
 
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Lugares livres do parque obtidos com sucesso.',
-            'data' => [
-                'lugares' => $lugares
-            ]
-        ]);
-        exit;
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lugares livres do parque obtidos com sucesso.',
+                'data' => [
+                    'lugares' => $lugares
+                ]
+            ]);
+            exit;
 
-    } catch (Exception $e) {
-        Utils::jsonResponse([
-            'success' => false,
-            'message' => $e->getMessage(),
-            'data' => []
-        ], 500);
-        exit;
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+            exit;
+        }
     }
-}
+
+    public function getReservasByLugar(int $lugarId): void
+    {
+        try {
+            $parqueDAO = new ParqueDAO();
+            $reservas = $parqueDAO->findReservasByLugar($lugarId);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Reservas do lugar obtidas com sucesso.',
+                'data' => [
+                    'reservas' => $reservas
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+            exit;
+        }
+    }
 }
