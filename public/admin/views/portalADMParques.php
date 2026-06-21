@@ -214,15 +214,26 @@ function tipoIcon(string $tipo): string
                                                 data-bs-target="#modalMapaParque">
                                                 <i class="bi bi-geo-alt me-1"></i>Mapa
                                             </button>
-                                            <button class="btn btn-sm btn-outline-primary btn-detalhe-parque">
+                                            <button class="btn btn-sm btn-outline-primary btn-detalhe-parque"
+                                                data-id="<?= $parque->getId() ?>" data-bs-toggle="modal"
+                                                data-bs-target="#modalDetalheParque">
                                                 <i class="bi bi-eye me-1"></i>Detalhes
                                             </button>
-                                            <button class="btn btn-sm btn-outline-warning btn-editar-parque" data-bs-toggle="modal"
-                                                data-bs-target="#modalEditarParque">
+                                            <button class="btn btn-sm btn-outline-warning btn-editar-parque"
+                                                data-id="<?= $parque->getId() ?>"
+                                                data-id-freguesia="<?= $parque->getIdFreguesia() ?>"
+                                                data-nome="<?= htmlspecialchars($parque->getNome(), ENT_QUOTES) ?>"
+                                                data-num-max-lugares="<?= $parque->getNumMaxLugares() ?>"
+                                                data-tipo="<?= htmlspecialchars($parque->getTipo(), ENT_QUOTES) ?>"
+                                                data-tarifa="<?= $parque->getTarifa() ?>"
+                                                data-latitude="<?= htmlspecialchars($parque->getLatitude(), ENT_QUOTES) ?>"
+                                                data-longitude="<?= htmlspecialchars($parque->getLongitude(), ENT_QUOTES) ?>"
+                                                data-bs-toggle="modal" data-bs-target="#modalEditarParque">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger btn-eliminar-parque"
-                                                data-id="<?= $parque->getId() ?>">
+                                                data-id="<?= $parque->getId() ?>"
+                                                data-nome="<?= htmlspecialchars($parque->getNome(), ENT_QUOTES) ?>">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
@@ -256,8 +267,8 @@ function tipoIcon(string $tipo): string
                             <input type="text" name="nome" class="form-control" placeholder="Ex: Parque Norte" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">ID Cidade</label>
-                            <input type="number" name="id_cidade" class="form-control" required>
+                            <label class="form-label fw-semibold">ID Freguesia</label>
+                            <input type="number" name="id_freguesia" class="form-control" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Nº Máx. Lugares</label>
@@ -312,8 +323,8 @@ function tipoIcon(string $tipo): string
                     <input type="hidden" name="id" id="edit-parque-id">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">ID Cidade</label>
-                            <input type="number" name="id_cidade" id="edit-parque-id-cidade" class="form-control"
+                            <label class="form-label fw-semibold">ID Freguesia</label>
+                            <input type="number" name="id_freguesia" id="edit-parque-id-freguesia" class="form-control"
                                 required>
                         </div>
                         <div class="col-md-6">
@@ -399,5 +410,41 @@ function tipoIcon(string $tipo): string
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL — CONFIRMAR ELIMINAÇÃO
+═══════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="modalEliminarParque" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminação</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-p-circle" style="font-size:3rem;color:#e74c3c;"></i>
+                <p class="mt-3 mb-1">Tens a certeza que queres eliminar o parque</p>
+                <p class="fw-bold fs-5" id="eliminar_parque_nome"></p>
+                <p class="text-muted" style="font-size:0.85rem;">Esta ação é irreversível.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i
+                        class="bi bi-x-lg me-1"></i>Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminarParque"><i
+                        class="bi bi-trash me-1"></i>Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<?php if (!empty($_SESSION['toast'])): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
+    });
+</script>
+<?php unset($_SESSION['toast']); ?>
+<?php endif; ?>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>

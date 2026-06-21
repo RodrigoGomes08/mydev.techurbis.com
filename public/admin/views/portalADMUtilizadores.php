@@ -67,7 +67,7 @@
                     <div>
                         <div class="pkpi-value text-warning">
                         </div>
-                        <div class="pkpi-label">Moradas Diferentes</div>
+                        <div class="pkpi-label">Utilizadores em Trabalho</div>
                     </div>
                 </div>
             </div>
@@ -105,6 +105,7 @@
                                 <th>Ações</th>
                             </tr>
                         </thead>
+                        <tbody id="listaUtilizadores">
                         <?php if (empty($users)): ?>
                             <tr>
                                 <td colspan="6" class="text-center text-muted py-4">
@@ -218,7 +219,7 @@
 <div class="modal fade" id="modalUtilizador" tabindex="-1" aria-labelledby="modalUtilLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="/create-utilizador" method="POST" id="formUtilizador">
+            <form action="/admin/create-utilizador" method="POST" id="formUtilizador">
                 <div class="modal-header" style="background:var(--primary-gradient);color:white;">
                     <h5 class="modal-title" id="modalUtilLabel">Adicionar Utilizador</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -270,7 +271,7 @@
 <div class="modal fade" id="modalRole" tabindex="-1" aria-labelledby="modalRoleLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="/create-role" method="POST" id="formRole">
+            <form action="/admin/create-role" method="POST" id="formRole">
                 <div class="modal-header" style="background:var(--primary-gradient);color:white;">
                     <h5 class="modal-title" id="modalRoleLabel">Adicionar Role</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -303,23 +304,6 @@
         </div>
     </div>
 </div>
-
-<!-- Script para filtro por cargo na tabela -->
-<script>
-    document.getElementById('filtroUtilCargo').addEventListener('change', function () {
-        const roleId = this.value;
-        document.querySelectorAll('#listaUtilizadores tr[data-role]').forEach(row => {
-            row.style.display = (!roleId || row.dataset.role === roleId) ? '' : 'none';
-        });
-    });
-
-    document.getElementById('searchUtil').addEventListener('input', function () {
-        const term = this.value.toLowerCase();
-        document.querySelectorAll('#listaUtilizadores tr[data-role]').forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-        });
-    });
-</script>
 
 
 <!-- MODAL EDITAR UTILIZADOR -->
@@ -423,5 +407,14 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($_SESSION['toast'])): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
+    });
+</script>
+<?php unset($_SESSION['toast']); ?>
+<?php endif; ?>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>

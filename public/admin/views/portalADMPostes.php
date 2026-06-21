@@ -123,7 +123,7 @@
                                 <td class="d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-primary btn-editar-poste"
                                         data-id="<?= $poste->getId() ?>"
-                                        data-id-Freguesia="<?= $poste->getIdFreguesia() ?>"
+                                        data-id-freguesia="<?= $poste->getIdFreguesia() ?>"
                                         data-id-estado="<?= $estadoId ?>"
                                         data-longitude="<?= htmlspecialchars($poste->getLongitude(), ENT_QUOTES) ?>"
                                         data-latitude="<?= htmlspecialchars($poste->getLatitude(), ENT_QUOTES) ?>"
@@ -207,8 +207,8 @@
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-semibold">ID Cidade</label>
-                            <input name="id_cidade" type="number" class="form-control" placeholder="Ex: 1" required>
+                            <label class="form-label fw-semibold">ID Freguesia</label>
+                            <input name="id_freguesia" type="number" class="form-control" placeholder="Ex: 1" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-semibold">Estado</label>
@@ -256,8 +256,8 @@
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-semibold">ID Cidade</label>
-                            <input name="id_cidade" id="edit_poste_id_cidade" type="number" class="form-control" required>
+                            <label class="form-label fw-semibold">ID Freguesia</label>
+                            <input name="id_freguesia" id="edit_poste_id_freguesia" type="number" class="form-control" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-semibold">Estado</label>
@@ -418,6 +418,11 @@
         }
         aplicarFiltros();
     });
+
+    <?php if (!empty($_SESSION['toast'])): ?>
+        showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
+        <?php unset($_SESSION['toast']); ?>
+    <?php endif; ?>
 
     // Inicializa — marca todas como filtrado=true
     todasLinhas().forEach(r => r.dataset.filtrado = 'true');
