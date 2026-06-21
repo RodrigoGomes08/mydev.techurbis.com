@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../dao/ParqueDAO.php';
+require_once __DIR__ . '/../dao/VeiculoDAO.php';
 
 class ParqueController
 {
@@ -243,6 +244,59 @@ class ParqueController
                 'data' => []
             ], 500);
             exit;
+        }
+    }
+
+    public function insertReservaEmParqueAPI($id)
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+        try {
+            $id = trim($id ?? '');
+            $input = json_decode(file_get_contents('php://input'), true);
+            $matricula = trim($input["matricula"] ?? '');
+            $reserved_from = trim($input["reserved_from"] ?? '');
+            $reserved_until = trim($input["reserved_until"] ?? '');
+
+            if (empty($id) || empty($matricula) || empty($reserved_from) || empty($reserved_until)) {
+                Utils::jsonResponse([
+                    'success' => false,
+                    'message' => 'ID, matrícula, reserved_from e reserved_until são obrigatórios.',
+                    'data' => []
+                ], 400);
+                return;
+            }
+
+            $parqueDAO = new ParqueDAO();
+
+            // Verificar se o lugar/parque existe
+            $parque = $parqueDAO->findByIdParque($id);
+            if (!$parque) {
+                throw new Exception("Parque com id '$id' não encontrado.");
+            }
+
+            // Obter o veículo pela matrícula
+            $veiculoDAO = new VeiculoDAO(); // ajusta ao nome real da tua DAO
+            $veiculo = $veiculoDAO->findByMatricula($matricula);
+            if (!$veiculo) {
+                throw new Exception("Veículo com matrícula '$matricula' não encontrado.");
+            }
+
+            $idReserva = $parqueDAO->insertReserva($id, $veiculo->getId(), $reserved_from, $reserved_until);
+
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Reserva inserida com sucesso.',
+                'data' => ['id_reserva' => $idReserva]
+            ]);
+        } catch (Exception $e) {
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
         }
     }
 }

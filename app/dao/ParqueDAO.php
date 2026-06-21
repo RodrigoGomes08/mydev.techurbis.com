@@ -36,7 +36,7 @@ class ParqueDAO
         return $parques;
     }
 
-    public function findByID($id)
+    public function findByIdParque($id)
     {
         $sql = "SELECT id, id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude FROM p_estacionamentos WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
@@ -208,19 +208,32 @@ class ParqueDAO
     public function findReservasByLugar(int $lugarId): array
     {
         $sql = "SELECT 
-            rl.id AS id_reserva,
-            rl.reserved_from,
-            rl.reserved_until,
+            hr.id AS id_reserva,
+            hr.reserved_from,
+            hr.reserved_until,
             l.identificacao AS identificacao_lugar,
             pe.id AS id_parque,
             pe.nome AS nome_parque
-        FROM reservas_lugares rl
-        JOIN lugares l ON rl.id_lugar = l.id
+        FROM historico_reservas hr
+        JOIN lugares l ON hr.id_lugar = l.id
         JOIN p_estacionamentos pe ON l.id_p_estacionamento = pe.id
-        WHERE rl.id_lugar = ?
-            AND NOW() BETWEEN rl.reserved_from AND rl.reserved_until";
+        WHERE hr.id_lugar = ?
+            AND NOW() BETWEEN hr.reserved_from AND hr.reserved_until";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$lugarId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function insertReserva($id_lugar, $id_veiculo, $reserved_from, $reserved_until)
+{
+    try {
+        $sql = "INSERT INTO historico_reservas (id_lugar, id_veiculo, reserved_from, reserved_until)
+                VALUES (?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id_lugar, $id_veiculo, $reserved_from, $reserved_until]);
+        return $this->conn->lastInsertId();
+    } catch (Exception $e) {
+        throw new Exception("Erro ao inserir reserva: " . $e->getMessage());
+    }
+}
 }

@@ -121,10 +121,10 @@ elseif ($uri === '/parques' && $method === 'GET') {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
     (new ParqueController())->getReservasByLugar($id);
-} elseif (preg_match('#^/parque/(\d+)/reservar$#', $uri, $m) && $method === "GET") {
+} elseif (preg_match('#^/parque/(\d+)/reservar$#', $uri, $m) && $method === "POST") {
     AuthMiddlewareApi::check();
     $id = (int) $m[1];
-    (new ParqueController())->reservar($id);
+    (new ParqueController())->insertReservaEmParqueAPI($id);
 }
 
 //==================================================
