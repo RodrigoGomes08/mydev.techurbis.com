@@ -1,32 +1,24 @@
 <?php include __DIR__ . "/../../includes/header.php"; ?>
 
 <?php
-// ── Calcular KPIs a partir dos dados reais ────────────────────────────────────
-$total = count($parques);
-$cobertos = 0;
-$subterraneos = 0;
-$descobertos = 0;
-$totalLugares = 0;
+// ── KPIs vêm agora de uma query SQL dedicada (ParqueDAO::numParqueEstatisticas) ──
+$total = (int) ($estatisticasParques['total_parques'] ?? 0);
+$totalLugares = (int) ($estatisticasParques['total_lugares'] ?? 0);
+$cobertos = (int) ($estatisticasParques['parques_cobertos'] ?? 0);
+$subterraneos = (int) ($estatisticasParques['parques_subterraneos'] ?? 0);
+$descobertos = (int) ($estatisticasParques['parques_descobertos'] ?? 0);
 
-// Agrupar parques por freguesia
+// Agrupar parques por freguesia (usado para renderizar as secções de cards)
 $grupos = [];
 foreach ($parques as $p) {
     $FreguesiaKey = $p->getIdFreguesia();
     $grupos[$FreguesiaKey][] = $p;
+}
 
-    $totalLugares += $p->getNumMaxLugares();
-
-    switch ($p->getTipo()) {
-        case 'Coberto':
-            $cobertos++;
-            break;
-        case 'Subterrâneo':
-            $subterraneos++;
-            break;
-        default:
-            $descobertos++;
-            break;
-    }
+// Lookup rápido id → nome de freguesia (a partir do array de objetos Freguesia)
+$fregMap = [];
+foreach ($freguesias as $f) {
+    $fregMap[$f->getId()] = $f->getNome();
 }
 
 // Helper: ícone por tipo
@@ -126,7 +118,7 @@ function tipoIcon(string $tipo): string
         <?php else: ?>
             <?php foreach ($grupos as $freguesiaId => $lista):
                 $collapseId = 'collapseParqueFreguesia' . $freguesiaId;
-                $nomeFreguesia = isset($freguesias[$freguesiaId]) ? $freguesias[$freguesiaId] : "Freguesia {$freguesiaId}";
+                $nomeFreguesia = $fregMap[$freguesiaId] ?? "Freguesia {$freguesiaId}";
                 $lugaresGrupo = array_sum(array_map(fn($p) => $p->getNumMaxLugares(), $lista));
                 ?>
                 <div class="mb-3 grupo-cidade">
@@ -267,8 +259,15 @@ function tipoIcon(string $tipo): string
                             <input type="text" name="nome" class="form-control" placeholder="Ex: Parque Norte" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">ID Freguesia</label>
-                            <input type="number" name="id_freguesia" class="form-control" required>
+                            <label class="form-label fw-semibold">Freguesia</label>
+                            <select name="id_freguesia" class="form-select" required>
+                                <option value="">-- Selecionar Freguesia --</option>
+                                <?php foreach ($freguesias as $freg): ?>
+                                    <option value="<?= $freg->getId() ?>">
+                                        <?= htmlspecialchars($freg->getNome()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Nº Máx. Lugares</label>
@@ -323,9 +322,15 @@ function tipoIcon(string $tipo): string
                     <input type="hidden" name="id" id="edit-parque-id">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">ID Freguesia</label>
-                            <input type="number" name="id_freguesia" id="edit-parque-id-freguesia" class="form-control"
-                                required>
+                            <label class="form-label fw-semibold">Freguesia</label>
+                            <select name="id_freguesia" id="edit-parque-id-freguesia" class="form-select" required>
+                                <option value="">-- Selecionar Freguesia --</option>
+                                <?php foreach ($freguesias as $freg): ?>
+                                    <option value="<?= $freg->getId() ?>">
+                                        <?= htmlspecialchars($freg->getNome()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Nome do Parque</label>

@@ -58,14 +58,13 @@ class ContentorController
             $latitude = trim($_POST['latitude'] ?? '');
             $tipo = trim($_POST['tipo'] ?? '');
             $identificacao = trim($_POST['identificacao'] ?? '');
-            $observacao = trim($_POST['observacao'] ?? '');
-            $id_estado = 1; // Estado inicial sempre Normal
+            $id_estado = 4; // Estado inicial sempre Normal
 
             // Gerar ID automático
             $contentorDAO = new ContentorDAO();
             $id = $contentorDAO->getNextId();
 
-            if (empty($id_freguesia) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao) || empty($observacao)) {
+            if (empty($id_freguesia) || empty($capacidade_max) || empty($longitude) || empty($latitude) || empty($tipo) || empty($identificacao)) {
                 $_SESSION['toast'] = [
                     'type' => 'error',
                     'message' => 'Todos os campos são obrigatórios.'
@@ -75,7 +74,7 @@ class ContentorController
             }
 
 
-            $contentorDAO->createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao);
+            $contentorDAO->createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao);
 
             $_SESSION['toast'] = [
                 'type' => 'success',

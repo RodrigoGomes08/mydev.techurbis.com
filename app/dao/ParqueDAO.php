@@ -36,7 +36,23 @@ class ParqueDAO
         return $parques;
     }
 
-    public function findByIdParque($id)
+    public function numParqueEstatisticas()
+    {
+        $sql = "SELECT
+                    COUNT(*) AS total_parques,
+                    COALESCE(SUM(num_max_lugares), 0) AS total_lugares,
+                    SUM(CASE WHEN tipo = 'Coberto' THEN 1 ELSE 0 END) AS parques_cobertos,
+                    SUM(CASE WHEN tipo = 'Subterrâneo' THEN 1 ELSE 0 END) AS parques_subterraneos,
+                    SUM(CASE WHEN tipo = 'Descoberto' THEN 1 ELSE 0 END) AS parques_descobertos
+                FROM p_estacionamentos";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function findByID($id)
     {
         $sql = "SELECT id, id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude FROM p_estacionamentos WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
@@ -193,47 +209,4 @@ class ParqueDAO
 
         return $parque; // null se não encontrado
     }
-
-    public function findLugaresLivresByParque(int $parqueId): array
-    {
-        $sql = "SELECT id, identificacao, id_tipo_lugares
-            FROM lugares
-            WHERE id_p_estacionamento = ? AND ocupado = 0
-            ORDER BY identificacao ASC";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$parqueId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function findReservasByLugar(int $lugarId): array
-    {
-        $sql = "SELECT 
-            hr.id AS id_reserva,
-            hr.reserved_from,
-            hr.reserved_until,
-            l.identificacao AS identificacao_lugar,
-            pe.id AS id_parque,
-            pe.nome AS nome_parque
-        FROM historico_reservas hr
-        JOIN lugares l ON hr.id_lugar = l.id
-        JOIN p_estacionamentos pe ON l.id_p_estacionamento = pe.id
-        WHERE hr.id_lugar = ?
-            AND NOW() BETWEEN hr.reserved_from AND hr.reserved_until";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$lugarId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function insertReserva($id_lugar, $id_veiculo, $reserved_from, $reserved_until)
-{
-    try {
-        $sql = "INSERT INTO historico_reservas (id_lugar, id_veiculo, reserved_from, reserved_until)
-                VALUES (?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id_lugar, $id_veiculo, $reserved_from, $reserved_until]);
-        return $this->conn->lastInsertId();
-    } catch (Exception $e) {
-        throw new Exception("Erro ao inserir reserva: " . $e->getMessage());
-    }
-}
 }

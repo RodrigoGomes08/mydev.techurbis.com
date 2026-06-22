@@ -480,11 +480,6 @@ foreach ($freguesias as $f) {
                                     <i class="bi bi-map me-2"></i>Escolher Localização no Mapa
                                 </button>
                             </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Observação</label>
-                                <textarea name="observacao" class="form-control" rows="2"
-                                    placeholder="Notas opcionais..."></textarea>
-                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

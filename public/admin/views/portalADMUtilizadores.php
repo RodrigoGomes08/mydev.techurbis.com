@@ -30,44 +30,41 @@
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div>
+                        <div class="pkpi-value"><?= (int) ($estatisticasUtilizadores['total_utilizadores'] ?? 0) ?></div>
                         <div class="pkpi-label">Total de Utilizadores</div>
-                        <?= count($users) ?>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="pkpi-card">
-                    <div class="pkpi-icon" style="background:#fde8e8;color:#e74c3c;">
-                        <i class="bi bi-shield-fill"></i>
-                    </div>
-                    <div>
-                        <div class="pkpi-value text-danger">
-                        </div>
-                        <div class="pkpi-label">Administradores</div>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="pkpi-card">
                     <div class="pkpi-icon" style="background:#e6f9ef;color:#27ae60;">
-                        <i class="bi bi-person-check-fill"></i>
+                        <i class="bi bi-shield-fill"></i>
                     </div>
                     <div>
-                        <div class="pkpi-value text-success">
-                        </div>
-                        <div class="pkpi-label">Utilizadores Comuns</div>
+                        <div class="pkpi-value text-success"><?= (int) ($estatisticasUtilizadores['total_administradores'] ?? 0) ?></div>
+                        <div class="pkpi-label">Administradores</div>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="pkpi-card">
-                    <div class="pkpi-icon" style="background:#fff4e0;color:#f39c12;">
-                        <i class="bi bi-geo-alt-fill"></i>
+                    <div class="pkpi-icon" style="background:#e8edff;color:#435ebe;">
+                        <i class="bi bi-person-check-fill"></i>
                     </div>
                     <div>
-                        <div class="pkpi-value text-warning">
-                        </div>
-                        <div class="pkpi-label">Utilizadores em Trabalho</div>
+                        <div class="pkpi-value" style="color:#435ebe;"><?= (int) ($estatisticasUtilizadores['total_utilizadores_comuns'] ?? 0) ?></div>
+                        <div class="pkpi-label">Utilizadores</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="pkpi-card">
+                    <div class="pkpi-icon" style="background:#fde8e8;color:#e74c3c;">
+                        <i class="bi bi-tools"></i>
+                    </div>
+                    <div>
+                        <div class="pkpi-value text-danger"><?= (int) ($estatisticasUtilizadores['total_operadores'] ?? 0) ?></div>
+                        <div class="pkpi-label">Operadores</div>
                     </div>
                 </div>
             </div>

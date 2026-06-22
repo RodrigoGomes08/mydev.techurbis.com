@@ -16,7 +16,7 @@ class FreguesiaDAO
     {
         $sql = "SELECT id, nome
                 FROM freguesias
-                ORDER BY nome ASC";
+                ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $freguesias = [];

@@ -96,7 +96,7 @@ class ContentorDAO
         return $row ?: null;
     }
 
-    public function createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao, $observacao)
+    public function createContentor($id, $id_freguesia, $id_estado, $capacidade_max, $longitude, $latitude, $tipo, $identificacao)
     {
         $sqlCheck = "SELECT id FROM contentores WHERE id = :id";
         $stmtCheck = $this->conn->prepare($sqlCheck);
@@ -161,7 +161,7 @@ class ContentorDAO
 
     public function numContentorEstado()
     {
-        $sql = "SELECT SUM(CASE WHEN e.nome = 'critico' THEN 1 ELSE 0 END) AS contentores_criticos, SUM(CASE WHEN e.nome = 'normal' THEN 1 ELSE 0 END) AS contentores_normais, SUM(CASE WHEN e.nome = 'atencao' THEN 1 ELSE 0 END) AS contentores_em_atencao
+        $sql = "SELECT SUM(CASE WHEN e.nome = 'Crítico' THEN 1 ELSE 0 END) AS contentores_criticos, SUM(CASE WHEN e.nome = 'Normal' THEN 1 ELSE 0 END) AS contentores_normais, SUM(CASE WHEN e.nome = 'Em Atenção' THEN 1 ELSE 0 END) AS contentores_em_atencao
                 FROM contentores c
                 INNER JOIN estados e ON c.id_estado = e.id;
             ";

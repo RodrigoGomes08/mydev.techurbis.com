@@ -37,6 +37,22 @@ class UserDAO
         return $users;
     }
 
+    public function numUtilizadorPorRole()
+    {
+        $sql = "SELECT
+                    COUNT(*) AS total_utilizadores,
+                    SUM(CASE WHEN r.nome_role = 'Administrador' THEN 1 ELSE 0 END) AS total_administradores,
+                    SUM(CASE WHEN r.nome_role = 'Utilizador' THEN 1 ELSE 0 END) AS total_utilizadores_comuns,
+                    SUM(CASE WHEN r.nome_role = 'Operador' THEN 1 ELSE 0 END) AS total_operadores
+                FROM users u
+                INNER JOIN roles r ON u.id_role = r.id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function findByID($id)
     {
         $sql = "SELECT users.id, users.id_role, users.nome, users.data_nascimento, users.telefone, users.morada, users.email, users.password, users.ativo, users.tem_mobilidade_reduzida, roles.id AS role_id, roles.nome_role, roles.cor FROM users INNER JOIN roles ON users.id_role = roles.id WHERE users.id = :id";

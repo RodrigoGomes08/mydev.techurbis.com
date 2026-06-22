@@ -143,7 +143,7 @@ class PosteDAO
             SELECT
                 SUM(CASE WHEN e.nome = 'avariado'     THEN 1 ELSE 0 END) AS candeeiros_avariados,
                 SUM(CASE WHEN e.nome = 'operacional'  THEN 1 ELSE 0 END) AS candeeiros_operacionais,
-                SUM(CASE WHEN e.nome = 'manutencao'   THEN 1 ELSE 0 END) AS candeeiros_em_manutencao
+                SUM(CASE WHEN e.nome = 'Em manutenção'   THEN 1 ELSE 0 END) AS candeeiros_em_manutencao
             FROM candeeiro_urbanos cu
             INNER JOIN estados e ON cu.id_estado = e.id
         ";

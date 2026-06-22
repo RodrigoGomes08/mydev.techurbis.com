@@ -4,6 +4,7 @@ use Composer\DependencyResolver\Transaction;
 
 require_once __DIR__ . '/../dao/PosteDAO.php';
 require_once __DIR__ . '/../config/DatabaseSingle.php';
+require_once __DIR__ . '/../dao/FreguesiaDAO.php';
 
 class PosteController
 {
@@ -28,10 +29,14 @@ class PosteController
             $estadoDAO = new EstadoDAO();
             $estados = $estadoDAO->getAllEstados();
 
+            $freguesiaDAO = new FreguesiaDAO();
+            $freguesias = $freguesiaDAO->getAllFreguesias();
+
             $this->view('portalADMPostes', [
                 'postes' => $postes,
                 'numPostePorEstado' => $numPostePorEstado,
-                'estados' => $estados
+                'estados' => $estados,
+                'freguesias' => $freguesias
             ]);
 
         } catch (Exception $e) {

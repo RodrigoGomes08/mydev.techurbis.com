@@ -22,13 +22,15 @@ class UserController
 
         $userDAO = new UserDAO();
         $users = $userDAO->getAllUsers();
+        $estatisticasUtilizadores = $userDAO->numUtilizadorPorRole();
 
         $roleDAO = new RoleDAO();
         $roles = $roleDAO->getAllRoles();
 
         $this->view('portalADMUtilizadores', [
             'users' => $users,
-            'roles' => $roles
+            'roles' => $roles,
+            'estatisticasUtilizadores' => $estatisticasUtilizadores,
         ]);
     }
 

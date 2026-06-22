@@ -207,21 +207,24 @@
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-semibold">ID Freguesia</label>
-                            <input name="id_freguesia" type="number" class="form-control" placeholder="Ex: 1" required>
+                            <label class="form-label fw-semibold">Freguesia</label>
+                            <select name="id_freguesia" class="form-select" required>
+                                <option value="">-- Selecionar --</option>
+                                <?php foreach ($freguesias as $freg): ?>
+                                    <option value="<?= $freg->getId() ?>">
+                                        <?= htmlspecialchars($freg->getNome()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-semibold">Estado</label>
                             <select name="id_estado" class="form-select" required>
                                 <option value="1">Operacional</option>
                                 <option value="2">Avariado</option>
-                                <option value="3">Manutenção</option>
+                                <option value="3">Em Manutenção</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Observações</label>
-                        <textarea name="observacao" class="form-control" rows="3" placeholder="Descrição do estado ou ocorrência..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -256,8 +259,15 @@
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-semibold">ID Freguesia</label>
-                            <input name="id_freguesia" id="edit_poste_id_freguesia" type="number" class="form-control" required>
+                            <label class="form-label fw-semibold">Freguesia</label>
+                            <select name="id_freguesia" id="edit_poste_id_freguesia" class="form-select" required>
+                                <option value="">-- Selecionar --</option>
+                                <?php foreach ($freguesias as $freg): ?>
+                                    <option value="<?= $freg->getId() ?>">
+                                        <?= htmlspecialchars($freg->getNome()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-semibold">Estado</label>
