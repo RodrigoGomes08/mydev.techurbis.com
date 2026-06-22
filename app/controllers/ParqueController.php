@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../dao/ParqueDAO.php';
+require_once __DIR__ . '/../dao/VeiculoDAO.php';
 require_once __DIR__ . '/../dao/FreguesiaDAO.php';
 
 class ParqueController
@@ -35,28 +36,28 @@ class ParqueController
     public function createParque()
     {
         try {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
-        }
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
 
-        $id = trim($_POST['id'] ?? '');
-        $id_freguesia = trim($_POST['id_freguesia'] ?? '');
-        $nome = trim($_POST['nome'] ?? '');
-        $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
-        $tipo = trim($_POST['tipo'] ?? '');
-        $tarifa = trim($_POST['tarifa'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
+            $id = trim($_POST['id'] ?? '');
+            $id_freguesia = trim($_POST['id_freguesia'] ?? '');
+            $nome = trim($_POST['nome'] ?? '');
+            $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
+            $tipo = trim($_POST['tipo'] ?? '');
+            $tarifa = trim($_POST['tarifa'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
+            $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
-            ];
-            header("Location: /admin/PortalADMParques");
-            exit;
-        }
+            if (empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
+                ];
+                header("Location: /admin/PortalADMParques");
+                exit;
+            }
 
             $parqueDAO = new ParqueDAO();
             $parqueDAO->createParque($id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
@@ -79,28 +80,28 @@ class ParqueController
     public function parqueUpdate($id)
     {
         try {
-        if (empty($_SESSION['token'])) {
-            header("Location: /login");
-            exit;
-        }
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
 
-        $id = trim($_POST['id'] ?? '');
-        $id_freguesia = trim($_POST['id_freguesia'] ?? '');
-        $nome = trim($_POST['nome'] ?? '');
-        $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
-        $tipo = trim($_POST['tipo'] ?? '');
-        $tarifa = trim($_POST['tarifa'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
+            $id = trim($_POST['id'] ?? '');
+            $id_freguesia = trim($_POST['id_freguesia'] ?? '');
+            $nome = trim($_POST['nome'] ?? '');
+            $num_max_lugares = trim($_POST['num_max_lugares'] ?? '');
+            $tipo = trim($_POST['tipo'] ?? '');
+            $tarifa = trim($_POST['tarifa'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
+            $latitude = trim($_POST['latitude'] ?? '');
 
-        if (empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
-            $_SESSION['toast'] = [
-                'type' => 'error',
-                'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
-            ];
-            header("Location: /admin/PortalADMParques");
-            exit;
-        }
+            if (empty($id_freguesia) || empty($nome) || empty($num_max_lugares) || empty($tipo) || empty($longitude) || empty($latitude)) {
+                $_SESSION['toast'] = [
+                    'type' => 'error',
+                    'message' => 'Todos os campos obrigatórios devem ser preenchidos.'
+                ];
+                header("Location: /admin/PortalADMParques");
+                exit;
+            }
 
             $linhasAlteradas = (new ParqueDAO())->parqueUpdateDAO($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa ?: 0, $longitude, $latitude);
 
@@ -150,22 +151,22 @@ class ParqueController
         $pdo->beginTransaction();
 
         try {
-        // if (empty($_SESSION['token'])) {
-        //     header("Location: /login");
-        //     exit;
-        // }
+            // if (empty($_SESSION['token'])) {
+            //     header("Location: /login");
+            //     exit;
+            // }
 
-        $parqueDAO = new ParqueDAO();
-        $parques = $parqueDAO->getAllParquesComLugaresApi();
+            $parqueDAO = new ParqueDAO();
+            $parques = $parqueDAO->getAllParquesComLugaresApi();
 
-        $pdo->commit();
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Lista de parques obtida com sucesso.',
-            'data' => [
-                'parques' => $parques
-            ]
-        ]);
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lista de parques obtida com sucesso.',
+                'data' => [
+                    'parques' => $parques
+                ]
+            ]);
         } catch (Exception $e) {
             $pdo->rollback();
             Utils::jsonResponse([
@@ -176,31 +177,133 @@ class ParqueController
         }
     }
 
-public function parqueDetailApi(int $id): void
-{
-    try {
-        $parque = (new ParqueDAO())->findOneComLugares($id);
+    public function parqueDetailApi(int $id): void
+    {
+        try {
+            $parque = (new ParqueDAO())->findOneComLugares($id);
 
-        if (!$parque) {
-            throw new Exception("Parque não encontrado");
+            if (!$parque) {
+                throw new Exception("Parque não encontrado");
+            }
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do parque obtido com sucesso.',
+                'data' => [
+                    'parque' => $parque
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 404);
+            exit;
         }
-
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Detalhe do parque obtido com sucesso.',
-            'data' => [
-                'parque' => $parque
-            ]
-        ]);
-        exit;
-
-    } catch (Exception $e) {
-        Utils::jsonResponse([
-            'success' => false,
-            'message' => $e->getMessage(),
-            'data' => []
-        ], 404);
-        exit;
     }
-}
+
+    public function getLugaresByParque(int $parqueId): void
+    {
+        try {
+            $lugares = (new ParqueDAO())->findLugaresLivresByParque($parqueId);
+
+             Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lugares livres do parque obtidos com sucesso.',
+                'data' => [
+                    'lugares' => $lugares
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+            exit;
+        }
+    }
+
+    public function getReservasByLugar(int $lugarId): void
+    {
+        try {
+            $parqueDAO = new ParqueDAO();
+            $reservas = $parqueDAO->findReservasByLugar($lugarId);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Reservas do lugar obtidas com sucesso.',
+                'data' => [
+                    'reservas' => $reservas
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+            exit;
+        }
+    }
+
+    public function insertReservaEmParqueAPI($id)
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+        try {
+            $id = trim($id ?? '');
+            $input = json_decode(file_get_contents('php://input'), true);
+            $matricula = trim($input["matricula"] ?? '');
+            $reserved_from = trim($input["reserved_from"] ?? '');
+            $reserved_until = trim($input["reserved_until"] ?? '');
+
+            if (empty($id) || empty($matricula) || empty($reserved_from) || empty($reserved_until)) {
+                Utils::jsonResponse([
+                    'success' => false,
+                    'message' => 'ID, matrícula, reserved_from e reserved_until são obrigatórios.',
+                    'data' => []
+                ], 400);
+                return;
+            }
+
+            $parqueDAO = new ParqueDAO();
+
+            // Verificar se o lugar/parque existe
+            $parque = $parqueDAO->findByIdParque($id);
+            if (!$parque) {
+                throw new Exception("Parque com id '$id' não encontrado.");
+            }
+
+            // Obter o veículo pela matrícula
+            $veiculoDAO = new VeiculoDAO(); // ajusta ao nome real da tua DAO
+            $veiculo = $veiculoDAO->findByMatricula($matricula);
+            if (!$veiculo) {
+                throw new Exception("Veículo com matrícula '$matricula' não encontrado.");
+            }
+
+            $idReserva = $parqueDAO->insertReserva($id, $veiculo->getId(), $reserved_from, $reserved_until);
+
+            $pdo->commit();
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Reserva inserida com sucesso.',
+                'data' => ['id_reserva' => $idReserva]
+            ]);
+        } catch (Exception $e) {
+            $pdo->rollback();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
+    }
 }
