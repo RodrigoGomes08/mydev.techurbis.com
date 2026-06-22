@@ -63,27 +63,17 @@ class ParqueDAO
         return $row ?: null;
     }
 
-    public function createParque($id, $id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
+    public function createParque($id_freguesia, $nome, $num_max_lugares, $tipo, $tarifa, $longitude, $latitude)
     {
-        $sqlCheck = "SELECT id FROM p_estacionamentos WHERE id = :id";
-        $stmtCheck = $this->conn->prepare($sqlCheck);
-        $stmtCheck->bindParam(':id', $id);
-        $stmtCheck->execute();
-
-        if ($stmtCheck->fetch()) {
-            throw new Exception("Parque com o ID \"{$id}\" já existe.");
-        }
-
         $sql = "
             INSERT INTO p_estacionamentos
-                (id, id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude)
+                (id_freguesia, nome, num_max_lugares, tipo, tarifa, longitude, latitude)
             VALUES
-                (:id, :id_freguesia, :nome, :num_max_lugares, :tipo, :tarifa, :longitude, :latitude)
+                (:id_freguesia, :nome, :num_max_lugares, :tipo, :tarifa, :longitude, :latitude)
         ";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
-            'id' => $id,
             'id_freguesia' => $id_freguesia,
             'nome' => $nome,
             'num_max_lugares' => $num_max_lugares,

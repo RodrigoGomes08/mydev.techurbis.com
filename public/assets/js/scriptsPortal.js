@@ -504,6 +504,25 @@
   document.getElementById('searchParque')?.addEventListener('input', aplicarFiltroParques);
   document.getElementById('filtroParqueTipo')?.addEventListener('change', aplicarFiltroParques);
 
+  // ── Accordion manual — fechar o aberto ao abrir outro ────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    const accordionParques = document.getElementById('accordionParques');
+    if (!accordionParques) return;
+
+    // Inicializar todas as instâncias de collapse manualmente
+    accordionParques.querySelectorAll('.collapse').forEach(function (el) {
+      bootstrap.Collapse.getOrCreateInstance(el, { toggle: false });
+    });
+
+    accordionParques.addEventListener('show.bs.collapse', function (e) {
+      accordionParques.querySelectorAll('.collapse.show').forEach(function (openPanel) {
+        if (openPanel !== e.target) {
+          bootstrap.Collapse.getOrCreateInstance(openPanel).hide();
+        }
+      });
+    });
+  });
+
   // ── Modal Mapa ─────────────────────────────────────────────────────────────────
   document.addEventListener('click', function (e) {
     const btn = e.target.closest('.btn-mapa-parque');

@@ -1,27 +1,23 @@
 <?php include __DIR__ . "/../../includes/header.php"; ?>
 
 <?php
-// ── KPIs vêm agora de uma query SQL dedicada (ParqueDAO::numParqueEstatisticas) ──
 $total = (int) ($estatisticasParques['total_parques'] ?? 0);
 $totalLugares = (int) ($estatisticasParques['total_lugares'] ?? 0);
 $cobertos = (int) ($estatisticasParques['parques_cobertos'] ?? 0);
 $subterraneos = (int) ($estatisticasParques['parques_subterraneos'] ?? 0);
 $descobertos = (int) ($estatisticasParques['parques_descobertos'] ?? 0);
 
-// Agrupar parques por freguesia (usado para renderizar as secções de cards)
 $grupos = [];
 foreach ($parques as $p) {
     $FreguesiaKey = $p->getIdFreguesia();
     $grupos[$FreguesiaKey][] = $p;
 }
 
-// Lookup rápido id → nome de freguesia (a partir do array de objetos Freguesia)
 $fregMap = [];
 foreach ($freguesias as $f) {
     $fregMap[$f->getId()] = $f->getNome();
 }
 
-// Helper: ícone por tipo
 function tipoIcon(string $tipo): string
 {
     return match ($tipo) {
@@ -44,10 +40,11 @@ function tipoIcon(string $tipo): string
                 </p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-danger btn-sm" id="btnParquesCriticos">
+                <button type="button" class="btn btn-outline-danger btn-sm" id="btnParquesCriticos">
                     <i class="bi bi-exclamation-triangle me-1"></i>Só Críticos
                 </button>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCriarParque">
+                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#modalCriarParque">
                     <i class="bi bi-plus-circle me-1"></i>Adicionar Parque
                 </button>
             </div>
@@ -116,126 +113,145 @@ function tipoIcon(string $tipo): string
         <?php if (empty($parques)): ?>
             <div class="alert alert-info">Nenhum parque registado.</div>
         <?php else: ?>
-            <?php foreach ($grupos as $freguesiaId => $lista):
-                $collapseId = 'collapseParqueFreguesia' . $freguesiaId;
-                $nomeFreguesia = $fregMap[$freguesiaId] ?? "Freguesia {$freguesiaId}";
-                $lugaresGrupo = array_sum(array_map(fn($p) => $p->getNumMaxLugares(), $lista));
-                ?>
-                <div class="mb-3 grupo-cidade">
-                    <button
-                        class="btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center py-3 px-4"
-                        style="border-radius:10px;font-weight:600;background:white;border-color:#e6e9f0;"
-                        data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
-                        <span><i class="bi bi-geo-alt me-2"
-                                style="color:#435ebe;"></i><?= htmlspecialchars($nomeFreguesia) ?></span>
-                        <span class="d-flex align-items-center gap-2">
-                            <span class="badge" style="background:#e6f9ef;color:#27ae60;font-size:0.75rem;"><?= $lugaresGrupo ?>
-                                lugares</span>
-                            <span class="badge" style="background:#e8edff;color:#435ebe;font-size:0.75rem;"><?= count($lista) ?>
-                                parque<?= count($lista) > 1 ? 's' : '' ?></span>
-                            <i class="bi bi-chevron-down"></i>
-                        </span>
-                    </button>
 
-                    <div class="collapse show" id="<?= $collapseId ?>">
-                        <div class="row g-3 mt-1">
-                            <?php foreach ($lista as $parque):
-                                $tipoIcon = tipoIcon($parque->getTipo());
-                                $tarifaStr = $parque->getTarifa() == 0 ? 'Gratuito' : number_format($parque->getTarifa(), 2) . ' €/h';
-                                ?>
-                                <div class="col-12 col-md-6 col-lg-3" data-id="<?= $parque->getId() ?>"
-                                    data-id-freguesia="<?= $parque->getIdFreguesia() ?>"
-                                    data-nome="<?= htmlspecialchars($parque->getNome()) ?>"
-                                    data-num-max-lugares="<?= $parque->getNumMaxLugares() ?>"
-                                    data-tipo="<?= htmlspecialchars($parque->getTipo()) ?>"
-                                    data-tarifa="<?= $parque->getTarifa() ?>" data-longitude="<?= $parque->getLongitude() ?>"
-                                    data-latitude="<?= $parque->getLatitude() ?>">
-                                    <?php
+            <div id="accordionParques">
+
+                <?php foreach ($grupos as $freguesiaId => $lista):
+                    $collapseId = 'collapseParqueFreguesia' . $freguesiaId;
+                    $nomeFreguesia = $fregMap[$freguesiaId] ?? "Freguesia {$freguesiaId}";
+                    $lugaresGrupo = array_sum(array_map(fn($p) => $p->getNumMaxLugares(), $lista));
+                    ?>
+
+                    <div class="mb-3 grupo-cidade">
+
+                        <button type="button"
+                            class="btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center py-3 px-4"
+                            style="border-radius:10px;font-weight:600;background:white;border-color:#e6e9f0;"
+                            data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>" aria-expanded="false"
+                            aria-controls="<?= $collapseId ?>">
+                            <span>
+                                <i class="bi bi-geo-alt me-2" style="color:#435ebe;"></i>
+                                <?= htmlspecialchars($nomeFreguesia) ?>
+                            </span>
+                            <span class="d-flex align-items-center gap-2">
+                                <span class="badge"
+                                    style="background:#e6f9ef;color:#27ae60;font-size:0.75rem;"><?= $lugaresGrupo ?>
+                                    lugares</span>
+                                <span class="badge"
+                                    style="background:#e8edff;color:#435ebe;font-size:0.75rem;"><?= count($lista) ?>
+                                    parque<?= count($lista) > 1 ? 's' : '' ?></span>
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                        </button>
+
+                        <div class="collapse" id="<?= $collapseId ?>" data-bs-parent="#accordionParques">
+                            <div class="row g-3 mt-1">
+
+                                <?php foreach ($lista as $parque):
+                                    $tipoIcon = tipoIcon($parque->getTipo());
+                                    $tarifaStr = $parque->getTarifa() == 0 ? 'Gratuito' : number_format($parque->getTarifa(), 2) . ' €/h';
                                     $maxLugares = $parque->getNumMaxLugares();
-                                    // Sem dados de ocupação real, assumir 0 ocupados (a lógica JS trata do resto)
                                     $pct = 0;
                                     $estado = 'normal';
                                     ?>
-                                    <div class="parque-card <?= $estado ?>">
-                                        <div class="parque-card-header">
-                                            <div class="parque-titulo">
-                                                <span><i
-                                                        class="bi <?= $tipoIcon ?> me-1"></i><?= htmlspecialchars($parque->getNome()) ?></span>
-                                                <span class="badge bg-secondary"
-                                                    style="font-size:0.68rem;font-weight:600;"><?= htmlspecialchars($parque->getTipo()) ?></span>
+
+                                    <div class="col-12 col-md-6 col-lg-3" data-id="<?= $parque->getId() ?>"
+                                        data-id-freguesia="<?= $parque->getIdFreguesia() ?>"
+                                        data-nome="<?= htmlspecialchars($parque->getNome()) ?>"
+                                        data-num-max-lugares="<?= $parque->getNumMaxLugares() ?>"
+                                        data-tipo="<?= htmlspecialchars($parque->getTipo()) ?>"
+                                        data-tarifa="<?= $parque->getTarifa() ?>" data-longitude="<?= $parque->getLongitude() ?>"
+                                        data-latitude="<?= $parque->getLatitude() ?>">
+
+                                        <div class="parque-card <?= $estado ?>">
+                                            <div class="parque-card-header">
+                                                <div class="parque-titulo">
+                                                    <span><i
+                                                            class="bi <?= $tipoIcon ?> me-1"></i><?= htmlspecialchars($parque->getNome()) ?></span>
+                                                    <span class="badge bg-secondary"
+                                                        style="font-size:0.68rem;font-weight:600;"><?= htmlspecialchars($parque->getTipo()) ?></span>
+                                                </div>
+                                                <div class="parque-subtitulo">
+                                                    <i class="bi bi-geo-alt" style="color:#435ebe;font-size:0.7rem;"></i>
+                                                    <?= $parque->getNumMaxLugares() ?> lugares · <?= $tarifaStr ?>
+                                                </div>
                                             </div>
-                                            <div class="parque-subtitulo">
-                                                <i class="bi bi-geo-alt" style="color:#435ebe;font-size:0.7rem;"></i>
-                                                <?= $parque->getNumMaxLugares() ?> lugares · <?= $tarifaStr ?>
+                                            <div class="parque-ocupacao-wrap">
+                                                <div class="d-flex justify-content-between align-items-baseline">
+                                                    <div class="parque-pct-num <?= $estado ?>"><?= $maxLugares ?></div>
+                                                    <div style="font-size:0.78rem;color:#aaa;">lugares totais</div>
+                                                </div>
+                                                <div class="parque-prog">
+                                                    <div class="parque-prog-bar <?= $estado ?>" style="width:<?= $pct ?>%"></div>
+                                                </div>
+                                                <div class="parque-lugares-label"><?= $maxLugares ?> lugares disponíveis</div>
+                                            </div>
+                                            <div class="parque-tags">
+                                                <span class="parque-tag tipo"><i
+                                                        class="bi <?= $tipoIcon ?>"></i><?= htmlspecialchars($parque->getTipo()) ?></span>
+                                                <?php if ($parque->getTarifa() == 0): ?>
+                                                    <span class="parque-tag ev"><i class="bi bi-check-circle"></i>Gratuito</span>
+                                                <?php else: ?>
+                                                    <span class="parque-tag mr"><i
+                                                            class="bi bi-currency-euro"></i><?= number_format($parque->getTarifa(), 2) ?>/h</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="parque-info-grid">
+                                                <div class="parque-info-item">
+                                                    <span class="parque-info-label">Latitude</span>
+                                                    <span class="parque-info-value"><?= $parque->getLatitude() ?></span>
+                                                </div>
+                                                <div class="parque-info-item">
+                                                    <span class="parque-info-label">Longitude</span>
+                                                    <span class="parque-info-value"><?= $parque->getLongitude() ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="parque-actions">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-mapa-parque"
+                                                    data-lat="<?= $parque->getLatitude() ?>"
+                                                    data-lng="<?= $parque->getLongitude() ?>"
+                                                    data-nome="<?= htmlspecialchars($parque->getNome()) ?>" data-bs-toggle="modal"
+                                                    data-bs-target="#modalMapaParque">
+                                                    <i class="bi bi-geo-alt me-1"></i>Mapa
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-primary btn-detalhe-parque"
+                                                    data-id="<?= $parque->getId() ?>" data-bs-toggle="modal"
+                                                    data-bs-target="#modalDetalheParque">
+                                                    <i class="bi bi-eye me-1"></i>Detalhes
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-warning btn-editar-parque"
+                                                    data-id="<?= $parque->getId() ?>"
+                                                    data-id-freguesia="<?= $parque->getIdFreguesia() ?>"
+                                                    data-nome="<?= htmlspecialchars($parque->getNome(), ENT_QUOTES) ?>"
+                                                    data-num-max-lugares="<?= $parque->getNumMaxLugares() ?>"
+                                                    data-tipo="<?= htmlspecialchars($parque->getTipo(), ENT_QUOTES) ?>"
+                                                    data-tarifa="<?= $parque->getTarifa() ?>"
+                                                    data-latitude="<?= htmlspecialchars($parque->getLatitude(), ENT_QUOTES) ?>"
+                                                    data-longitude="<?= htmlspecialchars($parque->getLongitude(), ENT_QUOTES) ?>"
+                                                    data-bs-toggle="modal" data-bs-target="#modalEditarParque">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-parque"
+                                                    data-id="<?= $parque->getId() ?>"
+                                                    data-nome="<?= htmlspecialchars($parque->getNome(), ENT_QUOTES) ?>">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="parque-ocupacao-wrap">
-                                            <div class="d-flex justify-content-between align-items-baseline">
-                                                <div class="parque-pct-num <?= $estado ?>"><?= $maxLugares ?></div>
-                                                <div style="font-size:0.78rem;color:#aaa;">lugares totais</div>
-                                            </div>
-                                            <div class="parque-prog">
-                                                <div class="parque-prog-bar <?= $estado ?>" style="width:<?= $pct ?>%"></div>
-                                            </div>
-                                            <div class="parque-lugares-label"><?= $maxLugares ?> lugares disponíveis</div>
-                                        </div>
-                                        <div class="parque-tags">
-                                            <span class="parque-tag tipo"><i
-                                                    class="bi <?= $tipoIcon ?>"></i><?= htmlspecialchars($parque->getTipo()) ?></span>
-                                            <?php if ($parque->getTarifa() == 0): ?>
-                                                <span class="parque-tag ev"><i class="bi bi-check-circle"></i>Gratuito</span>
-                                            <?php else: ?>
-                                                <span class="parque-tag mr"><i
-                                                        class="bi bi-currency-euro"></i><?= number_format($parque->getTarifa(), 2) ?>/h</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="parque-info-grid">
-                                            <div class="parque-info-item">
-                                                <span class="parque-info-label">Latitude</span>
-                                                <span class="parque-info-value"><?= $parque->getLatitude() ?></span>
-                                            </div>
-                                            <div class="parque-info-item">
-                                                <span class="parque-info-label">Longitude</span>
-                                                <span class="parque-info-value"><?= $parque->getLongitude() ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="parque-actions">
-                                            <button class="btn btn-sm btn-outline-secondary btn-mapa-parque"
-                                                data-lat="<?= $parque->getLatitude() ?>" data-lng="<?= $parque->getLongitude() ?>"
-                                                data-nome="<?= htmlspecialchars($parque->getNome()) ?>" data-bs-toggle="modal"
-                                                data-bs-target="#modalMapaParque">
-                                                <i class="bi bi-geo-alt me-1"></i>Mapa
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-primary btn-detalhe-parque"
-                                                data-id="<?= $parque->getId() ?>" data-bs-toggle="modal"
-                                                data-bs-target="#modalDetalheParque">
-                                                <i class="bi bi-eye me-1"></i>Detalhes
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-warning btn-editar-parque"
-                                                data-id="<?= $parque->getId() ?>"
-                                                data-id-freguesia="<?= $parque->getIdFreguesia() ?>"
-                                                data-nome="<?= htmlspecialchars($parque->getNome(), ENT_QUOTES) ?>"
-                                                data-num-max-lugares="<?= $parque->getNumMaxLugares() ?>"
-                                                data-tipo="<?= htmlspecialchars($parque->getTipo(), ENT_QUOTES) ?>"
-                                                data-tarifa="<?= $parque->getTarifa() ?>"
-                                                data-latitude="<?= htmlspecialchars($parque->getLatitude(), ENT_QUOTES) ?>"
-                                                data-longitude="<?= htmlspecialchars($parque->getLongitude(), ENT_QUOTES) ?>"
-                                                data-bs-toggle="modal" data-bs-target="#modalEditarParque">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger btn-eliminar-parque"
-                                                data-id="<?= $parque->getId() ?>"
-                                                data-nome="<?= htmlspecialchars($parque->getNome(), ENT_QUOTES) ?>">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
+
                                     </div>
-                                </div>
-                            <?php endforeach; ?>
+
+                                <?php endforeach; ?>
+
+                            </div>
                         </div>
+
                     </div>
-                </div>
-            <?php endforeach; ?>
+
+                <?php endforeach; ?>
+
+            </div><!-- #accordionParques -->
+
         <?php endif; ?>
 
     </section>
@@ -263,9 +279,7 @@ function tipoIcon(string $tipo): string
                             <select name="id_freguesia" class="form-select" required>
                                 <option value="">-- Selecionar Freguesia --</option>
                                 <?php foreach ($freguesias as $freg): ?>
-                                    <option value="<?= $freg->getId() ?>">
-                                        <?= htmlspecialchars($freg->getNome()) ?>
-                                    </option>
+                                    <option value="<?= $freg->getId() ?>"><?= htmlspecialchars($freg->getNome()) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -326,9 +340,7 @@ function tipoIcon(string $tipo): string
                             <select name="id_freguesia" id="edit-parque-id-freguesia" class="form-select" required>
                                 <option value="">-- Selecionar Freguesia --</option>
                                 <?php foreach ($freguesias as $freg): ?>
-                                    <option value="<?= $freg->getId() ?>">
-                                        <?= htmlspecialchars($freg->getNome()) ?>
-                                    </option>
+                                    <option value="<?= $freg->getId() ?>"><?= htmlspecialchars($freg->getNome()) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -441,15 +453,13 @@ function tipoIcon(string $tipo): string
     </div>
 </div>
 
-
-
 <?php if (!empty($_SESSION['toast'])): ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
-    });
-</script>
-<?php unset($_SESSION['toast']); ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
+        });
+    </script>
+    <?php unset($_SESSION['toast']); ?>
 <?php endif; ?>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>
