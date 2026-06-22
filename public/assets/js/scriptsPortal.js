@@ -27,6 +27,18 @@
     const root = document.body;
 
     // =========================
+    // TOAST PENDENTE (após reload de ação AJAX como eliminar parque)
+    // =========================
+    const toastPendente = sessionStorage.getItem('toastPendente');
+    if (toastPendente) {
+      sessionStorage.removeItem('toastPendente');
+      try {
+        const { tipo, mensagem } = JSON.parse(toastPendente);
+        mostrarToastJS(tipo, mensagem);
+      } catch (_) { }
+    }
+
+    // =========================
     // MENU LATERAL — ACTIVE
     // =========================
     const path = window.location.pathname;
@@ -624,20 +636,22 @@
       fetch(`/admin/delete-parque/${parqueAEliminar}`, { method: 'POST' })
         .then(r => r.json())
         .then(data => {
-          modalEliminarParque.hide();
           if (data.success) {
-            cardParqueAEliminar?.remove();
-            cardParqueAEliminar = null;
-            mostrarToastJS('success', data.message || 'Parque eliminado com sucesso!');
+            sessionStorage.setItem('toastPendente', JSON.stringify({ tipo: 'success', mensagem: data.message || 'Parque eliminado com sucesso!' }));
+            // Aguarda o Bootstrap fechar completamente o modal antes de fazer reload,
+            // caso contrário o backdrop fica "preso" no ecrã após a navegação.
+            modalEliminarParqueEl.addEventListener('hidden.bs.modal', () => location.reload(), { once: true });
+            modalEliminarParque.hide();
           } else {
+            modalEliminarParque.hide();
             mostrarToastJS('error', data.message || 'Erro ao eliminar parque.');
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="bi bi-trash me-1"></i>Eliminar';
           }
         })
         .catch(() => {
           modalEliminarParque.hide();
           mostrarToastJS('error', 'Erro de ligação ao servidor.');
-        })
-        .finally(() => {
           confirmBtn.disabled = false;
           confirmBtn.innerHTML = '<i class="bi bi-trash me-1"></i>Eliminar';
         });
