@@ -53,6 +53,18 @@ class UserDAO
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function numTotalUsers()
+    {
+        $sql = "SELECT
+                    COUNT(*) AS total_utilizadores
+                FROM users";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function findByID($id)
     {
         $sql = "SELECT users.id, users.id_role, users.nome, users.data_nascimento, users.telefone, users.morada, users.email, users.password, users.ativo, users.tem_mobilidade_reduzida, roles.id AS role_id, roles.nome_role, roles.cor FROM users INNER JOIN roles ON users.id_role = roles.id WHERE users.id = :id";
