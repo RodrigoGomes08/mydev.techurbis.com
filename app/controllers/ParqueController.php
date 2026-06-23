@@ -203,4 +203,98 @@ public function parqueDetailApi(int $id): void
         exit;
     }
 }
+
+    /**
+     * GET /api/parque/{id}/lugares
+     * Devolve apenas os lugares de um parque, usado para popular o
+     * spinner de seleção de lugar no modal de reserva.
+     */
+    public function getLugaresByParque(int $id): void
+    {
+        try {
+            $lugares = (new ParqueDAO())->getLugaresByParque($id);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Lugares do parque obtidos com sucesso.',
+                'data' => [
+                    'lugares' => $lugares
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+            exit;
+        }
+    }
+
+    /**
+     * POST /api/parque/{id}/reservar
+     * Body esperado: { "id_lugar": int, "matricula": string, "reserved_from": "YYYY-MM-DD HH:MM:SS", "reserved_until": "YYYY-MM-DD HH:MM:SS" }
+     *
+     * O veículo (identificado pela matrícula) tem de já estar associado ao utilizador autenticado;
+     * não é criado automaticamente.
+     */
+    public function insertReservaEmParqueAPI(int $id): void
+    {
+        try {
+            $dataToken = AuthMiddlewareAPI::check();
+            $userId = $dataToken->id;
+
+            $body = json_decode(file_get_contents('php://input'), true) ?? [];
+
+            $idLugar       = isset($body['id_lugar']) ? (int) $body['id_lugar'] : 0;
+            $matricula     = trim($body['matricula'] ?? '');
+            $reservedFrom  = trim($body['reserved_from'] ?? '');
+            $reservedUntil = trim($body['reserved_until'] ?? '');
+
+            if (empty($idLugar) || empty($matricula) || empty($reservedFrom) || empty($reservedUntil)) {
+                throw new Exception("Todos os campos (id_lugar, matricula, reserved_from, reserved_until) são obrigatórios.");
+            }
+
+            $parqueDAO = new ParqueDAO();
+
+            $veiculo = $parqueDAO->findVeiculoByMatriculaEUser($matricula, $userId);
+            if (!$veiculo) {
+                throw new Exception("Não foi encontrado nenhum veículo com essa matrícula associado à sua conta.");
+            }
+
+            $lugar = $parqueDAO->findLugarById($idLugar);
+            if (!$lugar || (int) $lugar['id_p_estacionamento'] !== $id) {
+                throw new Exception("Lugar inválido para este parque.");
+            }
+
+            if (!empty($lugar['ocupado'])) {
+                throw new Exception("Este lugar já está ocupado.");
+            }
+
+            $reservaId = $parqueDAO->createReserva($idLugar, (int) $veiculo['id'], $reservedFrom, $reservedUntil);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Reserva criada com sucesso.',
+                'data' => [
+                    'id' => $reservaId,
+                    'id_lugar' => $idLugar,
+                    'matricula' => $matricula,
+                    'reserved_from' => $reservedFrom,
+                    'reserved_until' => $reservedUntil
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+            exit;
+        }
+    }
 }

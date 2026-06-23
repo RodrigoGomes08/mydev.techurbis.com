@@ -193,10 +193,129 @@ class ParqueDAO
                     'id_tipo_lugares' => (int) $row['id_tipo_lugares'],
                     'identificacao' => (string) $row['identificacao'],
                     'ocupado' => (bool) $row['ocupado'],
+                    'reservado' => false, // preenchido abaixo
                 ];
             }
         }
 
+        if ($parque !== null) {
+            $idsReservados = $this->getLugaresReservadosAgora($id);
+
+            foreach ($parque['lugares'] as &$lugar) {
+                $lugar['reservado'] = in_array($lugar['id'], $idsReservados, true);
+            }
+            unset($lugar);
+        }
+
         return $parque; // null se não encontrado
+    }
+
+    /**
+     * Devolve apenas os lugares de um parque específico (sem os dados do parque),
+     * usado pelo modal de reserva para popular o spinner de seleção de lugar.
+     *
+     * @return array<int, array{id:int, id_p_estacionamento:int, id_tipo_lugares:int, identificacao:string, ocupado:bool}>
+     */
+    public function getLugaresByParque(int $idParque): array
+    {
+        $sql = "SELECT id, id_p_estacionamento, id_tipo_lugares, identificacao, ocupado
+                FROM lugares
+                WHERE id_p_estacionamento = ?
+                ORDER BY id ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$idParque]);
+
+        $lugares = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $lugares[] = [
+                'id' => (int) $row['id'],
+                'id_p_estacionamento' => (int) $row['id_p_estacionamento'],
+                'id_tipo_lugares' => (int) $row['id_tipo_lugares'],
+                'identificacao' => (string) $row['identificacao'],
+                'ocupado' => (bool) $row['ocupado'],
+            ];
+        }
+
+        return $lugares;
+    }
+
+    /**
+     * Devolve os IDs dos lugares de um parque que têm uma reserva ativa neste momento
+     * (hora atual do servidor entre reserved_from e reserved_until).
+     *
+     * @return array<int> lista de id_lugar reservados agora
+     */
+    public function getLugaresReservadosAgora(int $idParque): array
+    {
+        $sql = "SELECT DISTINCT hr.id_lugar
+                FROM historico_reservas hr
+                INNER JOIN lugares l ON l.id = hr.id_lugar
+                WHERE l.id_p_estacionamento = ?
+                  AND NOW() BETWEEN hr.reserved_from AND hr.reserved_until";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$idParque]);
+
+        return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    }
+
+    /**
+     * Procura um único lugar pelo id, incluindo a que parque pertence e se está ocupado.
+     * Usado para validar a reserva antes de a criar.
+     */
+    public function findLugarById(int $idLugar): ?array
+    {
+        $sql = "SELECT id, id_p_estacionamento, id_tipo_lugares, identificacao, ocupado
+                FROM lugares
+                WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$idLugar]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return [
+            'id' => (int) $row['id'],
+            'id_p_estacionamento' => (int) $row['id_p_estacionamento'],
+            'id_tipo_lugares' => (int) $row['id_tipo_lugares'],
+            'identificacao' => (string) $row['identificacao'],
+            'ocupado' => (bool) $row['ocupado'],
+        ];
+    }
+
+    /**
+     * Procura um veículo pela matrícula, garantindo que pertence ao utilizador autenticado.
+     * Não cria o veículo se não existir — a reserva exige que o veículo já esteja registado.
+     */
+    public function findVeiculoByMatriculaEUser(string $matricula, int $idUser): ?array
+    {
+        $sql = "SELECT id, id_user, tipo, matricula, modelo, marca, cor, is_eletric
+                FROM veiculos
+                WHERE matricula = ? AND id_user = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$matricula, $idUser]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
+
+    /**
+     * Cria uma reserva em historico_reservas para o lugar e veículo indicados.
+     * Devolve o id da reserva criada.
+     */
+    public function createReserva(int $idLugar, int $idVeiculo, string $reservedFrom, string $reservedUntil): int
+    {
+        $sql = "INSERT INTO historico_reservas (id_lugar, id_veiculo, reserved_from, reserved_until)
+                VALUES (?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$idLugar, $idVeiculo, $reservedFrom, $reservedUntil]);
+
+        return (int) $this->conn->lastInsertId();
     }
 }
