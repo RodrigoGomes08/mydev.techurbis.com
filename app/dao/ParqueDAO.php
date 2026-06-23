@@ -318,4 +318,35 @@ class ParqueDAO
 
         return (int) $this->conn->lastInsertId();
     }
+
+    /**
+     * Devolve o histórico de reservas de um lugar específico, mais recentes primeiro.
+     * Usado pela rota GET /api/lugar/{id}/getreservas.
+     */
+    public function findReservasByLugar(int $idLugar): array
+    {
+        $sql = "SELECT hr.id, hr.id_lugar, hr.id_veiculo, hr.reserved_from, hr.reserved_until,
+                       v.matricula
+                FROM historico_reservas hr
+                LEFT JOIN veiculos v ON v.id = hr.id_veiculo
+                WHERE hr.id_lugar = ?
+                ORDER BY hr.reserved_from DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$idLugar]);
+
+        $reservas = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $reservas[] = [
+                'id' => (int) $row['id'],
+                'id_lugar' => (int) $row['id_lugar'],
+                'id_veiculo' => (int) $row['id_veiculo'],
+                'matricula' => $row['matricula'] !== null ? (string) $row['matricula'] : null,
+                'reserved_from' => $row['reserved_from'],
+                'reserved_until' => $row['reserved_until'],
+            ];
+        }
+
+        return $reservas;
+    }
 }

@@ -234,6 +234,34 @@ public function parqueDetailApi(int $id): void
     }
 
     /**
+     * GET /api/lugar/{id}/getreservas
+     * Devolve o histórico de reservas de um lugar específico.
+     */
+    public function getReservasByLugar(int $idLugar): void
+    {
+        try {
+            $reservas = (new ParqueDAO())->findReservasByLugar($idLugar);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Reservas do lugar obtidas com sucesso.',
+                'data' => [
+                    'reservas' => $reservas
+                ]
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 500);
+            exit;
+        }
+    }
+
+    /**
      * POST /api/parque/{id}/reservar
      * Body esperado: { "id_lugar": int, "matricula": string, "reserved_from": "YYYY-MM-DD HH:MM:SS", "reserved_until": "YYYY-MM-DD HH:MM:SS" }
      *

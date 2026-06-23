@@ -67,8 +67,8 @@ function tipoIcon(string $tipo): string
                     <div class="pkpi-icon" style="background:#e6f9ef;color:#27ae60;"><i
                             class="bi bi-car-front-fill"></i></div>
                     <div>
-                        <div class="pkpi-value text-success"><?= $totalLugares ?></div>
-                        <div class="pkpi-label">Lugares Totais</div>
+                        <div class="pkpi-value text-success"><?= $descobertos ?></div>
+                        <div class="pkpi-label">Descobertos</div>
                     </div>
                 </div>
             </div>
@@ -103,9 +103,9 @@ function tipoIcon(string $tipo): string
             </div>
             <select id="filtroParqueTipo" class="form-select" style="max-width:180px;">
                 <option value="">Todos os tipos</option>
-                <option value="Coberto">Coberto</option>
-                <option value="Descoberto">Descoberto</option>
-                <option value="Subterrâneo">Subterrâneo</option>
+                <?php foreach ($parques as $parque): ?>
+                    <option value="<?= $parque->getId() ?>"><?= htmlspecialchars($parque->getTipo()) ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
 
