@@ -418,4 +418,44 @@ public function pressaoContentor(int $contentorId)
         ], 400);
     }
 }
+
+public function getMatriculaArduino()
+    {
+        try {
+            $json = file_get_contents("php://input");
+
+            if (!$json) {
+                throw new Exception("Erro ao ler o corpo do pedido");
+            }
+
+            $data = json_decode($json, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception("JSON inválido: " . json_last_error_msg());
+            }
+
+            if (!isset($data["id_lugar"], $data["matricula"])) {
+                throw new Exception("Campos obrigatórios em falta");
+            }
+
+            $id_lugar = $data["id_lugar"];
+            $matricula = $data["matricula"];
+
+            echo json_encode([
+                "success" => true,
+                "message" => "Valor recebido com sucesso",
+                "data" => [
+                    "id_lugar" => $id_lugar,
+                    "matricula" => $matricula
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            echo json_encode([
+                "success" => false,
+                "message" => $e->getMessage(),
+                "data" => []
+            ]);
+        }
+    }
 }

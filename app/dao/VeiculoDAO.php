@@ -3,7 +3,8 @@
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/Veiculo.php';
 
-class VeiculoDAO{
+class VeiculoDAO
+{
     private $conn;
 
     public function __construct()
@@ -12,8 +13,11 @@ class VeiculoDAO{
     }
 
     public function findByMatricula(string $matricula): ?Veiculo
-    {         
-    $sql = "SELECT * FROM veiculos WHERE matricula = ?";
+{
+    $sql = "SELECT id, id_user, tipo, matricula, modelo, marca, cor, is_eletric
+            FROM veiculos
+            WHERE matricula = ?";
+
     $stmt = $this->conn->prepare($sql);
     $stmt->execute([$matricula]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,14 +27,27 @@ class VeiculoDAO{
     }
 
     return new Veiculo(
-    (int) $row['id'],
-    (int) $row['id_user'],
-    $row['tipo'],
-    $row['matricula'],
-    $row['modelo'],
-    $row['marca'],
-    $row['cor'],
-    (int) $row['is_eletric']  
-);
+        (int) $row['id'],
+        (int) $row['id_user'],
+        $row['tipo'],
+        $row['matricula'],
+        $row['modelo'],
+        $row['marca'],
+        $row['cor'],
+        (int) $row['is_eletric']
+    );
 }
+
+    public function getMatriculaById($id)
+    {
+        $sql = "SELECT matricula
+        FROM veiculos 
+        WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
 }
