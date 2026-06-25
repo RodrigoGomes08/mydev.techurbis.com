@@ -438,24 +438,79 @@ public function getMatriculaArduino()
                 throw new Exception("Campos obrigatórios em falta");
             }
 
-            $id_lugar = $data["id_lugar"];
-            $matricula = $data["matricula"];
+            $idLugar = (int) $data["id_lugar"];
+            $matriculaLida = $this->normalizarMatricula((string) $data["matricula"]);
 
-            echo json_encode([
-                "success" => true,
-                "message" => "Valor recebido com sucesso",
-                "data" => [
-                    "id_lugar" => $id_lugar,
-                    "matricula" => $matricula
-                ]
-            ]);
+            $sensorDAO = new SensorDAO();
+
+            // Vai buscar a reserva ativa deste lugar (NOW() dentro do intervalo
+            // reserved_from / reserved_until), já com a matrícula do veículo.
+            $reserva = $sensorDAO->getReservaAtivaByLugar($idLugar);
+
+            // Sem reserva ativa -> não há nada para comparar, lugar livre para qualquer carro
+            if (!$reserva) {
+                Utils::jsonResponse([
+                    "success" => true,
+                    "message" => "Não há reserva ativa para este lugar.",
+                    "data" => [
+                        "id_lugar" => $idLugar,
+                        "resultado" => "sem_reserva",
+                        "acao_arduino" => [
+                            "led" => "verde",
+                            "buzzer" => false
+                        ]
+                    ]
+                ], 200);
+                return;
+            }
+
+            $matriculaReservada = $this->normalizarMatricula($reserva["matricula"]);
+
+            if ($matriculaLida === $matriculaReservada) {
+                Utils::jsonResponse([
+                    "success" => true,
+                    "message" => "Matrícula confirmada. Pode estacionar.",
+                    "data" => [
+                        "id_lugar" => $idLugar,
+                        "resultado" => "match",
+                        "acao_arduino" => [
+                            "led" => "azul",
+                            "buzzer" => false
+                        ]
+                    ]
+                ], 200);
+            } else {
+                Utils::jsonResponse([
+                    "success" => true,
+                    "message" => "Matrícula não corresponde à reserva deste lugar.",
+                    "data" => [
+                        "id_lugar" => $idLugar,
+                        "resultado" => "mismatch",
+                        "acao_arduino" => [
+                            "led" => "vermelho_intermitente",
+                            "buzzer" => true
+                        ]
+                    ]
+                ], 200);
+            }
 
         } catch (Exception $e) {
-            echo json_encode([
+            Utils::jsonResponse([
                 "success" => false,
                 "message" => $e->getMessage(),
                 "data" => []
-            ]);
+            ], 400);
         }
+    }
+
+    /**
+     * Normaliza a matrícula: maiúsculas, sem espaços nem hífenes.
+     * Garante que "12-AB-34", "12 AB 34" e "12ab34" são tratadas como iguais,
+     * tanto a que vem do Arduino como a que está guardada na BD.
+     */
+    private function normalizarMatricula(string $matricula): string
+    {
+        $m = strtoupper($matricula);
+        return preg_replace('/[\s\-]+/', '', $m);
     }
 }

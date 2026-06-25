@@ -30,7 +30,8 @@
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div>
-                        <div class="pkpi-value"><?= (int) ($estatisticasUtilizadores['total_utilizadores'] ?? 0) ?></div>
+                        <div class="pkpi-value"><?= (int) ($estatisticasUtilizadores['total_utilizadores'] ?? 0) ?>
+                        </div>
                         <div class="pkpi-label">Total de Utilizadores</div>
                     </div>
                 </div>
@@ -41,7 +42,8 @@
                         <i class="bi bi-shield-fill"></i>
                     </div>
                     <div>
-                        <div class="pkpi-value text-success"><?= (int) ($estatisticasUtilizadores['total_administradores'] ?? 0) ?></div>
+                        <div class="pkpi-value text-success">
+                            <?= (int) ($estatisticasUtilizadores['total_administradores'] ?? 0) ?></div>
                         <div class="pkpi-label">Administradores</div>
                     </div>
                 </div>
@@ -52,7 +54,8 @@
                         <i class="bi bi-person-check-fill"></i>
                     </div>
                     <div>
-                        <div class="pkpi-value" style="color:#435ebe;"><?= (int) ($estatisticasUtilizadores['total_utilizadores_comuns'] ?? 0) ?></div>
+                        <div class="pkpi-value" style="color:#435ebe;">
+                            <?= (int) ($estatisticasUtilizadores['total_utilizadores_comuns'] ?? 0) ?></div>
                         <div class="pkpi-label">Utilizadores</div>
                     </div>
                 </div>
@@ -63,7 +66,8 @@
                         <i class="bi bi-tools"></i>
                     </div>
                     <div>
-                        <div class="pkpi-value text-danger"><?= (int) ($estatisticasUtilizadores['total_operadores'] ?? 0) ?></div>
+                        <div class="pkpi-value text-danger">
+                            <?= (int) ($estatisticasUtilizadores['total_operadores'] ?? 0) ?></div>
                         <div class="pkpi-label">Operadores</div>
                     </div>
                 </div>
@@ -103,65 +107,77 @@
                             </tr>
                         </thead>
                         <tbody id="listaUtilizadores">
-                        <?php if (empty($users)): ?>
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="bi bi-people me-2"></i>Nenhum utilizador encontrado.
-                                </td>
-                            </tr>
-                        <?php else: ?>
-                            <?php foreach ($users as $user): ?>
-                                <?php
-                                // Encontrar o nome da role correspondente
-                                $roleNome = 'Desconhecido';
-                                foreach ($roles as $role) {
-                                    if ($role->getIdRole() === $user->getIdRole()) {
-                                        $roleNome = $role->getNomeRole();
-                                        break;
-                                    }
-                                }
-                                ?>
-                                <tr data-role="<?= $user->getIdRole() ?>">
-                                    <td>
-                                        <div class="fw-semibold">
-                                            <?= htmlspecialchars($user->getNome()) ?>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge rounded-pill" style="background-color:#435ebe;">
-                                            <?= htmlspecialchars($roleNome) ?>
-                                        </span>
-                                    </td>
-                                    <td><?= htmlspecialchars($user->getEmail()) ?></td>
-                                    <td><?= htmlspecialchars($user->getMorada()) ?></td>
-                                    <td>
-                                        <?php if ($user->getAtivo()): ?>
-                                            <span class="badge bg-success">Ativo</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary">Inativo</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1 btn-editar-util"
-                                            data-id="<?= $user->getId() ?>" data-id-role="<?= $user->getIdRole() ?>"
-                                            data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>"
-                                            data-email="<?= htmlspecialchars($user->getEmail(), ENT_QUOTES) ?>"
-                                            data-morada="<?= htmlspecialchars($user->getMorada(), ENT_QUOTES) ?>"
-                                            data-telefone="<?= htmlspecialchars($user->getTelefone(), ENT_QUOTES) ?>"
-                                            data-nascimento="<?= htmlspecialchars($user->getDataNascimento(), ENT_QUOTES) ?>"
-                                            data-ativo="<?= $user->getAtivo() ?>"
-                                            data-mobilidade="<?= $user->getTemMobilidadeReduzida() ?>">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger btn-eliminar-util"
-                                            data-id="<?= $user->getId() ?>"
-                                            data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                            <?php if (empty($users)): ?>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="bi bi-people me-2"></i>Nenhum utilizador encontrado.
                                     </td>
                                 </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php else: ?>
+                                <?php foreach ($users as $user): ?>
+                                    <?php
+                                    // Encontrar o nome da role correspondente
+                                    $roleNome = 'Desconhecido';
+                                    foreach ($roles as $role) {
+                                        if ($role->getIdRole() === $user->getIdRole()) {
+                                            $roleNome = $role->getNomeRole();
+                                            break;
+                                        }
+                                    }
+                                    ?>
+                                    <tr data-role="<?= $user->getIdRole() ?>">
+                                        <td>
+                                            <div class="fw-semibold">
+                                                <?= htmlspecialchars($user->getNome()) ?>
+                                            </div>
+                                        </td>
+                                        <?php
+                                        $classeCargo = '';
+
+                                        if (strtolower($roleNome) === 'administrador') {
+                                            $classeCargo = 'badge-admin';
+                                        } elseif (strtolower($roleNome) === 'utilizador') {
+                                            $classeCargo = 'badge-utilizador';
+                                        } elseif (strtolower($roleNome) === 'operador') {
+                                            $classeCargo = 'badge-operador';
+                                        }
+                                        ?>
+
+                                        <td>
+                                            <span class="badge rounded-pill <?= $classeCargo ?>">
+                                                <?= htmlspecialchars($roleNome) ?>
+                                            </span>
+                                        </td>
+                                        <td><?= htmlspecialchars($user->getEmail()) ?></td>
+                                        <td><?= htmlspecialchars($user->getMorada()) ?></td>
+                                        <td>
+                                            <?php if ($user->getAtivo()): ?>
+                                                <span class="badge bg-success">Ativo</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-secondary">Inativo</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1 btn-editar-util"
+                                                data-id="<?= $user->getId() ?>" data-id-role="<?= $user->getIdRole() ?>"
+                                                data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>"
+                                                data-email="<?= htmlspecialchars($user->getEmail(), ENT_QUOTES) ?>"
+                                                data-morada="<?= htmlspecialchars($user->getMorada(), ENT_QUOTES) ?>"
+                                                data-telefone="<?= htmlspecialchars($user->getTelefone(), ENT_QUOTES) ?>"
+                                                data-nascimento="<?= htmlspecialchars($user->getDataNascimento(), ENT_QUOTES) ?>"
+                                                data-ativo="<?= $user->getAtivo() ?>"
+                                                data-mobilidade="<?= $user->getTemMobilidadeReduzida() ?>">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger btn-eliminar-util"
+                                                data-id="<?= $user->getId() ?>"
+                                                data-nome="<?= htmlspecialchars($user->getNome(), ENT_QUOTES) ?>">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -406,12 +422,12 @@
 </div>
 
 <?php if (!empty($_SESSION['toast'])): ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
-    });
-</script>
-<?php unset($_SESSION['toast']); ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            showToast(<?= json_encode($_SESSION['toast']['message']) ?>, <?= json_encode($_SESSION['toast']['type']) ?>);
+        });
+    </script>
+    <?php unset($_SESSION['toast']); ?>
 <?php endif; ?>
 
 <?php include __DIR__ . "/../../includes/footer.php"; ?>

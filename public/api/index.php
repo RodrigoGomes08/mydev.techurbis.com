@@ -182,6 +182,12 @@ elseif ($uri === '/sensor/valor-temp' && $method === 'GET') {
     
 } elseif ($uri === '/sensor/valor-distancia' && $method === 'POST') {
     (new SensorController())->valorSensorDistancia();
+
+} elseif ($uri === '/sensor/valor-matricula' && $method === 'POST') {
+    // Sem AuthMiddlewareAPI::check() de propósito — mantém o mesmo padrão
+    // das outras rotas chamadas diretamente pelo Arduino (ocupar, desocupar,
+    // valor-distancia, pressaoContentor), que também não exigem JWT.
+    (new SensorController())->getMatriculaArduino();
 } 
 
 else {
