@@ -476,7 +476,7 @@ public function getMatriculaArduino()
                         "acao_arduino" => [
                             "led" => "azul",
                             "buzzer" => false
-                        ]
+                        ]  
                     ]
                 ], 200);
             } else {

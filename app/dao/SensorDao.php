@@ -110,8 +110,8 @@ class SensorDAO
     }
 
     public function getLugarParaOcupar(int $lugarId): array
-{
-    
+    {
+
         $sql = "SELECT id, identificacao, ocupado
             FROM lugares
             WHERE id = ?
@@ -123,16 +123,16 @@ class SensorDAO
         $lugar = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $lugar;
-}
+    }
 
-public function marcarComoOcupado(int $lugarId): void
-{
-    $sql = "UPDATE lugares
+    public function marcarComoOcupado(int $lugarId): void
+    {
+        $sql = "UPDATE lugares
             SET ocupado = 1
             WHERE id = ?";
-    $this->conn->prepare($sql)->execute([$lugarId]);
+        $this->conn->prepare($sql)->execute([$lugarId]);
 
-    $sql = "INSERT INTO use_his_ocu_lug (
+        $sql = "INSERT INTO use_his_ocu_lug (
                 id_lugar, id_p_estacionamento_user, entered_at
             )
             SELECT l.id, ps.id, NOW()
@@ -141,13 +141,13 @@ public function marcarComoOcupado(int $lugarId): void
                 ON ps.id_p_estacionamento = l.id_p_estacionamento
             WHERE l.id = ?
             LIMIT 1";
-    $this->conn->prepare($sql)->execute([$lugarId]);
-}
+        $this->conn->prepare($sql)->execute([$lugarId]);
+    }
 
-// 3. Busca o lugar atualizado para devolver
-public function getLugarFinal(int $lugarId): array
-{
-    $sql = "SELECT 
+    // 3. Busca o lugar atualizado para devolver
+    public function getLugarFinal(int $lugarId): array
+    {
+        $sql = "SELECT 
                 l.id,
                 l.identificacao,
                 l.ocupado,
@@ -159,53 +159,53 @@ public function getLugarFinal(int $lugarId): array
             WHERE l.id = ?
             ORDER BY h.id DESC
             LIMIT 1";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$lugarId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$lugarId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-public function getLugarParaDesocupar(int $lugarId): array|false
-{
-    $sql = "SELECT id, identificacao, ocupado
+    public function getLugarParaDesocupar(int $lugarId): array|false
+    {
+        $sql = "SELECT id, identificacao, ocupado
             FROM lugares
             WHERE id = ?
             LIMIT 1
             FOR UPDATE";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$lugarId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$lugarId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-public function getHistoricoAberto(int $lugarId): array|false
-{
-    $sql = "SELECT id
+    public function getHistoricoAberto(int $lugarId): array|false
+    {
+        $sql = "SELECT id
             FROM use_his_ocu_lug
             WHERE id_lugar = ?
               AND left_at IS NULL
             ORDER BY id DESC
             LIMIT 1
             FOR UPDATE";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$lugarId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$lugarId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-public function marcarComoLivre(int $lugarId, int $historicoId): void
-{
-    $sql = "UPDATE use_his_ocu_lug
+    public function marcarComoLivre(int $lugarId, int $historicoId): void
+    {
+        $sql = "UPDATE use_his_ocu_lug
             SET left_at = NOW()
             WHERE id = ?";
-    $this->conn->prepare($sql)->execute([$historicoId]);
+        $this->conn->prepare($sql)->execute([$historicoId]);
 
-    $sql = "UPDATE lugares
+        $sql = "UPDATE lugares
             SET ocupado = 0
             WHERE id = ?";
-    $this->conn->prepare($sql)->execute([$lugarId]);
-}
+        $this->conn->prepare($sql)->execute([$lugarId]);
+    }
 
-public function getHistorico(int $lugarId): array
-{
-    $sql = "SELECT
+    public function getHistorico(int $lugarId): array
+    {
+        $sql = "SELECT
                 id,
                 id_lugar,
                 id_p_estacionamento_user,
@@ -214,33 +214,52 @@ public function getHistorico(int $lugarId): array
             FROM use_his_ocu_lug
             WHERE id_lugar = ?
             ORDER BY id DESC";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$lugarId]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$lugarId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-public function findContentorById(int $id): array|false
-{
-    $sql = "SELECT id, id_cidade, id_estado, capacidade_max, is_full
+    public function findContentorById(int $id): array|false
+    {
+        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, is_full
             FROM contentores
             WHERE id = ?
             LIMIT 1";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute([$id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-public function insertLeituraContentor(int $contentorId, float $valor, bool $isFull): void
-{
-    // Insere a leitura
-    $sql = "INSERT INTO contentor_leituras (id_contentor, valor, data_leitura)
+    public function insertLeituraContentor(int $contentorId, float $valor, bool $isFull): void
+    {
+        // Insere a leitura
+        $sql = "INSERT INTO contentor_leituras (id_contentor, valor, data_leitura)
             VALUES (?, ?, NOW())";
-    $this->conn->prepare($sql)->execute([$contentorId, $valor]);
+        $this->conn->prepare($sql)->execute([$contentorId, $valor]);
 
-    // Atualiza is_full no contentor
-    $sql = "UPDATE contentores
+        // Atualiza is_full no contentor
+        $sql = "UPDATE contentores
             SET is_full = ?
             WHERE id = ?";
-    $this->conn->prepare($sql)->execute([$isFull ? 1 : 0, $contentorId]);
-}
+        $this->conn->prepare($sql)->execute([$isFull ? 1 : 0, $contentorId]);
+    }
+
+    /** * Procura a reserva ativa (NOW() dentro do intervalo reserved_from/reserved_until) * para um lugar, já com a matrícula do veículo associado via JOIN. * * @return array|false */
+    public function getReservaAtivaByLugar(int $idLugar)
+    {
+
+        $sql = "SELECT hr.id, hr.id_veiculo, v.matricula, hr.reserved_from, hr.reserved_until            
+        FROM historico_reservas hr            
+        INNER JOIN veiculos v ON v.id = hr.id_veiculo            
+        WHERE hr.id_lugar = :id_lugar              
+        AND NOW() BETWEEN hr.reserved_from AND hr.reserved_until            
+        ORDER BY hr.reserved_from DESC            
+        LIMIT 1";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['id_lugar' => $idLugar]);
+        
+        return $stmt->fetch();
+    }
+
 }
