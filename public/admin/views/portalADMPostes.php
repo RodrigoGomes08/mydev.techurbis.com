@@ -75,6 +75,12 @@
                 <option value="2">Avariado</option>
                 <option value="3">Manutenção</option>
             </select>
+            <select id="filtroPosteFreguesia" class="form-select" style="max-width:220px;">
+                <option value="">Todas as freguesias</option>
+                <?php foreach ($freguesias as $freg): ?>
+                    <option value="<?= $freg->getId() ?>"><?= htmlspecialchars($freg->getNome()) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <!-- TABELA -->
@@ -110,7 +116,7 @@
                                     $badgeCls = 'badge-status-warning'; $badgeIcon = 'bi-exclamation-circle'; $badgeLabel = 'Manutenção';
                                 }
                             ?>
-                            <tr data-estado="<?= $estadoId ?>">
+                            <tr data-estado="<?= $estadoId ?>" data-id-freguesia="<?= $poste->getIdFreguesia() ?>">
                                 <td><strong><?= htmlspecialchars($poste->getId()) ?></strong></td>
                                 <td><?= htmlspecialchars($poste->getLongitude()) ?></td>
                                 <td><?= htmlspecialchars($poste->getLatitude()) ?></td>
@@ -329,14 +335,16 @@
         return todasLinhas().filter(r => r.dataset.filtrado !== 'false');
     }
 
-    // Aplica pesquisa + filtro de estado e marca cada linha
+    // Aplica pesquisa + filtro de estado + filtro de freguesia e marca cada linha
     function aplicarFiltros() {
-        const termo    = (document.getElementById('searchPoste')?.value || '').toLowerCase();
-        const estadoId = document.getElementById('filtroPosteEstado')?.value || '';
+        const termo      = (document.getElementById('searchPoste')?.value || '').toLowerCase();
+        const estadoId   = document.getElementById('filtroPosteEstado')?.value || '';
+        const freguesiaId = document.getElementById('filtroPosteFreguesia')?.value || '';
 
         todasLinhas().forEach(row => {
-            const ok = (!termo    || row.innerText.toLowerCase().includes(termo))
-                    && (!estadoId || row.dataset.estado === estadoId);
+            const ok = (!termo       || row.innerText.toLowerCase().includes(termo))
+                    && (!estadoId    || row.dataset.estado === estadoId)
+                    && (!freguesiaId || row.dataset.idFreguesia === freguesiaId);
             row.dataset.filtrado = ok ? 'true' : 'false';
             if (!ok) row.classList.add('d-none');
         });
@@ -414,6 +422,7 @@
     // Listeners
     document.getElementById('searchPoste')?.addEventListener('input', aplicarFiltros);
     document.getElementById('filtroPosteEstado')?.addEventListener('change', aplicarFiltros);
+    document.getElementById('filtroPosteFreguesia')?.addEventListener('change', aplicarFiltros);
 
     document.getElementById('btnPostesAvariados')?.addEventListener('click', function () {
         const filtro = document.getElementById('filtroPosteEstado');

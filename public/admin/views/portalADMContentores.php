@@ -167,10 +167,11 @@ foreach ($freguesias as $f) {
             $numTotal = count($Freguesia['contentores']);
             ?>
             <div class="mb-3 secao-cidade">
-                <button
+                <button type="button"
                     class="btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center py-3 px-4"
                     style="border-radius:10px;font-weight:600;background:white;border-color:#e6e9f0;"
-                    data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
+                    data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>" aria-expanded="false"
+                    aria-controls="<?= $collapseId ?>">
                     <span><i class="bi bi-geo-alt me-2" style="color:#435ebe;"></i>
                         <?= htmlspecialchars($fregMap[$FreguesiaId] ?? 'Freguesia ' . $FreguesiaId) ?></span>
                     <span class="d-flex align-items-center gap-2">

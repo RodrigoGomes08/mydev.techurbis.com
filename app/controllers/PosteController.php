@@ -1,7 +1,5 @@
 <?php
 
-use Composer\DependencyResolver\Transaction;
-
 require_once __DIR__ . '/../dao/PosteDAO.php';
 require_once __DIR__ . '/../config/DatabaseSingle.php';
 require_once __DIR__ . '/../dao/FreguesiaDAO.php';
@@ -90,11 +88,18 @@ class PosteController
         exit;
     }
 
-    public function posteUpdate($id)
+    // Nota: $id (se vier da rota) é ignorado de propósito — o id real do
+    // poste a atualizar vem sempre do campo oculto do formulário ($_POST['id']).
+    public function posteUpdate($id = null)
     {
         $pdo = DatabaseSingle::connect();
         $pdo->beginTransaction();
         try {
+            if (empty($_SESSION['token'])) {
+                header("Location: /login");
+                exit;
+            }
+
             $id = trim($_POST["id"] ?? '');
             $id_freguesia = trim($_POST["id_freguesia"] ?? '');
             $id_estado = trim($_POST["id_estado"] ?? '');
@@ -159,6 +164,12 @@ class PosteController
         $pdo->beginTransaction();
 
         header('Content-Type: application/json');
+
+        if (empty($_SESSION['token'])) {
+            $pdo->rollback();
+            echo json_encode(['success' => false, 'message' => 'Sessão expirada. Por favor, inicia sessão novamente.']);
+            exit;
+        }
 
         try {
             $linhasAlteradas = (new PosteDAO())->posteDeleteDAO($postId);

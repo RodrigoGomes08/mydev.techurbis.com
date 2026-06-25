@@ -49,7 +49,6 @@
             <a class="nav-link <?= $activeContentores ?>" href="PortalADMContentores"><i class="bi bi-trash"></i> Contentores de Lixo</a>
             <a class="nav-link <?= $activePostes ?>" href="PortalADMPostes"><i class="bi bi-lightbulb"></i> Postes de Iluminação</a>
             <a class="nav-link <?= $activeParques ?>" href="PortalADMParques"><i class="bi bi-p-circle"></i> Parques de Estacionamento</a>
-            <a class="nav-link <?= $activeCidade ?>" href="PortalADMCidade"><i class="bi bi-info-circle"></i> Informações da Cidade</a>
             <a class="nav-link text-danger mt-auto" href="/"><i class="bi bi-box-arrow-right"></i> Sair</a>
         </nav>
     </aside>

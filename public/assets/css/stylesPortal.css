@@ -746,9 +746,27 @@ body {
 .grupo-cidade>button:hover {
     background: #f0f3ff !important;
     border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
 }
 
 .grupo-cidade>button[aria-expanded="true"] {
+    background: #eef1ff !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* ========================= CONTENTORES — SECÇÃO CIDADE ========================= */
+.secao-cidade>button {
+    transition: all 0.2s ease;
+}
+
+.secao-cidade>button:hover {
+    background: #f0f3ff !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+.secao-cidade>button[aria-expanded="true"] {
     background: #eef1ff !important;
     border-color: var(--primary-color) !important;
     color: var(--primary-color) !important;

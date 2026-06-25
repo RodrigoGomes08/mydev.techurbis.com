@@ -103,8 +103,13 @@ function tipoIcon(string $tipo): string
             </div>
             <select id="filtroParqueTipo" class="form-select" style="max-width:180px;">
                 <option value="">Todos os tipos</option>
-                <?php foreach ($parques as $parque): ?>
-                    <option value="<?= $parque->getId() ?>"><?= htmlspecialchars($parque->getTipo()) ?></option>
+                <?php
+                $tiposUnicos = [];
+                foreach ($parques as $parque) {
+                    $tiposUnicos[$parque->getTipo()] = true;
+                }
+                foreach (array_keys($tiposUnicos) as $tipoUnico): ?>
+                    <option value="<?= htmlspecialchars($tipoUnico) ?>"><?= htmlspecialchars($tipoUnico) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

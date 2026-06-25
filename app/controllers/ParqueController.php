@@ -76,7 +76,9 @@ class ParqueController
         exit;
     }
 
-    public function parqueUpdate($id)
+    // Nota: $id (se vier da rota) é ignorado de propósito — o id real do
+    // parque a atualizar vem sempre do campo oculto do formulário ($_POST['id']).
+    public function parqueUpdate($id = null)
     {
         try {
             if (empty($_SESSION['token'])) {
@@ -129,6 +131,12 @@ class ParqueController
     public function parqueDelete($parqueId)
     {
         header('Content-Type: application/json');
+
+        if (empty($_SESSION['token'])) {
+            echo json_encode(['success' => false, 'message' => 'Sessão expirada. Por favor, inicia sessão novamente.']);
+            exit;
+        }
+
         try {
             $linhasAlteradas = (new ParqueDAO())->parqueDeleteDAO($parqueId);
 
