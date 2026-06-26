@@ -9,6 +9,7 @@ require $base . '/RoleController.php';
 require $base . '/PosteController.php';
 require $base . '/ContentorController.php';
 require $base . '/ParqueController.php';
+require $base . '/GeralController.php';
 require realpath(__DIR__ . '/../../app/middleware/AuthMiddlewareWeb.php');
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -19,7 +20,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($uri === '/admin/PortalADMGeral' || $uri === '/admin' || $uri === '/admin/') {
     AuthMiddlewareWeb::isLoged();
     AuthMiddlewareWeb::isAdmin();
-    (new WebController())->adminGeral();
+    (new GeralController())->showPortalADMGeral();
 
 } elseif ($uri === '/admin/PortalADMCidade') {
     AuthMiddlewareWeb::isAdmin();

@@ -1,6 +1,7 @@
 <?php
 
-class GeralController{
+class GeralController
+{
 
     private function view($name, $data = [])
     {
@@ -8,7 +9,7 @@ class GeralController{
         require __DIR__ . '/../../public/admin/views/' . $name . '.php';
     }
 
-    public function showPortalADMUtilizadores()
+    public function showPortalADMGeral()
     {
         if (empty($_SESSION['token'])) {
             header("Location: /login");
@@ -16,14 +17,28 @@ class GeralController{
         }
 
         $userDAO = new UserDAO();
-        $numTotalusers = $userDAO->numTotalUsers();
+        $numTotalUsers = $userDAO->numTotalUsers();
 
         $contentorDAO = new ContentorDAO();
         $contentoresCriticos = $contentorDAO->numTotalContentoresCriticos();
+        $estadoContentores = $contentorDAO->estadoSistemaContentores();
 
-        $this->view('portalADMUtilizadores', [
-            'numTotalUsers' => $numTotalusers,
+        $posteDAO = new PosteDAO();
+        $postesAvariados = $posteDAO->numTotalPostesAvariados();
+        $estadoPostes = $posteDAO->estadoSistemaPostes();
+
+        $parqueDAO = new ParqueDAO();
+        $ocupacaoMediaDosParques = $parqueDAO->ocupacaoMediaDosParques();
+        $estadoParques = $parqueDAO->estadoSistemaParques();
+
+        $this->view('portalADMGeral', [
+            'numTotalUsers' => $numTotalUsers,
             'contentoresCriticos' => $contentoresCriticos,
+            'postesAvariados' => $postesAvariados,
+            'ocupacaoMediaDosParques' => $ocupacaoMediaDosParques,
+            'estadoContentores' => $estadoContentores,
+            'estadoPostes' => $estadoPostes,
+            'estadoParques' => $estadoParques,
         ]);
     }
 }

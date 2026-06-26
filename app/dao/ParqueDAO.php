@@ -41,9 +41,9 @@ class ParqueDAO
         $sql = "SELECT
                     COUNT(*) AS total_parques,
                     COALESCE(SUM(num_max_lugares), 0) AS total_lugares,
-                    SUM(CASE WHEN tipo = 'Coberto' THEN 1 ELSE 0 END) AS parques_cobertos,
-                    SUM(CASE WHEN tipo = 'Subterrâneo' THEN 1 ELSE 0 END) AS parques_subterraneos,
-                    SUM(CASE WHEN tipo = 'Descoberto' THEN 1 ELSE 0 END) AS parques_descobertos
+                    SUM(CASE WHEN tipo = 'Coberto'      THEN 1 ELSE 0 END) AS parques_cobertos,
+                    SUM(CASE WHEN tipo = 'Subterrâneo'  THEN 1 ELSE 0 END) AS parques_subterraneos,
+                    SUM(CASE WHEN tipo = 'Descoberto'   THEN 1 ELSE 0 END) AS parques_descobertos
                 FROM p_estacionamentos";
 
         $stmt = $this->conn->prepare($sql);
@@ -51,6 +51,47 @@ class ParqueDAO
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // ✅ CORRIGIDO: calcula a média global de ocupação entre todos os parques
+    //    e o nome do método foi normalizado (sem ç) para consistência com o controller
+    public function ocupacaoMediaDosParques(): array
+    {
+        $sql = "SELECT ROUND(AVG(sub.pct), 2) AS ocupacao_percentual
+                FROM (
+                    SELECT
+                        SUM(CASE WHEN l.ocupado = 1 THEN 1 ELSE 0 END) * 100.0
+                            / NULLIF(COUNT(l.id), 0) AS pct
+                    FROM p_estacionamentos p
+                    LEFT JOIN lugares l ON l.id_p_estacionamento = p.id
+                    GROUP BY p.id
+                ) sub";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['ocupacao_percentual' => 0];
+    }
+
+    public function estadoSistemaParques(): array
+{
+    $sql = "SELECT
+                SUM(CASE WHEN sub.pct < 50 THEN 1 ELSE 0 END) AS em_bom_estado,
+                COUNT(*) AS total
+            FROM (
+                SELECT
+                    p.id,
+                    SUM(CASE WHEN l.ocupado = 1 THEN 1 ELSE 0 END) * 100.0
+                        / NULLIF(p.num_max_lugares, 0) AS pct
+                FROM p_estacionamentos p
+                LEFT JOIN lugares l ON l.id_p_estacionamento = p.id
+                GROUP BY p.id, p.num_max_lugares
+            ) sub";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['em_bom_estado' => 0, 'total' => 0];
+}
 
     public function findByID($id)
     {
@@ -80,7 +121,7 @@ class ParqueDAO
             'tipo' => $tipo,
             'tarifa' => $tarifa,
             'longitude' => $longitude,
-            'latitude' => $latitude
+            'latitude' => $latitude,
         ]);
 
         return (int) $this->conn->lastInsertId();
@@ -123,7 +164,6 @@ class ParqueDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $p_id = $row['id'];
 
-            // Cria o parque apenas uma vez
             if (!isset($parques[$p_id])) {
                 $parques[$p_id] = [
                     'id' => (int) $row['id'],
@@ -138,7 +178,6 @@ class ParqueDAO
                 ];
             }
 
-            // Adiciona o lugar ao parque (se existir)
             if ($row['lugar_id'] !== null) {
                 $parques[$p_id]['lugares'][] = [
                     'id' => (int) $row['lugar_id'],
@@ -150,7 +189,6 @@ class ParqueDAO
             }
         }
 
-        // Re-indexa para array simples (sem chaves de id)
         return array_values($parques);
     }
 
@@ -170,7 +208,6 @@ class ParqueDAO
         $parque = null;
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Cria o parque apenas uma vez
             if ($parque === null) {
                 $parque = [
                     'id' => (int) $row['id'],
@@ -185,7 +222,6 @@ class ParqueDAO
                 ];
             }
 
-            // Adiciona o lugar (se existir)
             if ($row['lugar_id'] !== null) {
                 $parque['lugares'][] = [
                     'id' => (int) $row['lugar_id'],
@@ -193,7 +229,7 @@ class ParqueDAO
                     'id_tipo_lugares' => (int) $row['id_tipo_lugares'],
                     'identificacao' => (string) $row['identificacao'],
                     'ocupado' => (bool) $row['ocupado'],
-                    'reservado' => false, // preenchido abaixo
+                    'reservado' => false,
                 ];
             }
         }
@@ -207,7 +243,7 @@ class ParqueDAO
             unset($lugar);
         }
 
-        return $parque; // null se não encontrado
+        return $parque;
     }
 
     /**
@@ -241,10 +277,9 @@ class ParqueDAO
     }
 
     /**
-     * Devolve os IDs dos lugares de um parque que têm uma reserva ativa neste momento
-     * (hora atual do servidor entre reserved_from e reserved_until).
+     * Devolve os IDs dos lugares de um parque que têm uma reserva ativa neste momento.
      *
-     * @return array<int> lista de id_lugar reservados agora
+     * @return array<int>
      */
     public function getLugaresReservadosAgora(int $idParque): array
     {
@@ -261,8 +296,7 @@ class ParqueDAO
     }
 
     /**
-     * Procura um único lugar pelo id, incluindo a que parque pertence e se está ocupado.
-     * Usado para validar a reserva antes de a criar.
+     * Procura um único lugar pelo id.
      */
     public function findLugarById(int $idLugar): ?array
     {
@@ -289,7 +323,6 @@ class ParqueDAO
 
     /**
      * Procura um veículo pela matrícula, garantindo que pertence ao utilizador autenticado.
-     * Não cria o veículo se não existir — a reserva exige que o veículo já esteja registado.
      */
     public function findVeiculoByMatriculaEUser(string $matricula, int $idUser): ?array
     {
@@ -305,8 +338,7 @@ class ParqueDAO
     }
 
     /**
-     * Cria uma reserva em historico_reservas para o lugar e veículo indicados.
-     * Devolve o id da reserva criada.
+     * Cria uma reserva em historico_reservas.
      */
     public function createReserva(int $idLugar, int $idVeiculo, string $reservedFrom, string $reservedUntil): int
     {
@@ -321,7 +353,6 @@ class ParqueDAO
 
     /**
      * Devolve o histórico de reservas de um lugar específico, mais recentes primeiro.
-     * Usado pela rota GET /api/lugar/{id}/getreservas.
      */
     public function findReservasByLugar(int $idLugar): array
     {

@@ -82,7 +82,6 @@ class ContentorDAO
 
         $estadoContentor = $stmt->fetch(PDO::FETCH_ASSOC);
         return $estadoContentor;
-
     }
 
     public function findByID($id)
@@ -161,15 +160,45 @@ class ContentorDAO
 
     public function numContentorEstado()
     {
-        $sql = "SELECT SUM(CASE WHEN e.nome = 'Crítico' THEN 1 ELSE 0 END) AS contentores_criticos, SUM(CASE WHEN e.nome = 'Normal' THEN 1 ELSE 0 END) AS contentores_normais, SUM(CASE WHEN e.nome = 'Em Atenção' THEN 1 ELSE 0 END) AS contentores_em_atencao
+        $sql = "SELECT
+                    SUM(CASE WHEN e.nome = 'Crítico'    THEN 1 ELSE 0 END) AS contentores_criticos,
+                    SUM(CASE WHEN e.nome = 'Normal'     THEN 1 ELSE 0 END) AS contentores_normais,
+                    SUM(CASE WHEN e.nome = 'Em Atenção' THEN 1 ELSE 0 END) AS contentores_em_atencao
                 FROM contentores c
-                INNER JOIN estados e ON c.id_estado = e.id;
-            ";
+                INNER JOIN estados e ON c.id_estado = e.id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // ✅ CORRIGIDO: faltava "FROM contentores c"
+    public function numTotalContentoresCriticos()
+    {
+        $sql = "SELECT
+                    SUM(CASE WHEN e.nome = 'Crítico' THEN 1 ELSE 0 END) AS contentores_criticos
+                FROM contentores c
+                INNER JOIN estados e ON c.id_estado = e.id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function estadoSistemaContentores(): array
+    {
+        $sql = "SELECT
+                    SUM(CASE WHEN e.nome != 'Crítico' THEN 1 ELSE 0 END) AS ativos,
+                    COUNT(*) AS total
+                FROM contentores c
+                INNER JOIN estados e ON c.id_estado = e.id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['ativos' => 0, 'total' => 0];
     }
 
     public function insertObs($id_contentor, $texto)
@@ -189,7 +218,6 @@ class ContentorDAO
 
     public function findByIdContentor($id)
     {
-
         $sql = "SELECT c.id, c.id_freguesia, c.id_estado, c.capacidade_max, c.longitude, c.latitude, c.tipo, c.identificacao, c.is_full FROM contentores c WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id);
