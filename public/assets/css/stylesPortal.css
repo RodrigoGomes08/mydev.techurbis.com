@@ -243,28 +243,6 @@ body {
     vertical-align: middle;
 }
 
-/* ========================= CORES DOS CARGOS ========================= */
-
-.badge-admin {
-    background-color: #28a745 !important;
-    color: #fff !important;
-}
-
-.badge-utilizador {
-    background-color: #0d6efd !important;
-    color: #fff !important;
-}
-
-.badge-operador {
-    background-color: #dc3545 !important;
-    color: #fff !important;
-}
-
-.badge-default {
-    background-color: #6c757d !important;
-    color: #fff !important;
-}
-
 /* Status badges */
 .badge-status-ok {
     background-color: #d4edda;

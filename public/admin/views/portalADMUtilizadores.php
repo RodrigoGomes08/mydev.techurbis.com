@@ -116,11 +116,16 @@
                             <?php else: ?>
                                 <?php foreach ($users as $user): ?>
                                     <?php
-                                    // Encontrar o nome da role correspondente
+                                    // Encontrar o nome e a cor da role correspondente.
+                                    // A cor vem sempre da BD (tabela roles), nunca de uma lista fixa
+                                    // de classes CSS — assim funciona para qualquer role, incluindo
+                                    // as criadas depois pelo modal "Adicionar Role".
                                     $roleNome = 'Desconhecido';
+                                    $corRole = '#6c757d'; // fallback caso a role não seja encontrada
                                     foreach ($roles as $role) {
                                         if ($role->getIdRole() === $user->getIdRole()) {
                                             $roleNome = $role->getNomeRole();
+                                            $corRole = $role->getCor();
                                             break;
                                         }
                                     }
@@ -131,20 +136,9 @@
                                                 <?= htmlspecialchars($user->getNome()) ?>
                                             </div>
                                         </td>
-                                        <?php
-                                        $classeCargo = '';
-
-                                        if (strtolower($roleNome) === 'administrador') {
-                                            $classeCargo = 'badge-admin';
-                                        } elseif (strtolower($roleNome) === 'utilizador') {
-                                            $classeCargo = 'badge-utilizador';
-                                        } elseif (strtolower($roleNome) === 'operador') {
-                                            $classeCargo = 'badge-operador';
-                                        }
-                                        ?>
-
                                         <td>
-                                            <span class="badge rounded-pill <?= $classeCargo ?>">
+                                            <span class="badge rounded-pill"
+                                                style="background-color:<?= htmlspecialchars($corRole) ?>;color:#fff;">
                                                 <?= htmlspecialchars($roleNome) ?>
                                             </span>
                                         </td>
