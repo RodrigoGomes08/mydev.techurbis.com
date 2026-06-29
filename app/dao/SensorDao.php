@@ -221,7 +221,7 @@ class SensorDAO
 
     public function findContentorById(int $id): array|false
     {
-        $sql = "SELECT id, id_cidade, id_estado, capacidade_max, is_full
+        $sql = "SELECT id, id_freguesia, id_estado, capacidade_max, is_full
             FROM contentores
             WHERE id = ?
             LIMIT 1";
